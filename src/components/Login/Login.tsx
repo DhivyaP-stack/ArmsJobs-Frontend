@@ -12,7 +12,7 @@ function Login() {
     e.preventDefault();
     login(); // Set auth to true
     // You can add real authentication here
-    navigate('/dashboard');
+    navigate('/Candidate');
   };
   
   return (
