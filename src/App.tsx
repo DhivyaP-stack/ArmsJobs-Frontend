@@ -24,7 +24,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/" element={<ProtectedRoute><LoginLayout /></ProtectedRoute>}>
           {/* <Route path="/" element={<LoginLayout />}> */}
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/Candidate" element={<Candidate />} />
             <Route path="/UAEOwnFreeLauncerVisa" element={<UAEOwnFreeLauncerVisa />} />
             <Route path="/AgentsSupplier" element={<AgentsSupplier />} />
