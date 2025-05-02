@@ -284,15 +284,15 @@ export const ClientEnquiryTable = () => {
                     <td className="px-2 py-3">
                       <div className="flex items-center space-x-2">
                         {/* Edit Button */}
-                        <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                          <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div 
+                        <div
                            onClick={(e) => {
                             e.stopPropagation(); // Prevent row navigation
                             openEditClientEnquiryPopup(); // Open the popup
                           }}
-                          className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                        className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                          <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
+                          {/* Tooltip */}
+                          <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
                             Edit
                           </div>
                         </div>
