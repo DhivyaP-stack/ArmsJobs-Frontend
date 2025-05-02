@@ -27,7 +27,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
-                        Edit Candidate
+                        Edit Agents/Supplier
                     </h2>
                 </div>
                 <div

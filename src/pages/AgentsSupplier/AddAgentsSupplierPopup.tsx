@@ -27,7 +27,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
-                        Add Candidate
+                        Add Agents/Supplier
                     </h2>
                 </div>
                 <div
