@@ -12,7 +12,7 @@ import { ClientEnquiry } from './pages/ClientEnquiry';
 import { Reports } from './pages/Reports';
 import { CandidateView } from './pages/Candidate/CandidateView';
 import { LoginLayout } from './layout/LoginLayout';
-import ProtectedRoute from './components/ProtectedRoute';
+//import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './components/Context/AuthContext';
 
 function App() {
@@ -22,7 +22,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute><LoginLayout /></ProtectedRoute>}>
+          {/* <Route path="/" element={<ProtectedRoute><LoginLayout /></ProtectedRoute>}> */}
+          <Route path="/" element={<LoginLayout />}>
           {/* <Route path="/" element={<LoginLayout />}> */}
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/Candidate" element={<Candidate />} />
