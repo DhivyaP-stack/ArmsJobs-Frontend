@@ -6,7 +6,7 @@ import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
 import { AgentOrSupply } from "../../types/AgentSupplyList";
 import { FaArrowLeft } from "react-icons/fa6";
-import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
+//import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 export const AgentSupplyView = () => {
