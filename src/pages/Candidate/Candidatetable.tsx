@@ -443,7 +443,6 @@ const MOCK_CANDIDATES_DATA: CandidateProps[] = [
     availableForHire: true,
     preferredJobRoles: ["Frontend Developer", "UI/UX Designer"]
   },
-  // Add more mock candidates as needed
 ];
 
 export const CandidateTable = () => {
@@ -478,14 +477,12 @@ export const CandidateTable = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     //dispatch(setCurrentPage(page));
-
   };
 
   const handleItemsPerPageChange = (items: number) => {
     setItemsPerPage(items);
     setCurrentPage(1); // Reset to the first page when items per page changes
   };
-
 
   return (
     // <div className="min-h-screen bg-gray-100">
@@ -500,8 +497,6 @@ export const CandidateTable = () => {
             <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
           </div>
           <div className="flex items-center gap-4">
-
-
             <Button
               buttonType="button"
               buttonTitle="Candidate"
@@ -587,7 +582,6 @@ export const CandidateTable = () => {
                       </div>
                     )}
                   </td>
-
                   <td className="px-2 py-1">{candidate.fullName}</td>
                   <td className="px-2 py-1">{candidate.mobile}</td>
                   <td className="px-2 py-1">{candidate.whatsapp}</td>
@@ -634,7 +628,6 @@ export const CandidateTable = () => {
                             Edit
                           </div>
                         </div>
-
                         {/* Delete Button */}
                         <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
                           <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl" />
@@ -659,7 +652,6 @@ export const CandidateTable = () => {
           onPageChange={handlePageChange}
           onItemsPerPageChange={handleItemsPerPageChange}
         />
-
       </div>
       {showAddCandidatePopup && <AddCandidatePopup closePopup={closeAddCategoryPopup} />}
       {showEditCandidatePopup && <EditCandidatePopup closePopup={closeEditCategoryPopup} />}

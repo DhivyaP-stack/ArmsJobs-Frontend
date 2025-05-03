@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Candidate, CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import DefaultProfile from "../../assets/images/DefaultProfile.jpg"
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
+import { FaArrowLeft } from "react-icons/fa6";
+import { EditCandidatePopup } from "./EditCandidatePopup";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 // Toggle Switch Component
@@ -33,8 +35,11 @@ export const CandidateView = () => {
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [showEditCandidatePopup, setShowEditCandidatePopup] = useState(false);
     // const [isLoading, setIsLoading] = useState(true);
-    
+
+    const navigate = useNavigate();
+
     // Mock data for demonstration
     useEffect(() => {
         // setIsLoading(true);
@@ -132,6 +137,14 @@ export const CandidateView = () => {
     //   );
     // }
 
+    const openEditCandidatePopup = () => {
+        setShowEditCandidatePopup(true);
+    }
+
+    const closeEditCategoryPopup = () => {
+        setShowEditCandidatePopup(false)
+    }
+
     if (!candidate) {
         return <div>Loading...</div>;
     }
@@ -140,16 +153,30 @@ export const CandidateView = () => {
         // <div className="min-h-screen bg-gray-100">
         <div className="p-4">
             <div className="bg-white px-5 py-1 rounded-lg shadow-sm ">
-                {/* Header */}
-                <div className="flex items- p-3">
-                    <span className="text-2xl font-bold">Candidate</span>
-                    <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
-                    <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
-                    <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                    <span className="text-gray-500 pt-2 text-sm font-medium underline">Clients</span>
-                    <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                    <span className="text-gray-500 pt-2 text-sm font-medium ">View</span>
+                <div className="flex justify-between items-center p-1">
+                    {/* Header */}
+                    <div className="flex items- p-3">
+                        <span className="text-2xl font-bold">Candidate</span>
+                        <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
+                        <span className="mx-2 pt-2 text-sm">{"/"}</span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium underline">Clients</span>
+                        <span className="mx-2 pt-2 text-sm">{"/"}</span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium ">View</span>
+                    </div>
+                    <div className="flex items-center space-x-4 p-3">
+                        <Button
+                            buttonType="button"
+                            buttonTitle="Back"
+                            onClick={() => navigate(-1)}
+                            icon={
+                                <FaArrowLeft />
+                            }
+                            className="text-sm font-semibold border border-armsBlack px-4 py-2 rounded-md"
+                        />
+                    </div>
                 </div>
+
 
                 <div className="flex gap-4">
                     {/* Left Column - Candidate Names */}
@@ -241,6 +268,7 @@ export const CandidateView = () => {
                                     </div>
                                 </div>
                                 <Button
+                                    onClick={openEditCandidatePopup}
                                     buttonType="button"
                                     buttonTitle="Edit"
                                     className="mb-30 px-4 py-1 bg-armsjobslightblue text-white rounded text-sm"
@@ -502,6 +530,7 @@ export const CandidateView = () => {
                     </div>
                 </div>
             </div>
+            {showEditCandidatePopup && <EditCandidatePopup closePopup={closeEditCategoryPopup} />}
         </div>
         // </div>
     );

@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Candidate, CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
 import { ClientEnquiry } from "../../types/ClientEnquiryList";
+import { FaArrowLeft } from "react-icons/fa6";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 export const ClientEnquiryView = () => {
     const { id } = useParams<{ id: string }>();
     const [candidate, setCandidate] = useState<Candidate | null>(null);
-    const [ClientEnquiry,setClientEnquiry]=useState<ClientEnquiry| null>(null)
+    const [ClientEnquiry, setClientEnquiry] = useState<ClientEnquiry | null>(null)
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     // const [isLoading, setIsLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     // Mock data for demonstration
     useEffect(() => {
@@ -67,8 +70,8 @@ export const ClientEnquiryView = () => {
 
 
     useEffect(() => {
-    
-          
+
+
         const ClientEnquiry: ClientEnquiry = {
             CompanyName: "Global BuildCorp Ltd.",
             EmailID: "contact@buildcorp.com",
@@ -85,13 +88,13 @@ export const ClientEnquiryView = () => {
             AccommodationProvided: "Yes",
             QueryType: "Manpower Requirement",
             RemarksNotes: "Workers should have GCC experience. Preferably English-speaking."
-          };
-          
-          
-      
+        };
+
+
+
         setClientEnquiry(ClientEnquiry);
-      }, []);
-      
+    }, []);
+
     const handleAddRemark = () => {
         if (newRemark.trim()) {
             const remark: CandidateRemark = {
@@ -130,12 +133,25 @@ export const ClientEnquiryView = () => {
         <div className="p-4">
             <div className="bg-white px-5 py-1 rounded-lg shadow-sm ">
                 {/* Header */}
-                <div className="flex items- p-3">
-                    <span className="text-2xl font-bold">Client Enquiry</span>
-                    <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
-                    <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
-                    <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                    <span className="text-gray-500 pt-2 text-sm font-medium ">Client Enquiry</span>
+                <div className="flex justify-between items-center p-1">
+                    <div className="flex items- p-3">
+                        <span className="text-2xl font-bold">Client Enquiry</span>
+                        <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
+                        <span className="mx-2 pt-2 text-sm">{"/"}</span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium ">Client Enquiry</span>
+                    </div>
+                    <div className="flex items-center space-x-4 p-3">
+                        <Button
+                            buttonType="button"
+                            buttonTitle="Back"
+                            onClick={() => navigate(-1)}
+                            icon={
+                                <FaArrowLeft />
+                            }
+                            className="text-sm font-semibold border border-armsBlack px-4 py-2 rounded-md"
+                        />
+                    </div>
                 </div>
 
                 <div className="flex gap-4">
@@ -184,7 +200,7 @@ export const ClientEnquiryView = () => {
                     <div className="flex w-full bg-white border border-armsBlack rounded shadow-sm">
                         {/* Middle Column - Candidate Details */}
                         <div className="flex-[3] p-2">
-                           
+
 
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
@@ -210,7 +226,7 @@ export const ClientEnquiryView = () => {
                                             <p className="text-xs text-gray-600">Mobile Number</p>
                                             <p className="text-sm font-bold mt-1">{ClientEnquiry?.MobileNumber}</p>
                                         </div>
-                                    
+
                                     </div>
                                 </div>
 
@@ -265,7 +281,7 @@ export const ClientEnquiryView = () => {
                                             <p className="text-xs text-gray-600">Accommodation Provided?</p>
                                             <p className="text-sm font-bold mt-1">{ClientEnquiry?.AccommodationProvided}</p>
                                         </div>
-                                       
+
                                     </div>
                                 </div>
 
@@ -282,7 +298,7 @@ export const ClientEnquiryView = () => {
                                         <div>
                                             <p className="text-xs text-gray-600">Remarks / Notes</p>
                                             <p className="text-sm font-bold mt-1">{ClientEnquiry?.RemarksNotes}</p>
-                                        </div>    
+                                        </div>
                                     </div>
                                 </div>
                                 {/* Job Information */}
@@ -314,7 +330,7 @@ export const ClientEnquiryView = () => {
                                 </div>
 
                              */}
-                             
+
 
                                 {/* Job History */}
                                 <div className="w-full border border-main rounded-t-lg p-0 min-h-[300px] bg-white">

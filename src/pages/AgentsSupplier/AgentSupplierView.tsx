@@ -3,22 +3,32 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Candidate, CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
-import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
-import { OverSeasView } from "../../types/OverSeasList";
+import { AgentOrSupply } from "../../types/AgentSupplyList";
 import { FaArrowLeft } from "react-icons/fa6";
+import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
-export const OverSeasRecruitmentView = () => {
+export const AgentSupplyView = () => {
     const { id } = useParams<{ id: string }>();
     const [candidate, setCandidate] = useState<Candidate | null>(null);
-    const [overSeasDetail, setOverSeasDetail] = useState<OverSeasView | null>(null)
+    const [AgentOrSupply, setAgentOrSupply] = useState<AgentOrSupply | null>(null)
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    // const [showEditAgentsSupplierPopup, setShowEditAgentsSupplierPopup] = useState(false);
     // const [isLoading, setIsLoading] = useState(true);
+
     const navigate = useNavigate();
+
+    // const openEditAgentsSupplierPopup = () => {
+    //     setShowEditAgentsSupplierPopup(true);
+    //   }
+    
+    //   const closeEditAgentsSupplierPopup = () => {
+    //     setShowEditAgentsSupplierPopup(false)
+    //   }
     // Mock data for demonstration
     useEffect(() => {
         // setIsLoading(true);
@@ -66,20 +76,20 @@ export const OverSeasRecruitmentView = () => {
     }, [id]);
 
     useEffect(() => {
-        const overSeasDetails: OverSeasView = {
-            companyName: "ABC Company",
-            country: "USA",
-            contactPersonName: "John Doe",
-            MobileNumber: "1234567890",
-            whatsupNumber: "1234567890",
-            EmailId: "john@example.com",
-            CatogoryYouCanProvide: "Construction Workers, Engineers",
-            NationalityOfWorker: "USA",
-            MobilizationTime: "2 Weeks",
-            UAEDeploymentExperience: "Yes",
-            AdditionalDetails: "We require skilled labor for a 12-month project in Dubai."
+        const AgentOrSupply: AgentOrSupply = {
+            NameOfAgent: "Ahmed Khan",
+            EmailID: "ahmed.khan@recruitmenthub.com",
+            WhatsAppNumber: "+971-55-6789012",
+            MobileNumber: "+971-50-1234567",
+            agentDoRecruitment: "Yes",
+            AssociatedWithArms: "Yes, since 2021",
+            agentDoManpower: "Yes",
+            CategoriesYouCanSupply: "Construction Workers, Electricians, Drivers",
+            QuantityEstimates: "100-150 candidates per month",
+            AreasCovered: "UAE, Qatar, Saudi Arabia",
+            AdditionalNotes: "Can provide workers with verified experience and documentation"
         };
-        setOverSeasDetail(overSeasDetails);
+        setAgentOrSupply(AgentOrSupply);
     }, []);
 
     const handleAddRemark = () => {
@@ -122,11 +132,11 @@ export const OverSeasRecruitmentView = () => {
                 {/* Header */}
                 <div className="flex justify-between items-center p-1">
                     <div className="flex items- p-3">
-                        <span className="text-2xl font-bold">OverSeas Recruitment</span>
+                        <span className="text-2xl font-bold">Agents/Supplier</span>
                         <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
                         <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
                         <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                        <span className="text-gray-500 pt-2 text-sm font-medium ">OverSeas Recruitment</span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium ">Agents/Supplier</span>
                     </div>
                     <div className="flex items-center space-x-4 p-3">
                         <Button
@@ -162,12 +172,15 @@ export const OverSeasRecruitmentView = () => {
                                             key={c.id}
                                             // to={`/Candidate/${id}/${c.id}`}
                                             to={`/Candidate/${c.id}`}
-                                            className={`block p-3 border-b ${c.id === id} hover:bg-gray-100`}
+                                            className={`block p-3 border-b ${c.id === id} hover:bg-gray-100
+                                                    `}
                                         >
                                             <div className="flex justify-between items-center">
                                                 <div className="flex-grow">
                                                     <div className="text-sm font-medium">{c.name}</div>
+                                                    {/* <div className="text-xs text-gray-500 mt-1">ID: {c.candidateId}</div> */}
                                                 </div>
+                                                {/* <div className={`w-2 h-2 rounded-full ${c.isActive ? 'bg-green-500' : 'bg-gray-400'}`} /> */}
                                             </div>
                                         </Link>
                                     ))}
@@ -192,86 +205,73 @@ export const OverSeasRecruitmentView = () => {
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
-                                            <p className="text-xs text-gray-600">Company Name</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.companyName}</p>
+                                            <p className="text-xs text-gray-600">Name of Agent</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.NameOfAgent}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-600">Country</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.country}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Contact Person Name</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.contactPersonName}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.MobileNumber}</p>
+                                            <p className="text-xs text-gray-600"> Mobile Number</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.MobileNumber}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.whatsupNumber}</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.WhatsAppNumber}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.EmailId}</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.EmailID}</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Job Information */}
-                                <div className="mb-6">
+                                <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
-                                        <h2 className="text-xl font-bold">Recruitment Info</h2>
+                                        <h2 className="text-xl font-bold">Eligibility & History</h2>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
-                                        <div>
-                                            <p className="text-xs text-gray-600">Categories You Can Provide</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.CatogoryYouCanProvide}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Nationality of Workers</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.NationalityOfWorker}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobilization Time
-                                            </p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.MobilizationTime}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">UAE Deployment Experience</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.UAEDeploymentExperience}</p>
-                                        </div>
 
+                                    <div className="grid grid-cols-3 gap-4 pt-2">
+                                        <div>
+                                            <p className="text-xs text-gray-600">Can the agent do recruitment?</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.agentDoRecruitment}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Have you been associated earlier with ARMSJOBS?</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.AssociatedWithArms}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Can the agent do manpower supplying?</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.agentDoManpower}</p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Documents */}
-                                <div className="mb-6">
+                                <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
-                                        <h2 className="text-xl font-bold">Documents</h2>
+                                        <h2 className="text-xl font-bold">Manpower info</h2>
                                     </div>
-                                    <div className="flex grid-cols-4 gap-4 pt-2">
-                                        {/* {Object.entries(candidate.documents).map(([key, doc]) => (
-                                                <div key={key} className="flex flex-col items-center p-3 rounded hover:bg-gray-50 cursor-pointer">
-                                                    <span className="text-2xl text-armsjobslightblue mb-1 "><IoDocumentText /></span>
-                                                    <span className="text-xs text-gray-600">{doc.name}</span>
-                                                    <span className="text-xs text-gray-400">{doc.size}</span>
-                                                </div>
-                                            ))} */}
-                                        {/* Upload CV Section */}
+                                    <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
-                                            <h3 className="text-xs text-gray-600 mb-2">Upload CV</h3>
-                                            <div className="flex items-start gap-3">
-                                                <span className="text-3xl text-armsjobslightblue"><IoDocumentText /></span>
-                                                <div>
-                                                    <p className="text-sm font-bold">Babu.doc</p>
-                                                    <p className="text-xs text-gray-400">470 KB</p>
-                                                </div>
-                                            </div>
+                                            <p className="text-xs text-gray-600">Categories You Can Supply</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.CategoriesYouCanSupply}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-600">Additional Details</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.AdditionalDetails}</p>
+                                            <p className="text-xs text-gray-600">Quantity Estimates</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.QuantityEstimates}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Areas Covered</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.AreasCovered}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mb-6 ">
+                                    <div className="flex items-center justify-between mb-1 border-b">
+                                        <h2 className="text-xl font-bold">Additional info</h2>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4 pt-2">
+                                        <div>
+                                            <p className="text-xs text-gray-600">Additional Notes (Category Rates & Recruitment Rates)</p>
+                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.AdditionalNotes}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -290,6 +290,9 @@ export const OverSeasRecruitmentView = () => {
                                                 <th className="text-left p-3 text-sm font-bold">Date & Time</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+                                            {/* Add job history rows here */}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -336,6 +339,7 @@ export const OverSeasRecruitmentView = () => {
                                                 Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
                                             </p>
                                         </div>
+
                                         <div className="border-b pb-4">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
@@ -377,7 +381,8 @@ export const OverSeasRecruitmentView = () => {
                     </div>
                 </div>
             </div>
+            {/* {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />} */}
         </div>
-        //</div>
+        // </div>
     );
 };

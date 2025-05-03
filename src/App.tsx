@@ -16,6 +16,8 @@ import { LoginLayout } from './layout/LoginLayout';
 import { AuthProvider } from './components/Context/AuthContext';
 import { ClientEnquiryView } from './pages/ClientEnquiry/ClientEnquiryView';
 import { OverSeasRecruitmentView } from './pages/OverSeasRecruitment/OverSeasRecruitmentView';
+import { AgentSupplyView } from './pages/AgentsSupplier/AgentSupplierView';
+import { ManPowerSupplyView } from './pages/ManPowerSupply/ManPowerSupplyView';
 
 function App() {
 
@@ -38,6 +40,8 @@ function App() {
             <Route path="/Candidate/:id" element={<CandidateView />} />
             <Route path="/ClientEnquiry/:id" element={<ClientEnquiryView />} />
             <Route path="/OverSeasRecruitment/:id" element={<OverSeasRecruitmentView />} />
+            <Route path="/ManPowerSupplyView/:id" element={<ManPowerSupplyView />} />
+            <Route path="/AgentSupplyView/:id" element={<AgentSupplyView />} />
           </Route>
         </Routes>
       </Router>

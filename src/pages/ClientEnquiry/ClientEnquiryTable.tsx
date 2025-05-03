@@ -314,7 +314,6 @@ export const ClientEnquiryTable = () => {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
         <Pagination

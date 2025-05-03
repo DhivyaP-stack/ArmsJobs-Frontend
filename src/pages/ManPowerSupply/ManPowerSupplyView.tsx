@@ -5,20 +5,22 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
-import { OverSeasView } from "../../types/OverSeasList";
+import { ManpowerSupply } from "../../types/ManPowerList";
 import { FaArrowLeft } from "react-icons/fa6";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
-export const OverSeasRecruitmentView = () => {
+export const ManPowerSupplyView = () => {
     const { id } = useParams<{ id: string }>();
     const [candidate, setCandidate] = useState<Candidate | null>(null);
-    const [overSeasDetail, setOverSeasDetail] = useState<OverSeasView | null>(null)
+    const [ManpowerSupply, setManpowerSupply] = useState<ManpowerSupply | null>(null)
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     // const [isLoading, setIsLoading] = useState(true);
+
     const navigate = useNavigate();
+
     // Mock data for demonstration
     useEffect(() => {
         // setIsLoading(true);
@@ -65,21 +67,21 @@ export const OverSeasRecruitmentView = () => {
         return () => clearTimeout(timer);
     }, [id]);
 
+
     useEffect(() => {
-        const overSeasDetails: OverSeasView = {
-            companyName: "ABC Company",
-            country: "USA",
-            contactPersonName: "John Doe",
-            MobileNumber: "1234567890",
-            whatsupNumber: "1234567890",
-            EmailId: "john@example.com",
-            CatogoryYouCanProvide: "Construction Workers, Engineers",
-            NationalityOfWorker: "USA",
-            MobilizationTime: "2 Weeks",
-            UAEDeploymentExperience: "Yes",
-            AdditionalDetails: "We require skilled labor for a 12-month project in Dubai."
+        const ManpowerSupply: ManpowerSupply = {
+            CompanyName: "Global Manpower Solutions",
+            EmailID: "info@globalmanpower.com",
+            ContactPersonName: "Michael Johnson",
+            MobileNumber: "+1-555-123-4567",
+            OfficeLocation: "Houston, Texas, USA",
+            CategoriesAvailable: "Electricians, Plumbers, Welders",
+            QuantityPerCategory: "Electricians: 25, Plumbers: 15, Welders: 20",
+            PreviousExperience: "Supplied workers for Qatar and UAE projects",
+            workedEarlierWithArms: "Yes",
+            Comments: "All workers are certified and have prior GCC experience"
         };
-        setOverSeasDetail(overSeasDetails);
+        setManpowerSupply(ManpowerSupply);
     }, []);
 
     const handleAddRemark = () => {
@@ -122,11 +124,11 @@ export const OverSeasRecruitmentView = () => {
                 {/* Header */}
                 <div className="flex justify-between items-center p-1">
                     <div className="flex items- p-3">
-                        <span className="text-2xl font-bold">OverSeas Recruitment</span>
+                        <span className="text-2xl font-bold">Manpower Supply</span>
                         <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
                         <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
                         <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                        <span className="text-gray-500 pt-2 text-sm font-medium ">OverSeas Recruitment</span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium ">Manpower Supply</span>
                     </div>
                     <div className="flex items-center space-x-4 p-3">
                         <Button
@@ -140,7 +142,6 @@ export const OverSeasRecruitmentView = () => {
                         />
                     </div>
                 </div>
-
                 <div className="flex gap-4">
                     {/* Left Column - Candidate Names */}
                     <div className="w-1/4 border-armsBlack border-1 rounded ">
@@ -162,12 +163,15 @@ export const OverSeasRecruitmentView = () => {
                                             key={c.id}
                                             // to={`/Candidate/${id}/${c.id}`}
                                             to={`/Candidate/${c.id}`}
-                                            className={`block p-3 border-b ${c.id === id} hover:bg-gray-100`}
+                                            className={`block p-3 border-b ${c.id === id} hover:bg-gray-100
+                                                    `}
                                         >
                                             <div className="flex justify-between items-center">
                                                 <div className="flex-grow">
                                                     <div className="text-sm font-medium">{c.name}</div>
+                                                    {/* <div className="text-xs text-gray-500 mt-1">ID: {c.candidateId}</div> */}
                                                 </div>
+                                                {/* <div className={`w-2 h-2 rounded-full ${c.isActive ? 'bg-green-500' : 'bg-gray-400'}`} /> */}
                                             </div>
                                         </Link>
                                     ))}
@@ -184,6 +188,8 @@ export const OverSeasRecruitmentView = () => {
                     <div className="flex w-full bg-white border border-armsBlack rounded shadow-sm">
                         {/* Middle Column - Candidate Details */}
                         <div className="flex-[3] p-2">
+
+
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
                                 <div className="mb-6 ">
@@ -193,74 +199,54 @@ export const OverSeasRecruitmentView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Company Name</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.companyName}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Country</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.country}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Contact Person Name</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.contactPersonName}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.MobileNumber}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.whatsupNumber}</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.CompanyName}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.EmailId}</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.EmailID}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Contact Person Name</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.ContactPersonName}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Mobile Number</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.MobileNumber}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Office Location</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.OfficeLocation}</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Job Information */}
-                                <div className="mb-6">
+                                <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
-                                        <h2 className="text-xl font-bold">Recruitment Info</h2>
+                                        <h2 className="text-xl font-bold">ManPower information</h2>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
+
+                                    <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
-                                            <p className="text-xs text-gray-600">Categories You Can Provide</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.CatogoryYouCanProvide}</p>
+                                            <p className="text-xs text-gray-600">Nature of Work</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.CategoriesAvailable}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-600">Nationality of Workers</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.NationalityOfWorker}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobilization Time
-                                            </p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.MobilizationTime}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">UAE Deployment Experience</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.UAEDeploymentExperience}</p>
+                                            <p className="text-xs text-gray-600">Project Location</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.QuantityPerCategory}</p>
                                         </div>
 
                                     </div>
                                 </div>
 
-                                {/* Documents */}
+
                                 <div className="mb-6">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Documents</h2>
                                     </div>
                                     <div className="flex grid-cols-4 gap-4 pt-2">
-                                        {/* {Object.entries(candidate.documents).map(([key, doc]) => (
-                                                <div key={key} className="flex flex-col items-center p-3 rounded hover:bg-gray-50 cursor-pointer">
-                                                    <span className="text-2xl text-armsjobslightblue mb-1 "><IoDocumentText /></span>
-                                                    <span className="text-xs text-gray-600">{doc.name}</span>
-                                                    <span className="text-xs text-gray-400">{doc.size}</span>
-                                                </div>
-                                            ))} */}
-                                        {/* Upload CV Section */}
+
                                         <div>
-                                            <h3 className="text-xs text-gray-600 mb-2">Upload CV</h3>
+                                            <h3 className="text-xs text-gray-600 mb-2">Upload Trade License</h3>
                                             <div className="flex items-start gap-3">
                                                 <span className="text-3xl text-armsjobslightblue"><IoDocumentText /></span>
                                                 <div>
@@ -269,12 +255,56 @@ export const OverSeasRecruitmentView = () => {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div>
-                                            <p className="text-xs text-gray-600">Additional Details</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.AdditionalDetails}</p>
+                                            <h3 className="text-xs text-gray-600 mb-2">Upload Company License</h3>
+                                            <div className="flex items-start gap-3">
+                                                <span className="text-3xl text-armsjobslightblue"><IoDocumentText /></span>
+                                                <div>
+                                                    <p className="text-sm font-bold">Babu.doc</p>
+                                                    <p className="text-xs text-gray-400">470 KB</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
+                                <div className="mb-6 ">
+                                    <div className="flex items-center justify-between mb-1 border-b">
+                                        <h2 className="text-xl font-bold">Experience</h2>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-4 pt-2">
+                                        <div>
+                                            <p className="text-xs text-gray-600">Previous experience in manpower supplying</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.PreviousExperience}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">If worked earlier with Arms</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.workedEarlierWithArms}</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div className="mb-6 ">
+                                    <div className="flex items-center justify-between mb-1 border-b">
+                                        <h2 className="text-xl font-bold">Additional</h2>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-4 pt-2">
+                                        <div>
+                                            <p className="text-xs text-gray-600">Comments</p>
+                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.Comments}</p>
                                         </div>
                                     </div>
                                 </div>
+
+
 
                                 {/* Job History */}
                                 <div className="w-full border border-main rounded-t-lg p-0 min-h-[300px] bg-white">
@@ -290,6 +320,9 @@ export const OverSeasRecruitmentView = () => {
                                                 <th className="text-left p-3 text-sm font-bold">Date & Time</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+                                            {/* Add job history rows here */}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -336,6 +369,7 @@ export const OverSeasRecruitmentView = () => {
                                                 Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
                                             </p>
                                         </div>
+
                                         <div className="border-b pb-4">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
@@ -378,6 +412,6 @@ export const OverSeasRecruitmentView = () => {
                 </div>
             </div>
         </div>
-        //</div>
+        // </div>
     );
 };

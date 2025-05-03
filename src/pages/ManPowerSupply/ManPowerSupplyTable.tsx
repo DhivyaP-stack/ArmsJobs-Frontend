@@ -11,6 +11,7 @@ import { Pagination } from "../../common/Pagination";
 import { IoMdSearch } from "react-icons/io";
 import { AddManpowerPopup } from "./AddManpowerSupplyPopup";
 import { EditManpowerPopup } from "./EditManpowerSupplyPopup";
+import { useNavigate } from "react-router-dom";
 
 // Define a Candidate type
 interface ManPowerSupply {
@@ -154,6 +155,7 @@ export const ManPowerSupplyTable = () => {
   const currentManPower = manPower.slice(indexOfFirstManPower, indexOfLastManPower);
   const [showAddManpowerPopup, setShowAddManpowerPopup] = useState(false);
   const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
+  const navigate = useNavigate()
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -264,7 +266,9 @@ export const ManPowerSupplyTable = () => {
             </thead>
             <tbody className="whitespace-nowrap">
               {currentManPower.map((manpower, index) => (
-                <tr key={index} className="border-b-2 border-armsgrey">
+                <tr key={index}
+                onClick={() => navigate(`/ManPowerSupplyView/${manpower.id}`)}
+                className="border-b-2 border-armsgrey hover:bg-gray-100">
                   <td className="px-2 py-3">{manpower.id}</td>
                   <td className="px-2 py-3">{manpower.fullName}</td>
                   <td className="px-2 py-3">{manpower.contactPerson || "-"}</td>
