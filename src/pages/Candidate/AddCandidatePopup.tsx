@@ -22,7 +22,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
-
             <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative">
                 {/* Heading */}
                 <div className="relative mb-5">
@@ -45,8 +44,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                             className={`px-4 py-2 text-sm font-bold ${activeTab === tab
                                 ? "bg-main text-white"
                                 : "text-black"
-                                }`}
-                        >
+                                }`}>
                             {tab}
                         </button>
                     ))}
@@ -55,7 +53,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                 {activeTab === "Personal Information" && (
                     <div className="max-w-full mx-auto p-0 pl-1">
                         <form className="flex flex-row gap-1 items-start">
-
                             {/* Photo Upload */}
                             <div className="flex gap-6 w-full">
                                 <div className="flex flex-col items-center pt-5">
@@ -80,7 +77,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                         />
                                     </label>
                                 </div>
-
                                 {/* Form Fields */}
                                 <div className="flex flex-col gap-4 flex-1">
                                     {/* First Row - 4 fields */}
@@ -108,7 +104,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 label={""}
                                             />
                                         </div>
-
                                         <div className="flex-1 min-w-[220px]">
                                             <label className="text-sm font-semibold mb-1">
                                                 WhatsApp Number <span className="text-red-500">*</span>
@@ -120,7 +115,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 label={""}
                                             />
                                         </div>
-
                                         <div className="flex-1 min-w-[220px]">
                                             <label className="text-sm font-semibold mb-1">
                                                 Email ID <span className="text-red-500">*</span>
@@ -133,7 +127,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                             />
                                         </div>
                                     </div>
-
                                     {/* Second Row - 2 fields */}
                                     <div className="flex flex-wrap gap-4">
                                         <div className="w-1/5 min-w-[295px]">
@@ -145,7 +138,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 label={""}
                                             />
                                         </div>
-
                                         <div className="w-1/5 min-w-[295px]">
                                             <label className="text-sm font-semibold mb-1">Current Location</label>
                                             <InputField

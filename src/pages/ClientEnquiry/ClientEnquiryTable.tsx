@@ -11,6 +11,7 @@ import { Pagination } from "../../common/Pagination";
 import { IoMdSearch } from "react-icons/io";
 import { ClientEnquiryAddPopup } from "./AddClientEnquiryPopup";
 import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
+import { useNavigate } from "react-router-dom";
 
 // Define a Candidate type
 interface ClientEnquiry {
@@ -137,7 +138,6 @@ const MOCK_CLIENTENQUIRY_DATA: ClientEnquiry[] = [
     availableForHire: true,
     preferredJobRoles: ["Frontend Developer", "UI/UX Designer"]
   },
-  // Add more mock candidates as needed
 ];
 
 export const ClientEnquiryTable = () => {
@@ -150,7 +150,7 @@ export const ClientEnquiryTable = () => {
   const currentClientEnquiry = clientEnquiry.slice(indexOfFirstClient, indexOfLastClientEnquiry);
   const [showAddClientEnquiryPopup, setShowAddClientEnquiryPopup] = useState<boolean>(false)
   const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false)
-
+  const navigate = useNavigate();
   const openAddClientEnquiryPopup = () => {
     setShowAddClientEnquiryPopup(true)
   }
@@ -264,7 +264,10 @@ export const ClientEnquiryTable = () => {
             </thead>
             <tbody className="whitespace-nowrap">
               {currentClientEnquiry.map((client) => (
-                <tr key={client.id} className="border-b-2 border-armsgrey">
+                <tr key={client.id}
+                  onClick={() => navigate(`/ClientEnquiry/${client.id}`)}
+                  className="border-b-2 border-armsgrey hover:bg-gray-100"
+                >
                   <td className="px-2 py-2">{client.fullName}</td>
                   <td className="px-2 py-2">{client.mobile}</td>
                   <td className="px-2 py-2">{client.whatsapp}</td>
@@ -285,11 +288,11 @@ export const ClientEnquiryTable = () => {
                       <div className="flex items-center space-x-2">
                         {/* Edit Button */}
                         <div
-                           onClick={(e) => {
+                          onClick={(e) => {
                             e.stopPropagation(); // Prevent row navigation
                             openEditClientEnquiryPopup(); // Open the popup
                           }}
-                        className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                          className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
                           <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
                           {/* Tooltip */}
                           <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">

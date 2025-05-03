@@ -15,8 +15,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
     closePopup,
 }) => {
     //   if (!isOpen) return null;
-    const [activeTab, setActiveTab] = useState("Personal Information");
-    // const tabs = ["Personal Information", "Visa & Work Eligibility", "Job Information", "Documents Upload"];
+    const [activeTab, setActiveTab] = useState("Company Details");
     const tabs = ['Company Details', "Personal Information", "Facility Info", "Remarks"];
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">

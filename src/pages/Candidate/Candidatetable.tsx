@@ -569,7 +569,7 @@ export const CandidateTable = () => {
                 <th className="bg-main px-2 py-3 ">Upload Relevant Docs</th>
                 <th className="bg-main px-2 py-3 ">Status</th>
                 <th className="bg-main px-2 py-3 ">Created At</th>
-                <th className="bg-main px-2 py-3 ">Actions</th>
+                <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
               </tr>
             </thead>
             <tbody className="whitespace-nowrap ">

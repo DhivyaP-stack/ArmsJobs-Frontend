@@ -14,6 +14,8 @@ import { CandidateView } from './pages/Candidate/CandidateView';
 import { LoginLayout } from './layout/LoginLayout';
 //import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './components/Context/AuthContext';
+import { ClientEnquiryView } from './pages/ClientEnquiry/ClientEnquiryView';
+import { OverSeasRecruitmentView } from './pages/OverSeasRecruitment/OverSeasRecruitmentView';
 
 function App() {
 
@@ -34,6 +36,8 @@ function App() {
             <Route path="/ClientEnquiry" element={<ClientEnquiry />} />
             <Route path="/Reports" element={<Reports />} />
             <Route path="/Candidate/:id" element={<CandidateView />} />
+            <Route path="/ClientEnquiry/:id" element={<ClientEnquiryView />} />
+            <Route path="/OverSeasRecruitment/:id" element={<OverSeasRecruitmentView />} />
           </Route>
         </Routes>
       </Router>

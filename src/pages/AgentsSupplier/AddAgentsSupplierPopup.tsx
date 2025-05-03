@@ -1,12 +1,7 @@
-// AddCandidateModal.tsx
 import React, { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
-// import DefaultProfile from "../../assets/images/DefaultProfile.jpg"
 import { Button } from "../../common/Button"
 import { InputField } from "../../common/InputField";
-// import { SelectField } from "../../common/SelectField";
-// import { FaCloudUploadAlt } from "react-icons/fa";
-
 interface AddAgentsSupplierPopupProps {
     // isOpen: boolean;
     closePopup: () => void;
@@ -71,7 +66,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                 label={""}
                                             />
                                         </div>
-
+                                        {/* Mobile Number */}
                                         <div className="flex-1 min-w-[210px]">
                                             <label className="text-sm font-semibold mb-1">
                                                 Mobile Number <span className="text-red-500">*</span>
@@ -83,7 +78,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                 label={""}
                                             />
                                         </div>
-
+                                        {/* WhatsApp Number */}
                                         <div className="flex-1 min-w-[220px]">
                                             <label className="text-sm font-semibold mb-1">
                                                 WhatsApp Number <span className="text-red-500">*</span>
