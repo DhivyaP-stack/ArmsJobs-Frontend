@@ -6,6 +6,7 @@ import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
 import { AgentOrSupply } from "../../types/AgentSupplyList";
 import { FaArrowLeft } from "react-icons/fa6";
+import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 //import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
@@ -17,18 +18,18 @@ export const AgentSupplyView = () => {
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-    // const [showEditAgentsSupplierPopup, setShowEditAgentsSupplierPopup] = useState(false);
+    const [showEditAgentsSupplierPopup, setShowEditAgentsSupplierPopup] = useState(false);
     // const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
-    // const openEditAgentsSupplierPopup = () => {
-    //     setShowEditAgentsSupplierPopup(true);
-    //   }
-    
-    //   const closeEditAgentsSupplierPopup = () => {
-    //     setShowEditAgentsSupplierPopup(false)
-    //   }
+    const openEditAgentsSupplierPopup = () => {
+        setShowEditAgentsSupplierPopup(true);
+    }
+
+    const closeEditAgentsSupplierPopup = () => {
+        setShowEditAgentsSupplierPopup(false)
+    }
     // Mock data for demonstration
     useEffect(() => {
         // setIsLoading(true);
@@ -199,35 +200,45 @@ export const AgentSupplyView = () => {
                         <div className="flex-[3] p-2">
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
+
                                 <div className="mb-6 ">
+
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Company Details</h2>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-4 pt-2">
-                                        <div>
-                                            <p className="text-xs text-gray-600">Name of Agent</p>
-                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.NameOfAgent}</p>
+                                    <div className="flex justify-end ">
+                                        <div className="grid grid-cols-3 gap-4 pt-2">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Name of Agent</p>
+                                                <p className="text-sm font-bold mt-1">{AgentOrSupply?.NameOfAgent}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600"> Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{AgentOrSupply?.MobileNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">WhatsApp Number</p>
+                                                <p className="text-sm font-bold mt-1">{AgentOrSupply?.WhatsAppNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{AgentOrSupply?.EmailID}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600"> Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.MobileNumber}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.WhatsAppNumber}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{AgentOrSupply?.EmailID}</p>
-                                        </div>
+                                        <Button
+                                            onClick={openEditAgentsSupplierPopup}
+                                            buttonType="button"
+                                            buttonTitle="Edit"
+                                            className="mt-5 px-4 py-1 bg-armsjobslightblue text-white rounded text-sm"
+                                        />
                                     </div>
                                 </div>
 
+                                {/* Eligibility & History */}
                                 <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Eligibility & History</h2>
                                     </div>
-
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Can the agent do recruitment?</p>
@@ -243,7 +254,7 @@ export const AgentSupplyView = () => {
                                         </div>
                                     </div>
                                 </div>
-
+                                {/* Manpower info */}
                                 <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Manpower info</h2>
@@ -263,7 +274,7 @@ export const AgentSupplyView = () => {
                                         </div>
                                     </div>
                                 </div>
-
+                                Additional info
                                 <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Additional info</h2>
@@ -381,7 +392,7 @@ export const AgentSupplyView = () => {
                     </div>
                 </div>
             </div>
-            {/* {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />} */}
+            {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />}
         </div>
         // </div>
     );

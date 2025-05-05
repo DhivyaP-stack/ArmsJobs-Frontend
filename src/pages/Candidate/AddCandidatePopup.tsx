@@ -333,7 +333,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                             type="radio"
                                                             name="currentlyemployed"
                                                             value="no"
-                                                           className="w-5 h-5"
+                                                            className="w-5 h-5"
                                                         />
                                                         No
                                                     </label>
@@ -494,9 +494,10 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                     <div className="flex justify-center gap-4 mt-8 ">
                         <div>
                             <Button
+                                onClick={closePopup}
                                 buttonType="button"
                                 buttonTitle="Cancel"
-                                className="px-6 py-2 text-armsBlack font-semibold"
+                                className="px-7 py-2.5 text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
                             />
                         </div>
                         <div>

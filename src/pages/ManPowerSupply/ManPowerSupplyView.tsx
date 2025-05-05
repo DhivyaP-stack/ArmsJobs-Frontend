@@ -7,6 +7,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
 import { ManpowerSupply } from "../../types/ManPowerList";
 import { FaArrowLeft } from "react-icons/fa6";
+import { EditManpowerPopup } from "./EditManpowerSupplyPopup";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 export const ManPowerSupplyView = () => {
@@ -17,10 +18,18 @@ export const ManPowerSupplyView = () => {
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
     // const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
+    const openEditManpowerPopup = () => {
+        setShowEditManpowerPopup(true);
+      }
+    
+      const closeEditManpowerPopup = () => {
+        setShowEditManpowerPopup(false)
+      }
     // Mock data for demonstration
     useEffect(() => {
         // setIsLoading(true);
@@ -188,35 +197,43 @@ export const ManPowerSupplyView = () => {
                     <div className="flex w-full bg-white border border-armsBlack rounded shadow-sm">
                         {/* Middle Column - Candidate Details */}
                         <div className="flex-[3] p-2">
-
-
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
                                 <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Company Details</h2>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-4 pt-2">
-                                        <div>
-                                            <p className="text-xs text-gray-600">Company Name</p>
-                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.CompanyName}</p>
+
+                                    <div className="flex justify-start  ">
+                                        <div className="grid grid-cols-3 gap-4 pt-2">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Company Name</p>
+                                                <p className="text-sm font-bold mt-1">{ManpowerSupply?.CompanyName}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{ManpowerSupply?.EmailID}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Contact Person Name</p>
+                                                <p className="text-sm font-bold mt-1">{ManpowerSupply?.ContactPersonName}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{ManpowerSupply?.MobileNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Office Location</p>
+                                                <p className="text-sm font-bold mt-1">{ManpowerSupply?.OfficeLocation}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.EmailID}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Contact Person Name</p>
-                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.ContactPersonName}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.MobileNumber}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Office Location</p>
-                                            <p className="text-sm font-bold mt-1">{ManpowerSupply?.OfficeLocation}</p>
-                                        </div>
+
+                                        <Button
+                                            onClick={openEditManpowerPopup}
+                                            buttonType="button"
+                                            buttonTitle="Edit"
+                                            className="mt-5 ml-30 px-4 py-1 bg-armsjobslightblue text-white rounded text-sm"
+                                        />
                                     </div>
                                 </div>
 
@@ -411,6 +428,7 @@ export const ManPowerSupplyView = () => {
                     </div>
                 </div>
             </div>
+            {showEditManpowerPopup && <EditManpowerPopup closePopup={closeEditManpowerPopup} />}
         </div>
         // </div>
     );
