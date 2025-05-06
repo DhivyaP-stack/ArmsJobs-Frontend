@@ -7,6 +7,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
 import { OverSeasView } from "../../types/OverSeasList";
 import { FaArrowLeft } from "react-icons/fa6";
+import { EditOverSeasPopup } from "./EditOverSeasRecruitment";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 export const OverSeasRecruitmentView = () => {
@@ -17,6 +18,7 @@ export const OverSeasRecruitmentView = () => {
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false)
     // const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
     // Mock data for demonstration
@@ -102,6 +104,13 @@ export const OverSeasRecruitmentView = () => {
         c.candidateId.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const openEditOverseasPopup = () => {
+        setShowEditOverSeasPopup(true)
+      }
+    
+      const closeEditOverseasPopup = () => {
+        setShowEditOverSeasPopup(false)
+      }
     // if (isLoading) {
     //   return (
     //     <div className="min-h-screen bg-gray-100">
@@ -187,10 +196,12 @@ export const OverSeasRecruitmentView = () => {
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
                                 <div className="mb-6 ">
-                                    <div className="flex items-center justify-between mb-1 border-b">
+                                    <div className="flex items-center justify-between mb-1 border-b pb-1">
                                         <h2 className="text-xl font-bold">Company Details</h2>
+
                                     </div>
-                                    <div className="grid grid-cols-3 gap-4 pt-2">
+                                    <div className="flex justify-start  ">
+                                    <div className="grid grid-cols-3 gap-4 pt-2 w-full">
                                         <div>
                                             <p className="text-xs text-gray-600">Company Name</p>
                                             <p className="text-sm font-bold mt-1">{overSeasDetail?.companyName}</p>
@@ -203,6 +214,7 @@ export const OverSeasRecruitmentView = () => {
                                             <p className="text-xs text-gray-600">Contact Person Name</p>
                                             <p className="text-sm font-bold mt-1">{overSeasDetail?.contactPersonName}</p>
                                         </div>
+
                                         <div>
                                             <p className="text-xs text-gray-600">Mobile Number</p>
                                             <p className="text-sm font-bold mt-1">{overSeasDetail?.MobileNumber}</p>
@@ -215,6 +227,13 @@ export const OverSeasRecruitmentView = () => {
                                             <p className="text-xs text-gray-600">Email ID</p>
                                             <p className="text-sm font-bold mt-1">{overSeasDetail?.EmailId}</p>
                                         </div>
+                                    </div>
+                                    <Button
+                                        onClick={openEditOverseasPopup}
+                                        buttonType="button"
+                                        buttonTitle="Edit"
+                                        className="  px-4 py-1 bg-armsjobslightblue text-white rounded text-sm"
+                                    />
                                     </div>
                                 </div>
 
@@ -318,7 +337,7 @@ export const OverSeasRecruitmentView = () => {
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
                                         {/* Static remarks data */}
                                         <div className="border-b pb-4">
-                                            <div className="flex items-center justify-between mb-2">
+                                            <div className="flex max-xl:flex-col items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                         <img
@@ -338,7 +357,7 @@ export const OverSeasRecruitmentView = () => {
                                         </div>
                                         <div className="border-b pb-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex max-xl:flex-col items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                         <img
                                                             src={Profileimg}
@@ -377,6 +396,7 @@ export const OverSeasRecruitmentView = () => {
                     </div>
                 </div>
             </div>
+              {showEditOverSeasPopup&&<EditOverSeasPopup closePopup={closeEditOverseasPopup}/>}
         </div>
         //</div>
     );

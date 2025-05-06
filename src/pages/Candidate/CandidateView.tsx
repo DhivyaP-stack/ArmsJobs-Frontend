@@ -224,8 +224,8 @@ export const CandidateView = () => {
                     <div className="flex w-full bg-white border border-armsBlack rounded shadow-sm">
                         {/* Middle Column - Candidate Details */}
                         <div className="flex-[3] p-2">
-                            <div className="flex justify-between items-center p-4">
-                                <div className="flex items-center gap-1">
+                            <div className="flex  justify-between items-center p-4">
+                                <div className="flex items-center gap-1 max-xl:flex-col max-md:flex-col">
                                     <div className="relative -top-2 -left-2">
                                         <div className="max-w-45 max-h-45  bg-gray-200 rounded-lg flex items-center justify-center">
                                             <img
@@ -470,7 +470,7 @@ export const CandidateView = () => {
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
                                         {/* Static remarks data */}
                                         <div className="border-b pb-4">
-                                            <div className="flex items-center justify-between mb-2">
+                                            <div className="flex max-xl:flex-col items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                         <img
@@ -491,7 +491,7 @@ export const CandidateView = () => {
 
                                         <div className="border-b pb-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex max-xl:flex-col items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                         <img
                                                             src={Profileimg}

@@ -57,7 +57,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                     <div className="flex flex-wrap gap-4">
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="text-sm font-semibold mb-1">
-                                                Name of Agent
+                                                Name of Agent<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="text"

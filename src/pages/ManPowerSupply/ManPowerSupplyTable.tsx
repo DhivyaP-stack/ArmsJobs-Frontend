@@ -187,7 +187,7 @@ export const ManPowerSupplyTable = () => {
     <div className="p-6">
       <div className="bg-white px-5 py-1 rounded-lg shadow-sm ">
         {/* Header Section */}
-        <div className="flex items-center justify-between pb-2 py-2">
+        <div className="flex flex-wrap items-center justify-between pb-2 py-2 gap-y-3">
           <div className="flex items-center">
             <span className="text-2xl font-bold">Manpower Supply</span>
             <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>

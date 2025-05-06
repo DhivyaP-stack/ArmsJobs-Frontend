@@ -6,6 +6,7 @@ import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
 import { ClientEnquiry } from "../../types/ClientEnquiryList";
 import { FaArrowLeft } from "react-icons/fa6";
+import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 export const ClientEnquiryView = () => {
@@ -16,6 +17,7 @@ export const ClientEnquiryView = () => {
     const [newRemark, setNewRemark] = useState("");
     const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+     const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false)
     // const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
@@ -124,6 +126,14 @@ export const ClientEnquiryView = () => {
     //   );
     // }
 
+    const openEditClientEnquiryPopup = () => {
+        setShowEditClientEnquiryPopup(true)
+      }
+    
+      const closeEditClientEnquiryPopup = () => {
+        setShowEditClientEnquiryPopup(false)
+      }
+
     if (!candidate) {
         return <div>Loading...</div>;
     }
@@ -200,33 +210,37 @@ export const ClientEnquiryView = () => {
                     <div className="flex w-full bg-white border border-armsBlack rounded shadow-sm">
                         {/* Middle Column - Candidate Details */}
                         <div className="flex-[3] p-2">
-
-
                             <div className="p-0">
-                                {/* Visa & Work Eligibility */}
+                                {/* Company Details*/}
                                 <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Company Details</h2>
                                     </div>
-
-                                    <div className="grid grid-cols-3 gap-4 pt-2">
-                                        <div>
-                                            <p className="text-xs text-gray-600">Company Name</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.CompanyName}</p>
+                                    <div className="flex justify-start  ">
+                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Company Name</p>
+                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.CompanyName}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.EmailID}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Contact Person Name</p>
+                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.ContactPersonName}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.MobileNumber}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.EmailID}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Contact Person Name</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.ContactPersonName}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.MobileNumber}</p>
-                                        </div>
-
+                                        <Button
+                                            onClick={openEditClientEnquiryPopup}
+                                            buttonType="button"
+                                            buttonTitle="Edit"
+                                            className="  px-4 py-1 bg-armsjobslightblue text-white rounded text-sm"
+                                        />
                                     </div>
                                 </div>
 
@@ -377,7 +391,7 @@ export const ClientEnquiryView = () => {
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
                                         {/* Static remarks data */}
                                         <div className="border-b pb-4">
-                                            <div className="flex items-center justify-between mb-2">
+                                            <div className="flex  max-xl:flex-col items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                         <img
@@ -398,7 +412,7 @@ export const ClientEnquiryView = () => {
 
                                         <div className="border-b pb-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex   max-xl:flex-col items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                         <img
                                                             src={Profileimg}
@@ -437,6 +451,7 @@ export const ClientEnquiryView = () => {
                     </div>
                 </div>
             </div>
+            {showEditClientEnquiryPopup && (<EditClientEnquiryPopup closePopup={closeEditClientEnquiryPopup} />)}
         </div>
         // </div>
     );
