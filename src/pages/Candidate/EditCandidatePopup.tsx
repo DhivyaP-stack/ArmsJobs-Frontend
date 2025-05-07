@@ -41,7 +41,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold ${activeTab === tab
+                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
                                 ? "bg-main text-white"
                                 : "text-black"
                                 }`}
@@ -67,13 +67,13 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                             <span>Photo Upload</span><br /><span>(Optional)</span>
                                         </div>
                                     </div>
-                                    <label className="mt-5 px-4 py-2  text-armsjobslightblue rounded cursor-pointer border-2 b-armsjobslightblue ml-1">
+                                    <label className="mt-5 px-4 py-2  text-armsjobslightblue rounded border-2 b-armsjobslightblue ml-1 cursor-pointer">
                                         Upload
                                         <InputField
                                             type="file"
                                             name="photo"
                                             accept="image/*"
-                                            className="hidden"
+                                            className="hidden cursor-pointer"
                                             label={""}
                                         />
                                     </label>
@@ -171,7 +171,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                     { value: "Freelaunce", label: "Freelaunce" },
                                     { value: "Dependent", label: "Dependent" },
                                 ]}
-                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                             />
                         </div>
 
@@ -182,7 +182,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                             <InputField
                                 type="date"
                                 name="VisaExpiryDate"
-                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                 label={""}
                             />
                         </div>
@@ -199,7 +199,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                     { value: "1 week", label: "1 week" },
                                     { value: "2 weeks", label: "2 weeks" },
                                 ]}
-                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                             />
                         </div>
                     </div>
@@ -279,7 +279,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                 { value: "Abu Dubai", label: "Abu Dubai" },
                                                 { value: "Open to All UAE ", label: "Coimbatore" },
                                             ]}
-                                            className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                            className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         />
                                     </div>
                                     <div>
@@ -309,27 +309,27 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                 { value: "Monthly Contract ", label: "Monthly Contract" },
                                                 { value: "Yearly Contract", label: "Yearly Contract" },
                                             ]}
-                                            className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                            className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         />
                                     </div>
                                     <div>
                                         <label className="text-sm font-semibold mb-1">Currently Employed</label>
                                         <div className="flex space-x-6 pt-2">
-                                            <label className="flex items-center">
+                                            <label className="flex items-center cursor-pointer">
                                                 <input
                                                     type="radio"
                                                     name="currentlyemployed"
                                                     value="yes"
-                                                    className="w-5 h-5"
+                                                    className="w-5 h-5 cursor-pointer "
                                                 />
                                                 Yes
                                             </label>
-                                            <label className="flex items-center">
+                                            <label className="flex items-center cursor-pointer">
                                                 <input
                                                     type="radio"
                                                     name="currentlyemployed"
                                                     value="no"
-                                                    className="w-5 h-5"
+                                                    className="w-5 h-5 cursor-pointer"
                                                 />
                                                 No
                                             </label>
@@ -372,7 +372,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                         <Button
                                             buttonType="button"
                                             buttonTitle="Browse Files"
-                                            className="bg-armsjobslightblue text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
+                                            className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
                                         />
 
                                         <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
@@ -405,9 +405,9 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                         <Button
                                             buttonType="button"
                                             buttonTitle="Browse Files"
-                                            className="bg-armsjobslightblue text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
+                                            className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
                                         />
-                                        <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
+                                        <p className="text-xs cursor-pointer text-gray-400 mb-5">Max file size 500KB.</p>
                                     </div>
                                 </div>
                             </div>
@@ -482,7 +482,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                 onClick={closePopup}
                                 buttonType="button"
                                 buttonTitle="Cancel"
-                                className="px-6 py-2 text-armsBlack font-semibold"
+                                className="px-6 py-2 cursor-pointer text-armsBlack font-semibold"
                             />
                         </div>
                         <div>

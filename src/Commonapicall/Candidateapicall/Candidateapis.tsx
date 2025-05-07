@@ -40,7 +40,6 @@ export const AddCandidateList = async (
   AdditionalNotes:string,
   ReferralName:string,
   ReferralContact:string
-
  ) => {
   try {
     const formData = new FormData();

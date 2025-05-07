@@ -40,7 +40,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold ${activeTab === tab
+                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
                                 ? "bg-main text-white"
                                 : "text-black"
                                 }`}
@@ -131,7 +131,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                                     { value: "Closed space", label: "Closed space" },
 
                                                 ]}
-                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                             />
                                         </div>
                                         {/* Project Location */}
@@ -145,7 +145,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                                     { value: "", label: "Select Project Location" },
                                                     { value: "Emirates", label: "Emirates" },
                                                 ]}
-                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                             />
                                         </div>
                                         {/* Project Duration */}
@@ -162,7 +162,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                                     { value: "3-6 months", label: "3-6 months" },
                                                     { value: "6 and above", label: "6 and above" },
                                                 ]}
-                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                             />
                                         </div>
                                         {/* Categories Required */}
@@ -198,7 +198,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                             <InputField
                                                 type="date"
                                                 name="projectStartDate"
-                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                 label=""
                                             />
                                         </div>
@@ -217,21 +217,21 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                 Kitchen Facilities Provided?
                             </label>
                             <div className="flex gap-6">
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="kitchenFacilities"
                                         value="yes"
-                                        className="accent-blue-600"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     Yes
                                 </label>
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="kitchenFacilities"
                                         value="no"
-                                        className="accent-blue-600"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
@@ -243,21 +243,21 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                 Transportation Provided?
                             </label>
                             <div className="flex gap-6">
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="Transportation Provided"
                                         value="yes"
-                                        className="accent-blue-600"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     Yes
                                 </label>
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="kitchenFacilities"
                                         value="no"
-                                        className="accent-blue-600"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
@@ -269,21 +269,21 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                 Accommodation Provided?
                             </label>
                             <div className="flex gap-6">
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="Accommodation Provided"
                                         value="yes"
-                                        className="accent-blue-600"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     Yes
                                 </label>
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="kitchenFacilities"
                                         value="no"
-                                        className="accent-blue-600"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
@@ -307,7 +307,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                     { value: "Outsourcing", label: "Outsourcing" },
                                     { value: "Others", label: "Others" },
                                 ]}
-                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                             />
                         </div>
 
@@ -335,7 +335,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                 onClick={closePopup}
                                 buttonType="button"
                                 buttonTitle="Cancel"
-                                className="px-7 py-2.5 text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
+                                className="px-7 py-2.5 cursor-pointer text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
                             />
                         </div>
                         <div>

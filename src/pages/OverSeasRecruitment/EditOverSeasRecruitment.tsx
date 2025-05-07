@@ -39,7 +39,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold ${activeTab === tab
+                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
                                 ? "bg-main text-white"
                                 : "text-black"
                                 }`}
@@ -183,21 +183,21 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                                 UAE Deployment Experience
                                             </label>
                                             <div className="flex gap-6">
-                                                <label className="flex items-center gap-2">
+                                                <label className="flex items-center gap-2 cursor-pointer">
                                                     <input
                                                         type="radio"
                                                         name="UAE Deployment Experience"
                                                         value="yes"
-                                                        className="accent-blue-600"
+                                                        className="w-5 h-5 cursor-pointer"
                                                     />
                                                     Yes
                                                 </label>
-                                                <label className="flex items-center gap-2">
+                                                <label className="flex items-center gap-2 cursor-pointer">
                                                     <input
                                                         type="radio"
                                                         name="UAE Deployment Experience"
                                                         value="no"
-                                                        className="accent-blue-600"
+                                                        className="w-5 h-5 cursor-pointer"
                                                     />
                                                     No
                                                 </label>
@@ -244,7 +244,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                 <Button
                                     buttonType="button"
                                     buttonTitle="Browse Files"
-                                    className="bg-armsjobslightblue text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
+                                    className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
                                 />
                                 <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
                             </div>
@@ -275,7 +275,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                 onClick={closePopup}
                                 buttonType="button"
                                 buttonTitle="Cancel"
-                                className="px-7 py-2.5 text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
+                                className="px-7 py-2.5 cursor-pointer text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
                             />
                         </div>
                         <div>

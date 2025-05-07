@@ -41,7 +41,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold ${activeTab === tab
+                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
                                 ? "bg-main text-white"
                                 : "text-black"
                                 }`}
@@ -117,21 +117,21 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 Can the agent do recruitment?
                             </label>
                             <div className="flex gap-4 pt-1.5">
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="currentlyemployed"
                                         value="yes"
-                                        className="w-5 h-5 "
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     Yes
                                 </label>
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="currentlyemployed"
                                         value="no"
-                                        className="w-5 h-5"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
@@ -143,21 +143,21 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 Have you been associated earlier with ARMSJOBS?
                             </label>
                             <div className="flex gap-4 pt-1.5">
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="currentlyemployed"
                                         value="yes"
-                                        className="w-5 h-5 "
+                                        className="w-5 h-5 cursor-pointer "
                                     />
                                     Yes
                                 </label>
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="currentlyemployed"
                                         value="no"
-                                        className="w-5 h-5"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
@@ -169,21 +169,21 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 Can the agent do manpower supplying?
                             </label>
                             <div className="flex gap-4 pt-1.5">
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="currentlyemployed"
                                         value="yes"
-                                        className="w-5 h-5 "
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     Yes
                                 </label>
-                                <label className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="currentlyemployed"
                                         value="no"
-                                        className="w-5 h-5"
+                                        className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
@@ -264,7 +264,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 onClick={closePopup}
                                 buttonType="button"
                                 buttonTitle="Cancel"
-                                className="px-7 py-2.5 text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
+                                className="px-7 py-2.5  text-armsBlack rounded-sm font-semibold hover:bg-gray-200 cursor-pointer"
                             />
                         </div>
                         <div>

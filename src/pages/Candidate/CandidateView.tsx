@@ -172,7 +172,7 @@ export const CandidateView = () => {
                             icon={
                                 <FaArrowLeft />
                             }
-                            className="text-sm font-semibold border border-armsBlack px-4 py-2 rounded-md"
+                            className="px-4 py-2 bg-armsjobslightblue text-sm font-semibold text-armsWhite border-[1px] rounded-md cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                         />
                     </div>
                 </div>
@@ -271,7 +271,7 @@ export const CandidateView = () => {
                                     onClick={openEditCandidatePopup}
                                     buttonType="button"
                                     buttonTitle="Edit"
-                                    className="mb-30 px-4 py-1 bg-armsjobslightblue text-white rounded text-sm"
+                                    className="mb-30 px-4 py-1 bg-armsjobslightblue text-armsWhite font-semibol border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue text-sm"
                                 />
                             </div>
 
@@ -465,7 +465,7 @@ export const CandidateView = () => {
                                         onClick={handleAddRemark}
                                         buttonType="button"
                                         buttonTitle="Add"
-                                        className=" mx-auto px-4 py-1 bg-armsjobslightblue text-white rounded text-sm "
+                                        className="mx-auto px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                     />
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
                                         {/* Static remarks data */}
