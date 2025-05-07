@@ -85,14 +85,14 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Personal Information");
     const tabs = ["Personal Information", "Visa & Work Eligibility", "Job Infor/Work Preferences", "Documents Upload", "Other Information"];
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState<string | null>(null);
+    const [, setLoading] = useState(false);
+    const [, setError] = useState<string | null>(null);
     const {
         register,
         handleSubmit,
         formState: { errors },
-        watch,
-        trigger,
         reset,
     } = useForm<CandidateFormData>({
         resolver: zodResolver(candidateSchema),
@@ -101,64 +101,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
         },
     });
 
-
-
-    // const handleTabChange = async (tab: string) => {
-    //     // Validate current tab before switching
-    //     let isValid = true;
-
-    //     switch (activeTab) {
-    //         case "Personal Information":
-    //             isValid = await trigger([
-    //                 "full_name", "mobile_number", "whatsapp_number", "email",
-    //                 "nationality", "current_location"
-    //             ]);
-    //             break;
-    //         case "Visa & Work Eligibility":
-    //             isValid = await trigger([
-    //                 "visaType", "visaExpiryDate", "availabilityToJoin"
-    //             ]);
-    //             break;
-    //         case "Job Infor/Work Preferences":
-    //             isValid = await trigger([
-    //                 "positionApplyingFor", "category", "expectedSalary",
-    //                 "preferredWorkLocation", "skills", "languageSpoken",
-    //                 "preferredWorkType", "currentlyEmployed"
-    //             ]);
-    //             break;
-    //         // Documents and Other Info might not need validation on tab change
-    //     }
-
-    //     if (isValid) {
-    //         setActiveTab(tab);
-    //     }
-    // };
-
-
-    // Form submission
-    // const onSubmit = async (data: CandidateFormData) => {
-    //     setLoading(true);
-    //     setError(null);
-
-    //     try {
-    //         // Here you would call your API
-
-
-    //         // // Simulate API call
-    //         // await new Promise(resolve => setTimeout(resolve, 1000));
-
-    //         // On success:
-    //         console.log("Form data:", data);
-    //         console.log("Candidate Added successfully");
-    //         reset();
-    //         closePopup();
-
-    //     } catch (error: any) {
-    //         setError(error.message || "Failed to submit form");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
     const onSubmit = async (data: CandidateFormData) => {
         setLoading(true);
         setError(null);

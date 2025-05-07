@@ -67,8 +67,9 @@ interface CandidateList {
 
 export const CandidateTable = () => {
   const [candidatesData, setCandidatesData] = useState<CandidateList[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [loading, setLoading] = useState(true);
+  //const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState(true);
   const [showAddCandidatePopup, setShowAddCandidatePopup] = useState(false);
   const [showEditCandidatePopup, setShowEditCandidatePopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
