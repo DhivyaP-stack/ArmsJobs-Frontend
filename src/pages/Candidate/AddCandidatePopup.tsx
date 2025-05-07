@@ -745,7 +745,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
 
-            <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative  max-xl:!h-[90%]">
+            <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative  max-xl:!h-[90%]  ">
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
@@ -804,7 +804,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
 
                                 {/* Form Fields */}
                                 <div className="flex flex-col gap-4 flex-1">
-                                    <div className="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    <div className="grid grid-cols-4 md:!grid-cols-2 lg:!grid-cols-3 xl:!grid-cols-4 gap-6.5">
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
                                                 Full Name <span className="text-red-500">*</span>
@@ -1009,7 +1009,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                         <label className="text-sm font-semibold mb-1">Skills & Tasks You can Perform</label>
                                         <textarea
                                             name="skills"
-                                            className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                            className="w-full h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         />
                                     </div>
                                     <div>
