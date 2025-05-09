@@ -4,11 +4,62 @@ import { IoCloseOutline } from "react-icons/io5";
 import { Button } from "../../common/Button"
 import { InputField } from "../../common/InputField";
 import { SelectField } from "../../common/SelectField";
-
+// import * as zod from "zod";
+// import { useForm } from "react-hook-form";
+// import { zodResolver } from "@hookform/resolvers/zod";
 interface ClientEnquiryAddPopupProps {
     // isOpen: boolean;
     closePopup: () => void;
 }
+
+// const companydetailsSchema = zod.object({
+//     company_name: zod.string().min(3, "Full name is required"),
+//     contact_person_name: zod.string().min(3, "Contact Person name is required"),
+//     mobile_number: zod
+//         .string()
+//         .min(1, "Mobile number is required")
+//         .regex(/^[0-9]+$/, "Must be a valid phone number"),
+//     email: zod
+//         .string()
+//         .min(1, "Email is required")
+//         .email("Must be a valid email"),
+// });
+
+// // Visa & Work Eligibility Schema
+// const personalSchema = zod.object({
+//     visa_type: zod.string().optional(),
+//     visa_expiry_date: zod.string().optional(),
+//     availability_to_join: zod.string().optional(),
+    
+// });
+
+// // Job Information Schema
+// const facilityInfoSchema = zod.object({
+//     position_applying_for: zod.string().optional(),
+//     category: zod.string().optional(),
+//     other_category: zod.string().optional(),
+//     expected_salary: zod.string().optional(),
+//     preferred_work_location: zod.string().optional(),
+//     skills_tasks: zod.string().optional(),
+//     languages_spoken: zod.string().optional(),
+//     preferred_work_type: zod.string().optional(),
+//     currently_employed: zod.string().optional(),
+//     uae_experience_years: zod.string().optional(),
+// });
+
+// // Documents Schema
+// const remarksSchema = zod.object({
+//     cv: zod.any(), // Adjust based on your file validation needs
+//     relevantDocuments: zod.any(),
+// });
+
+// // Combined Schema
+// const candidateSchema = companydetailsSchema
+//     .merge(personalSchema)
+//     .merge(facilityInfoSchema)
+//     .merge(remarksSchema)
+
+// type CandidateFormData = zod.infer<typeof candidateSchema>;
 
 export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
     // isOpen,
@@ -58,7 +109,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                         {/* Company Name */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Company Name
+                                                Company Name<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="text"
@@ -70,7 +121,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                         {/* Email ID */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Email ID
+                                                Email ID<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="email"
@@ -82,7 +133,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                         {/* Contact Person Name */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Contact Person Name
+                                                Contact Person Name<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="text"
@@ -94,7 +145,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                         {/* Mobile Number */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Mobile Number
+                                                Mobile Number<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="tel"

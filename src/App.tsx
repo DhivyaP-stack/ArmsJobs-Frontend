@@ -17,11 +17,13 @@ import { ClientEnquiryView } from './pages/ClientEnquiry/ClientEnquiryView';
 import { OverSeasRecruitmentView } from './pages/OverSeasRecruitment/OverSeasRecruitmentView';
 import { AgentSupplyView } from './pages/AgentsSupplier/AgentSupplierView';
 import { ManPowerSupplyView } from './pages/ManPowerSupply/ManPowerSupplyView';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
   return (
     <AuthProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />

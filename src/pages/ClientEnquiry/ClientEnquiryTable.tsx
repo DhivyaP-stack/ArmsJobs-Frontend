@@ -1,6 +1,4 @@
-
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputField } from "../../common/InputField";
 import { Button } from "../../common/Button";
 //import profileimg from "../../assets/images/profileimg.jpg"
@@ -12,145 +10,103 @@ import { IoMdSearch } from "react-icons/io";
 import { ClientEnquiryAddPopup } from "./AddClientEnquiryPopup";
 import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
 import { useNavigate } from "react-router-dom";
+import { fetchClientEnquiryList } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis"
+import { ClientEnquiryTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/ClientEnquiryTableShimmer"
+import { DeleteClientPopup } from "./DeleteClientEnquiryPopup";
+import { NotifyError } from "../../common/Toast/ToastMessage";
 
 // Define a Candidate type
-interface ClientEnquiry {
-  id: string;
-  fullName: string;
-  mobile: string;
-  whatsapp: string;
-  email: string;
-  nationality: string;
-  currentLocation: string;
-  visaType: string;
-  visaExpiryDate: string;
-  availabilityToJoin: string;
-  positionApplyingFor: string;
-  category: string;
-  otherCategory?: string;
-  uaeExperience: string;
-  skills: string[];
-  tasksCanPerform: string[];
-  preferredWorkLocation: string[];
-  expectedSalary: string;
-  cvUrl: string;
-  relevantDocsUrl: string;
-  status: string;
-  createdAt: string;
-  availableForHire: boolean;
-  preferredJobRoles: string[];
-  UploadReleventDoc: string;
-  AdditionalNotes: string;
-  RefferalContact: string;
-  Status: string;
-  dateTime: string;
+interface ClientEnquiryApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    status: string;
+    message: string;
+    data: ClientEnquiryList[];
+  };
 }
 
-// Define mock data for candidates
-const MOCK_CLIENTENQUIRY_DATA: ClientEnquiry[] = [
-  {
-    id: "CND001",
-    fullName: "Alice Johnson",
-    mobile: "+971 55 111 2233",
-    whatsapp: "+971 55 111 2233",
-    email: "alice@example.com",
-    nationality: "Canadian",
-    currentLocation: "Dubai",
-    visaType: "N/A",
-    visaExpiryDate: "2025-12-31",
-    availabilityToJoin: "Immediately",
-    positionApplyingFor: "Frontend Developer",
-    category: "IT",
-    uaeExperience: "5 years",
-    skills: ["React", "Node.js", "JavaScript"],
-    tasksCanPerform: ["UI Development", "API Integration"],
-    preferredWorkLocation: ["Dubai", "Abu Dhabi"],
-    expectedSalary: "15,000 AED",
-    cvUrl: "https://example.com/resume/alice.pdf",
-    relevantDocsUrl: "https://example.com/docs/alice.zip",
-    status: "Active",
-    createdAt: "2023-05-15T10:30:00",
-    UploadReleventDoc: "",
-    AdditionalNotes: "",
-    RefferalContact: "",
-    Status: "",
-    dateTime: "",
-    availableForHire: true,
-    preferredJobRoles: ["Frontend Developer", "UI/UX Designer"]
-  },
-  {
-    id: "CND001",
-    fullName: "ABC company",
-    mobile: "+971 55 111 2233",
-    whatsapp: "+971 55 111 2233",
-    email: "alice@example.com",
-    nationality: "Canadian",
-    currentLocation: "Dubai",
-    visaType: "N/A",
-    visaExpiryDate: "2025-12-31",
-    availabilityToJoin: "Immediately",
-    positionApplyingFor: "Frontend Developer",
-    category: "IT",
-    uaeExperience: "5 years",
-    skills: ["React", "Node.js", "JavaScript"],
-    tasksCanPerform: ["UI Development", "API Integration"],
-    preferredWorkLocation: ["Dubai", "Abu Dhabi"],
-    expectedSalary: "15,000 AED",
-    cvUrl: "https://example.com/resume/alice.pdf",
-    relevantDocsUrl: "https://example.com/docs/alice.zip",
-    status: "Active",
-    createdAt: "2023-05-15T10:30:00",
-    UploadReleventDoc: "",
-    AdditionalNotes: "",
-    RefferalContact: "",
-    Status: "",
-    dateTime: "",
-    availableForHire: true,
-    preferredJobRoles: ["Frontend Developer", "UI/UX Designer"]
-  },
-  {
-    id: "CND001",
-    fullName: "Alice ",
-    mobile: "+971 55 111 2233",
-    whatsapp: "+971 55 111 2233",
-    email: "alice@example.com",
-    nationality: "Canadian",
-    currentLocation: "Dubai",
-    visaType: "N/A",
-    visaExpiryDate: "2025-12-31",
-    availabilityToJoin: "Immediately",
-    positionApplyingFor: "Frontend Developer",
-    category: "IT",
-    uaeExperience: "5 years",
-    skills: ["React", "Node.js", "JavaScript"],
-    tasksCanPerform: ["UI Development", "API Integration"],
-    preferredWorkLocation: ["Dubai", "Abu Dhabi"],
-    expectedSalary: "15,000 AED",
-    cvUrl: "https://example.com/resume/alice.pdf",
-    relevantDocsUrl: "https://example.com/docs/alice.zip",
-    status: "Active",
-    createdAt: "2023-05-15T10:30:00",
-    UploadReleventDoc: "",
-    AdditionalNotes: "",
-    RefferalContact: "",
-    Status: "",
-    dateTime: "",
-    availableForHire: true,
-    preferredJobRoles: ["Frontend Developer", "UI/UX Designer"]
-  },
-];
+interface ClientEnquiryList {
+  id: number;
+  client_enquiry_id: string;
+  company_name: string;
+  email: string;
+  contact_person_name: string;
+  mobile_number: string;
+  nature_of_work: string;
+  project_location: string;
+  project_duration: string;
+  categories_required: string;
+  quantity_required: string;
+  project_start_date: string;
+  kitchen_facility: boolean;
+  transportation_provided: boolean;
+  accommodation_provided: boolean;
+  remarks: string | null;
+  query_type: string;
+  status: string;
+  is_deleted: boolean;
+  created_at: string;
+}
 
 export const ClientEnquiryTable = () => {
-  // const [clientEnquiry, setClientEnquiry] = useState<ClientEnquiry[]>(MOCK_CLIENTENQUIRY_DATA);
-  const [clientEnquiry] = useState<ClientEnquiry[]>(MOCK_CLIENTENQUIRY_DATA);
+  const [clientEnquiry, setClientEnquiry] = useState<ClientEnquiryList[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [showAddClientEnquiryPopup, setShowAddClientEnquiryPopup] = useState<boolean>(false);
+  const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false);
+  const [showDeleteClientPopup, setShowDeletedClientPopup] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const indexOfLastClientEnquiry = currentPage * itemsPerPage;
   const indexOfFirstClient = indexOfLastClientEnquiry - itemsPerPage;
   const currentClientEnquiry = clientEnquiry.slice(indexOfFirstClient, indexOfLastClientEnquiry);
-  const [showAddClientEnquiryPopup, setShowAddClientEnquiryPopup] = useState<boolean>(false)
-  const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false)
-  const navigate = useNavigate();
+  const [clientToDelete, setclientToDelete] = useState<{ id: string, name:string } | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchClientEnquiryList() as ClientEnquiryApiResponse;
+        console.log("Full API response:", response); // Debug log
+        if (response?.results?.data) {
+          console.log("Client enquiry data:", response.results.data); // Debug log
+          setClientEnquiry(response.results.data);
+        } else {
+          console.log("No data found in response");
+          setClientEnquiry([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch client enquiries:", err);
+        setClientEnquiry([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Debug log for current state
+  useEffect(() => {
+    console.log("Current clientEnquiry state:", clientEnquiry);
+    console.log("Current page items:", currentClientEnquiry);
+  }, [clientEnquiry, currentClientEnquiry]);
+
+
+  
+    const refreshClientList = async () => {
+      try {
+        setLoading(true);
+        const response = await  fetchClientEnquiryList() as ClientEnquiryApiResponse;
+        setClientEnquiry(response?.results?.data);
+      } catch (err) {
+        NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
+      } finally {
+        setLoading(false);
+      }
+    };
+
   const openAddClientEnquiryPopup = () => {
     setShowAddClientEnquiryPopup(true)
   }
@@ -167,6 +123,18 @@ export const ClientEnquiryTable = () => {
     setShowEditClientEnquiryPopup(false)
   }
 
+  const openDeleteClientPopup = (client: ClientEnquiryList, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setclientToDelete({ id: client.id.toString(), name: client.contact_person_name });
+    setShowDeletedClientPopup(true);
+  };
+
+  const closeDeleteAgentsPopup = () => {
+    setShowDeletedClientPopup(false);
+    setclientToDelete(null);
+  }
+
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     //dispatch(setCurrentPage(page));
@@ -179,7 +147,7 @@ export const ClientEnquiryTable = () => {
 
   return (
     <div className="p-6">
-      <div className="bg-white px-5 py-1 rounded-lg shadow-sm ">
+      <div className="bg-white px-5 py-1 rounded-lg shadow-sm">
         {/* Header Section */}
         <div className="flex flex-wrap items-center justify-between pb-2 py-2 gap-y-3">
           <div className="flex items-center">
@@ -229,91 +197,125 @@ export const ClientEnquiryTable = () => {
         </div>
         {/* Table rendering */}
         <div className="w-full overflow-x-auto">
-          <table className="w-full table-auto text-sm ">
-            <thead className="bg-main text-left">
-              <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
-                <th className="bg-main px-2 py-3  ">Company Name</th>
-                <th className="bg-main px-2 py-3 ">Contact <br /> Person name</th>
-                <th className="bg-main px-2 py-3 ">Mobile No</th>
-                <th className="bg-main px-2 py-3 ">Email ID</th>
-                <th className="bg-main px-2 py-3 ">Nature of work</th>
-                <th className="bg-main px-2 py-3 ">Project
-                  <br />duration</th>
-                <th className="bg-main px-2 py-3 ">Project
-                  <br />
-                  location</th>
-                <th className="bg-main px-2 py-3 ">Do you provide
-                  <br />
-                  Kitchen facilities
-                </th>
-                <th className="bg-main px-2 py-3 ">Do you provide
-                  <br />
-                  transportation
-                </th>
-                <th className="bg-main px-2 py-3 ">Do you provide
-                  <br />
-                  Accommodation
-                </th>
-
-                <th className="bg-main px-2 py-3 ">Catogory of staff</th>
-                <th className="bg-main px-2 py-3 ">Qty required<br /> in each trade</th>
-                <th className="bg-main px-2 py-3 ">Status</th>
-                <th className="bg-main px-2 py-3 ">Created Date&Time</th>
-                <th className="bg-main px-2 py-3 sticky right-0 z-10 ">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="whitespace-nowrap">
-              {currentClientEnquiry.map((client) => (
-                <tr key={client.id}
-                  onClick={() => navigate(`/ClientEnquiry/${client.id}`)}
-                  className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer"
-                >
-                  <td className="px-2 py-2">{client.fullName}</td>
-                  <td className="px-2 py-2">{client.mobile}</td>
-                  <td className="px-2 py-2">{client.whatsapp}</td>
-                  <td className="px-2 py-2">{client.email}</td>
-                  <td className="px-2 py-2">{client.positionApplyingFor}</td>
-                  <td className="px-2 py-2">{client.category}</td>
-                  <td className="px-2 py-2">{client.currentLocation}</td>
-                  <td className="px-2 py-2">{client.visaType}</td>
-                  <td className="px-2 py-2">{client.expectedSalary}</td>
-                  <td className="px-2 py-2">{client.status}</td>
-                  <td className="px-2 py-2">{client.status}</td>
-                  <td className="px-2 py-2">{client.status}</td>
-                  <td className="px-2 py-2">{client.status}</td>
-
-                  <td className="px-2 py-2">{new Date(client.createdAt).toLocaleString()}</td>
-                  <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
-                    <td className="px-2 py-3">
-                      <div className="flex items-center space-x-2">
-                        {/* Edit Button */}
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent row navigation
-                            openEditClientEnquiryPopup(); // Open the popup
-                          }}
-                          className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                          <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                            Edit
-                          </div>
-                        </div>
-
-                        {/* Delete Button */}
-                        <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                          <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                            Delete
-                          </div>
-                        </div>
-                      </div>
-                    </td>
+          <table className="w-full table-auto text-sm">
+            {loading ? (
+              <tbody>
+                <tr>
+                  <td colSpan={15} className="text-center py-4">
+                    <ClientEnquiryTableShimmer />
                   </td>
                 </tr>
-              ))}
-            </tbody>
+              </tbody>
+            ) : (
+              <>
+                <thead className="bg-main text-left">
+                  <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
+                    <th className="bg-main px-2 py-3  ">Company Name</th>
+                    <th className="bg-main px-2 py-3 ">Contact <br /> Person name</th>
+                    <th className="bg-main px-2 py-3 ">Mobile No</th>
+                    <th className="bg-main px-2 py-3 ">Email ID</th>
+                    <th className="bg-main px-2 py-3 ">Nature of work</th>
+                    <th className="bg-main px-2 py-3 ">Project
+                      <br />duration</th>
+                    <th className="bg-main px-2 py-3 ">Project
+                      <br />
+                      location</th>
+                    <th className="bg-main px-2 py-3 ">Do you provide
+                      <br />
+                      Kitchen facilities
+                    </th>
+                    <th className="bg-main px-2 py-3 ">Do you provide
+                      <br />
+                      transportation
+                    </th>
+                    <th className="bg-main px-2 py-3 ">Do you provide
+                      <br />
+                      Accommodation
+                    </th>
+
+                    <th className="bg-main px-2 py-3 ">Catogory of staff</th>
+                    <th className="bg-main px-2 py-3 ">Qty required<br /> in each trade</th>
+                    <th className="bg-main px-2 py-3 ">Status</th>
+                    <th className="bg-main px-2 py-3 ">Created Date&Time</th>
+                    <th className="bg-main px-2 py-3 sticky right-0 z-10 ">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="whitespace-nowrap">
+                  {currentClientEnquiry.length === 0 ? (
+                    <tr>
+                      <td colSpan={14} className="text-center py-4">
+                        No client enquiries found
+                      </td>
+                    </tr>
+                  ) : (
+                    currentClientEnquiry.map((client) => (
+                      <tr
+                        key={client.id}
+                        onClick={() => navigate(`/ClientEnquiry/${client.id}`)}
+                        className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer"
+                      >
+                        <td className="px-2 py-2">{client.company_name || '-'}</td>
+                        <td className="px-2 py-2">{client.contact_person_name || '-'}</td>
+                        <td className="px-2 py-2">{client.mobile_number || '-'}</td>
+                        <td className="px-2 py-2">{client.email || '-'}</td>
+                        <td className="px-2 py-2">{client.nature_of_work || '-'}</td>
+                        <td className="px-2 py-2">{client.project_duration || '-'}</td>
+                        <td className="px-2 py-2">{client.project_location || '-'}</td>
+                        <td className="px-2 py-2">
+                          {client.kitchen_facility ? 'Yes' : 'No'}
+                        </td>
+                        <td className="px-2 py-2">
+                          {client.transportation_provided ? 'Yes' : 'No'}
+                        </td>
+                        <td className="px-2 py-2">
+                          {client.accommodation_provided ? 'Yes' : 'No'}
+                        </td>
+                        <td className="px-2 py-2">{client.categories_required || '-'}</td>
+                        <td className="px-2 py-2">{client.quantity_required || '-'}</td>
+                        <td className="px-2 py-2">
+                          <span className={`px-2 py-1 rounded-full text-xs ${client.status === 'Active' ? 'bg-green-100 text-green-800' :
+                            client.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800'
+                            }`}>
+                            {client.status || 'N/A'}
+                          </span>
+                        </td>
+                        <td className="px-2 py-2">
+                          {client.created_at ? new Date(client.created_at).toLocaleString() : '-'}
+                        </td>
+                        <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
+                          <div className="flex items-center space-x-2">
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditClientEnquiryPopup();
+                              }}
+                              className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200"
+                            >
+                              <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
+                              <div className="absolute -top-6.5 bg-armsjobslightblue text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                Edit
+                              </div>
+                            </div>
+
+                            <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                              <MdDelete
+                                onClick={(e) => openDeleteClientPopup(client, e)}
+                                className="text-white group-hover:text-armsjobslightblue text-xl" />
+                              <div
+                                onClick={(e) => openDeleteClientPopup(client, e)}
+                                className="absolute -top-6.5 bg-armsjobslightblue text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                Delete
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </>
+            )}
           </table>
         </div>
         <Pagination
@@ -326,6 +328,9 @@ export const ClientEnquiryTable = () => {
       </div>
       {showAddClientEnquiryPopup && (<ClientEnquiryAddPopup closePopup={closeAddClientEnquiryPopup} />)}
       {showEditClientEnquiryPopup && (<EditClientEnquiryPopup closePopup={closeEditClientEnquiryPopup} />)}
+      {showDeleteClientPopup && clientToDelete && (<DeleteClientPopup closePopup={closeDeleteAgentsPopup} ClientData={clientToDelete} 
+      refreshData={refreshClientList} 
+      />)}
     </div>
   );
 };

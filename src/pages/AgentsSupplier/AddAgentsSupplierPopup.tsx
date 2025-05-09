@@ -76,11 +76,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
             }
         } catch (error) {
             console.error("Error adding agent:", error);
-            // toast.error(
-            //     axios.isAxiosError(error)
-            //         ? error.response?.data?.message || "Failed to add agent"
-            //         : "Failed to add agent"
-            // );
+          
         } finally {
             setIsSubmitting(false);
         }

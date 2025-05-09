@@ -114,7 +114,7 @@ export const CandidateView = () => {
     const { id } = useParams<{ id: string }>();
     const [candidates, setCandidates] = useState<CandidateDetails[]>([]);
     const [initialLoading, setInitialLoading] = useState(true); // For first load
-    // const [detailsLoading, setDetailsLoading] = useState(false); // For candidate details
+    const [searchLoading, setSearchLoading] = useState(false); // For search operations
     const [, setDetailsLoading] = useState(false); // For candidate details
     const [selectedCandidate, setSelectedCandidate] = useState<CandidateDetails | null>(null);
     ///const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
@@ -124,11 +124,20 @@ export const CandidateView = () => {
 
     const navigate = useNavigate();
 
+
+    
+
     // Fetch all candidate names
     const loadCandidates = async () => {
         try {
-            setInitialLoading(true);
-            const response = await fetchCandidateNames() as CandidateNameResponse;
+            // Only set initial loading on first load (when searchQuery is empty)
+            if (!searchQuery) {
+                setInitialLoading(true);
+            } else {
+                setSearchLoading(true);
+            }
+
+            const response = await fetchCandidateNames(searchQuery) as CandidateNameResponse;
 
             // Transform the API response to match our CandidateDetails interface
             const transformedCandidates: CandidateDetails[] = response.data.map(candidate => ({
@@ -170,6 +179,7 @@ export const CandidateView = () => {
             console.error("Error fetching candidates:", error);
         } finally {
             setInitialLoading(false);
+            setSearchLoading(false);
         }
     };
 
@@ -221,7 +231,7 @@ export const CandidateView = () => {
 
     useEffect(() => {
         loadCandidates();
-    }, [id]); // Reload when ID changes
+    }, [id, searchQuery]); // Reload when ID changes
 
     // const handleEditClick = (candidate: Candidate) => {
     //     setSelectedCandidate(candidate);
@@ -287,23 +297,26 @@ export const CandidateView = () => {
                                     className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
                                 />
                                 <div className="space-y-0 max-h-100% overflow-y-auto">
-                                    {filteredCandidates.map((candidate) => (
-                                        <Link
-                                            key={candidate.id}
-                                            // to={`/Candidate/${id}/${c.id}`}
-                                            to={`/Candidate/${candidate.id}`}
-                                            className={`block p-3 border-b ${candidate.id === Number(id)} hover:bg-gray-100`}
-                                        >
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex-grow">
-                                                    <div className="text-sm font-medium">{candidate?.name}</div>
-                                                    {/* <div className="text-xs text-gray-500 mt-1">ID: {c.candidateId}</div> */}
+                                    {searchLoading ? (
+                                        <div className="text-center py-4 text-gray-500">
+                                            Searching...
+                                        </div>
+                                    ) : (
+                                        filteredCandidates.map((candidate) => (
+                                            <Link
+                                                key={candidate.id}
+                                                to={`/Candidate/${candidate.id}`}
+                                                className={`block p-3 border-b ${candidate.id === Number(id)} hover:bg-gray-100`}
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex-grow">
+                                                        <div className="text-sm font-medium">{candidate?.name}</div>
+                                                    </div>
                                                 </div>
-                                                {/* <div className={`w-2 h-2 rounded-full ${c.isActive ? 'bg-green-500' : 'bg-gray-400'}`} /> */}
-                                            </div>
-                                        </Link>
-                                    ))}
-                                    {filteredCandidates.length === 0 && (
+                                            </Link>
+                                        ))
+                                    )}
+                                    {!searchLoading && filteredCandidates.length === 0 && (
                                         <div className="text-center py-4 text-gray-500">
                                             No candidates found
                                         </div>

@@ -1,24 +1,134 @@
 // AddCandidateModal.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 //import DefaultProfile from "../../assets/images/DefaultProfile.jpg"
 import { Button } from "../../common/Button"
 import { InputField } from "../../common/InputField";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { agentSchema } from "./AddAgentsSupplierPopup";
+import { z } from "zod";
+import { fetchAgentById, updateAgent } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
+import { toast } from "react-toastify";
+import { AgentSupplier } from "./AgentsSupplierTable";
 // import { SelectField } from "../../common/SelectField";
 // import { FaCloudUploadAlt } from "react-icons/fa";
 
 interface EditAgentsSupplierPopupProps {
-    // isOpen: boolean;
     closePopup: () => void;
+    agentId: number;
+    onAgentAdded?: () => void;
 }
 
+
+type AgentFormData = z.infer<typeof agentSchema>;
 export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = ({
-    // isOpen,
     closePopup,
+    agentId,
+    onAgentAdded,
 }) => {
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Agent Details");
     const tabs = ["Agent Details", "Eligibility & History", "Manpower Info", "Additional Info"];
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors, isDirty }, 
+        reset,
+        
+        setValue
+    } = useForm<AgentFormData>({
+        resolver: zodResolver(agentSchema),
+        defaultValues: {
+            can_recruit: "no",
+            associated_earlier: "no",
+            can_supply_manpower: "no",
+        }
+    });
+
+
+
+    
+// Optimize the useEffect for data loading:
+useEffect(() => {
+    const fetchAgentData = async () => {
+        try {
+            setIsSubmitting(true);
+            const agent = await fetchAgentById(agentId);
+        
+            reset({
+                name: agent.name || "",
+                mobile_no: agent.mobile_no || "",
+                whatsapp_no: agent.whatsapp_no || "",
+                email: agent.email || "",
+                can_recruit: agent.can_recruit ? "yes" : "no",
+                associated_earlier: agent.associated_earlier ? "yes" : "no",
+                can_supply_manpower: agent.can_supply_manpower ? "yes" : "no",
+                supply_categories: agent.supply_categories || "",
+                quantity_estimates: agent.quantity_estimates || "",
+                areas_covered: agent.areas_covered || "",
+                additional_notes: agent.additional_notes || ""
+              });
+              
+        } catch (error) {
+            console.error("Error fetching agent data:", error);
+            toast.error("Failed to load agent data");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (agentId) {
+        fetchAgentData();
+    }
+}, [agentId, reset, setValue]); // Add setValue to dependencies
+
+
+
+
+    const onSubmit = async (data: AgentFormData) => {
+        try {
+            setIsSubmitting(true);
+          
+
+            const parseBoolean = (val: string | undefined): boolean | undefined =>
+                val === "true" ? true : val === "false" ? false : undefined;
+              
+              const updateData: Partial<AgentSupplier> = {
+                name: data.name,
+                mobile_no: data.mobile_no,
+                whatsapp_no: data.whatsapp_no,
+                email: data.email,
+                can_recruit: parseBoolean(data.can_recruit),
+                associated_earlier: parseBoolean(data.associated_earlier),
+                can_supply_manpower: parseBoolean(data.can_supply_manpower),
+                supply_categories: data.supply_categories,
+                quantity_estimates: data.quantity_estimates,
+                areas_covered: data.areas_covered,
+                additional_notes: data.additional_notes,
+              };
+              
+              if (onAgentAdded) {
+                onAgentAdded();
+            }
+
+            await updateAgent(agentId, updateData);
+            reset(); // Clear the form
+                           closePopup();
+                           toast.success('Agent Updated successfully');
+                           if (onAgentAdded) onAgentAdded();
+        } catch (error) {
+            console.error("Error updating agent:", error);
+            toast.error("Failed to update agent");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -50,6 +160,9 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                         </button>
                     ))}
                 </div>
+                  
+                {/* Form */}
+                <form onSubmit={handleSubmit(onSubmit)}>
                 {/* Agent Details */}
                 {activeTab === "Agent Details" && (
                     <div className="max-w-full mx-auto p-0 pl-1 ">
@@ -62,10 +175,11 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                     </label>
                                     <InputField
                                         type="text"
-                                        name="nameofagent"
+                                        {...register("name")}
                                         className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         label={""}
                                     />
+                                     {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
                                 </div>
                                 {/* Mobile Number */}
                                 <div>
@@ -74,10 +188,12 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                     </label>
                                     <InputField
                                         type="text"
-                                        name="mobileNumber"
+                                       
+                                        {...register("mobile_no")}
                                         className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         label={""}
                                     />
+                                    {errors.mobile_no && <p className="text-red-500 text-xs">{errors.mobile_no.message}</p>}
                                 </div>
                                 {/* WhatsApp Number */}
                                 <div>
@@ -86,10 +202,12 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                     </label>
                                     <InputField
                                         type="text"
-                                        name="whatsappNumber"
+                                    
+                                        {...register("whatsapp_no")}
                                         className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         label={""}
                                     />
+                                      {errors.whatsapp_no && <p className="text-red-500 text-xs">{errors.whatsapp_no.message}</p>}
                                 </div>
                                 {/* Email ID  */}
                                 <div >
@@ -98,10 +216,11 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                     </label>
                                     <InputField
                                         type="email"
-                                        name="email"
+                                        {...register("email")}
                                         className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                         label={""}
                                     />
+                                      {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
                                 </div>
                             </div>
                         </div>
@@ -120,8 +239,9 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="currentlyemployed"
+                                       
                                         value="yes"
+                                        {...register("can_recruit")}
                                         className="w-5 h-5 cursor-pointer"
                                     />
                                     Yes
@@ -129,13 +249,15 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="currentlyemployed"
+                                        
                                         value="no"
+                                        {...register("can_recruit")}
                                         className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
                             </div>
+                            {errors.can_recruit && <p className="text-red-500 text-xs">{errors.can_recruit.message}</p>}
                         </div>
 
                         <div className="pr-12">
@@ -146,7 +268,8 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="currentlyemployed"
+                                       
+                                        {...register("associated_earlier")}
                                         value="yes"
                                         className="w-5 h-5 cursor-pointer "
                                     />
@@ -155,13 +278,15 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="currentlyemployed"
+                                        
+                                        {...register("associated_earlier")}
                                         value="no"
                                         className="w-5 h-5 cursor-pointer"
                                     />
                                     No
                                 </label>
                             </div>
+                            {errors.associated_earlier && <p className="text-red-500 text-xs">{errors.associated_earlier.message}</p>}
                         </div>
 
                         <div>
@@ -172,7 +297,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="currentlyemployed"
+                                        {...register("can_supply_manpower")}
                                         value="yes"
                                         className="w-5 h-5 cursor-pointer"
                                     />
@@ -181,7 +306,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="currentlyemployed"
+                                        {...register("can_supply_manpower")}
                                         value="no"
                                         className="w-5 h-5 cursor-pointer"
                                     />
@@ -189,6 +314,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                 </label>
                             </div>
                         </div>
+                        {errors.can_supply_manpower && <p className="text-red-500 text-xs">{errors.can_supply_manpower.message}</p>}
                     </div>
                 )}
                 {/* Manpower Info */}
@@ -206,10 +332,12 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                             </label>
                                             <InputField
                                                 type="text"
-                                                name="categoriesyoucansupply"
+                                               
+                                                {...register("supply_categories")}
                                                 className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                 label={""}
                                             />
+                                              {errors.supply_categories && <p className="text-red-500 text-xs">{errors.supply_categories.message}</p>}
                                         </div>
 
                                         <div className="flex-1 min-w-[210px]">
@@ -218,19 +346,23 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                             </label>
                                             <InputField
                                                 type="text"
-                                                name="quantituyestimates"
+                                            
+                                                {...register("quantity_estimates")}
                                                 className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                 label={""}
                                             />
+                                             {errors.quantity_estimates && <p className="text-red-500 text-xs">{errors.quantity_estimates.message}</p>}
                                         </div>
                                         <div className="flex-1 min-w-[220px]" >
                                             <label className="text-sm font-semibold mb-1">
                                                 Areas Covered (Emirates)
                                             </label>
                                             <textarea
-                                                name="areascovered"
+                                                
+                                                {...register("areas_covered")}
                                                 className="w-full  h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                             />
+                                             {errors.areas_covered && <p className="text-red-500 text-xs">{errors.areas_covered.message}</p>}
                                         </div>
                                     </div>
                                 </div>
@@ -268,14 +400,18 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                             />
                         </div>
                         <div>
-                            <Button
-                                buttonType="button"
-                                buttonTitle="Submit"
-                                className="bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
-                            />
+                        <Button
+                                    buttonType="submit"
+                                    buttonTitle={isSubmitting ? "Submit" : "Submit"}
+                                    className={`bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue ${
+                                        isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
+                                    disabled={isSubmitting || !isDirty}
+                                />
                         </div>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     );

@@ -244,7 +244,7 @@ export const CandidateTable = () => {
                       <td className="px-2 py-7">{candidate.candidate_id}</td>
                       <td className="px-2 py-1">
                         {candidate.photo_upload ? (
-                          <img src={candidate.photo_upload}
+                          <img src={candidate.photo_upload }
                             alt={candidate.photo_upload}
                             className="w-10 h-10 rounded-full"
                           />

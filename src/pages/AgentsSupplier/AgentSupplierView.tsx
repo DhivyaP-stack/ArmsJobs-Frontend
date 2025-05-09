@@ -42,6 +42,7 @@ export const AgentSupplyView = () => {
     }
     const [agents, setAgents] = useState<Agent[]>([]);
     const [loading, setLoading] = useState(false);
+    const [agentId,setAgentId]=useState<number | null>(null)
     
     const handleSearch = async (query: string) => {
         try {
@@ -110,6 +111,32 @@ export const AgentSupplyView = () => {
         }
     }, [id]);
 
+
+// Define fetchSingleAgent outside useEffect so it can be reused
+const fetchSingleAgent = async () => {
+    try {
+      if (id) {
+        const response = await fetchAgentsListById(Number(id));
+        setAgent(response);
+        setAgentId(response.id);   
+      }
+    } catch (err) {
+      console.error("Error fetching agent by ID:", err);
+    }
+  };
+  
+  // Initial fetch
+  useEffect(() => {
+    fetchSingleAgent();
+  }, [id]);
+  
+  // Handler for when agent is updated
+  const handleAgentAdded = () => {
+    fetchSingleAgent(); // Now this works correctly
+  };
+
+
+  
     if (loading) {
         return <AgentSupplierViewShimmer />;
     }
@@ -274,25 +301,7 @@ export const AgentSupplyView = () => {
                                     </div>
                                 </div>
 
-                                {/* Job History */}
-                                {/* <div className="w-full border border-main rounded-t-lg p-0 min-h-[300px] bg-white">
-                                    <h3 className="text-armsWhite font-bold bg-main py-2 px-4 rounded-t-lg">Job History</h3>
-                                    <table className="w-full">
-                                        <thead>
-                                            <tr className="text-armsBlack">
-                                                <th className="text-left p-3 text-sm font-bold">Job ID</th>
-                                                <th className="text-left p-3 text-sm font-bold">Company Name</th>
-                                                <th className="text-left p-3 text-sm font-bold">Position</th>
-                                                <th className="text-left p-3 text-sm font-bold">Remarks</th>
-                                                <th className="text-left p-3 text-sm font-bold">Status</th>
-                                                <th className="text-left p-3 text-sm font-bold">Date & Time</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                          
-                                        </tbody>
-                                    </table>
-                                </div> */}
+                               
                             </div>
                         </div>
 
@@ -379,7 +388,8 @@ export const AgentSupplyView = () => {
                     </div>
                 </div>
             </div>
-            {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />}
+            {/* {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />} */}
+            {showEditAgentsSupplierPopup && agentId !== null &&<EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} agentId={agentId}  onAgentAdded={handleAgentAdded}         />}
         </div>
         // </div>
     );

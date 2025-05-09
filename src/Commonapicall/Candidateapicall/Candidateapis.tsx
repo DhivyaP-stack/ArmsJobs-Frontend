@@ -1,3 +1,4 @@
+
 import { apiAxios } from '../apiUrl';
 
 // Get CandidateList
@@ -169,9 +170,12 @@ export const deleteCandidate = async (Id: number): Promise<boolean> => {
 };
 
 // Get Candidate Names List
-export const fetchCandidateNames = async () => {
+export const fetchCandidateNames = async (search?:string) => {
   try {
-    const response = await apiAxios.get('/api/candidates/names/');
+    const response = await apiAxios.get('/api/candidates/names/',
+      {
+      params: { search },
+    });
 
     if (response.status !== 200 || !response.data) {
       throw new Error('Failed to fetch candidate names');
@@ -200,3 +204,35 @@ export const ViewCandidateName = async (
     throw new Error(error.response?.message || 'Submission failed. Please try again.');
   }
 };
+
+// // Search in viewpage
+// export const ViewSearch = async (searchQuery: string = '') => {
+//   try {
+//     // Construct the URL with the search query
+//     const response = await apiAxios.get(`/api/candidates/names/?search=${encodeURIComponent(searchQuery)}`);
+
+//     if (!response.data || response.status !== 200) {
+//       throw new Error("Failed to fetch candidates");
+//     }
+
+//     console.log("Candidatesearch API response", response.data);
+
+//     return response.data;
+    
+//   } catch (error: any) {
+//     console.error("Error fetching candidates:", error.response?.data?.message || error.message);
+//     throw new Error(error.response?.data?.message || "Unable to fetch candidates. Please try again later.");
+//   }
+// };
+
+// export const ViewSearch = async (query: string): Promise<CandidateNames[]> => {
+//   try {
+//     const res = await apiAxios.get<CandidateSearchResponse>("/api/candidates/names/", {
+//       params: { search: query },
+//     });
+//     return res.data.data;
+//   } catch (error) {
+//     console.error("Error fetching Candidate names", error);
+//     return [];
+//   }
+// };
