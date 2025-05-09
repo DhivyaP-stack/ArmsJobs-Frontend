@@ -11,7 +11,7 @@ import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 import { useNavigate } from "react-router-dom";
 import { AgentSupplierTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/AgentSupplierTableShimmer";
 import React from "react";
-import { deleteAgentData, fetchAgentsList } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
+import {  fetchAgentsList } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
 import { DeleteAgentsPopup } from "./DeleteAgentsPopup";
 
 export interface AgentSupplier {
@@ -64,11 +64,13 @@ export const AgentSupplierTable = () => {
   const [showAddAgentsSupplierPopup, setShowAddAgentsSupplierPopup] = useState(false);
   const [showEditAgentsSupplierPopup, setShowEditAgentsSupplierPopup] = useState(false);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
   const [showDeleteAgentsSupplierPopup, setShowDeleteAgentsPopup] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState<{ id: number, name: string } | null>(null);
-  const [selectedagents, setSelectedAgents] = useState<any>(null);
+  ///const [selectedagents, setSelectedAgents] = useState<any>(null);
 
 
   // Simulate loading state

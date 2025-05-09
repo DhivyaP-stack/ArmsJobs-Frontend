@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 // import { Candidate, CandidateRemark } from "../../types/CandidateList";
-import {  CandidateRemark } from "../../types/CandidateList";
+//import {  CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import DefaultProfile from "../../assets/images/DefaultProfile.jpg"
 import Profileimg from "../../assets/images/profileimg.jpg"
@@ -36,13 +36,37 @@ interface ApiResponse<T> {
     previous?: string | null;
 }
 
-
-
+// API Response Data Interface
+interface CandidateApiResponse {
+    id: number;
+    full_name: string;
+    candidate_id?: string;
+    mobile_number?: string;
+    whatsapp_number?: string;
+    email?: string;
+    nationality?: string;
+    current_location?: string;
+    visa_type?: string;
+    availability_to_join?: string;
+    position_applying_for?: string;
+    category?: string;
+    other_category?: string;
+    uae_experience_years?: string;
+    skills_tasks?: string;
+    preferred_work_location?: string;
+    expected_salary?: string;
+    languages_spoken?: string;
+    preferred_work_type?: string;
+    currently_employed?: string;
+    additional_notes?: string;
+    referral_name?: string;
+    referral_contact?: string;
+}
 
 interface CandidateDetails {
     id: number;
     name: string;
-    candidateId?: string ;
+    candidateId?: string;
     isActive?: boolean;
     mobileNumber?: string;
     whatsappNumber?: string;
@@ -59,12 +83,12 @@ interface CandidateDetails {
     skillsAndTasks?: string;
     preferredWorkLocation?: string;
     expectedSalary?: string;
-    languagesSpoken?:string,
-    preferredWorkType?: string,
-    currentlyEmployed?: string,
-    additionalNotes?: string,
-    referralName?: string,
-    referralContact?: string,
+    languagesSpoken?: string;
+    preferredWorkType?: string;
+    currentlyEmployed?: string;
+    additionalNotes?: string;
+    referralName?: string;
+    referralContact?: string;
 }
 
 // Toggle Switch Component
@@ -90,10 +114,11 @@ export const CandidateView = () => {
     const { id } = useParams<{ id: string }>();
     const [candidates, setCandidates] = useState<CandidateDetails[]>([]);
     const [initialLoading, setInitialLoading] = useState(true); // For first load
-    const [detailsLoading, setDetailsLoading] = useState(false); // For candidate details
+    // const [detailsLoading, setDetailsLoading] = useState(false); // For candidate details
+    const [, setDetailsLoading] = useState(false); // For candidate details
     const [selectedCandidate, setSelectedCandidate] = useState<CandidateDetails | null>(null);
     ///const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
-    const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
+   // const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -153,16 +178,17 @@ export const CandidateView = () => {
     const fetchCandidateDetails = async (candidateId: number) => {
         try {
             setDetailsLoading(true);
-            const response = await ViewCandidateName(candidateId) as ApiResponse<CandidateDetails>;
+            const response = await ViewCandidateName(candidateId) as ApiResponse<CandidateApiResponse>;
         
             if (!response.data) {
                 throw new Error("No data received");
             }
+
             // Transform the API response to match our interface
             const candidateDetails: CandidateDetails = {
                 id: response.data.id,
                 name: response.data.full_name,
-                candidateId: response.data.candidate_id?.toString(),
+                candidateId: response.data.candidate_id,
                 mobileNumber: response.data.mobile_number,
                 whatsappNumber: response.data.whatsapp_number,
                 emailId: response.data.email,
@@ -178,11 +204,12 @@ export const CandidateView = () => {
                 preferredWorkLocation: response.data.preferred_work_location,
                 expectedSalary: response.data.expected_salary,
                 languagesSpoken: response.data.languages_spoken,
-                preferredWorkType:response.data.preferred_work_type,
+                preferredWorkType: response.data.preferred_work_type,
                 currentlyEmployed: response.data.currently_employed,
                 additionalNotes: response.data.additional_notes,
                 referralName: response.data.referral_name,
                 referralContact: response.data.referral_contact,
+                isActive: true // Default value since it's not in the API response
             };
             setSelectedCandidate(candidateDetails);
         } catch (error) {
@@ -404,11 +431,11 @@ export const CandidateView = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Preferred Work Type</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferredWorkLocation}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferredWorkType}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Currently Employed?</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.expectedSalary}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.currentlyEmployed}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -469,16 +496,16 @@ export const CandidateView = () => {
                                     <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Additional Notes or Information</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.positionApplyingFor}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.additionalNotes}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Referral Contact Details</p>
                                             <p className="text-xs text-gray-600">Name</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.category}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referralName}</p>
                                         </div>
                                         <div className="pt-4">
                                             <p className="text-xs text-gray-600">Contact</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.otherCategory}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referralContact}</p>
                                         </div>
                                     </div>
                                 </div>

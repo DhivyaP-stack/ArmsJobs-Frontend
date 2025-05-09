@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Candidate, CandidateRemark } from "../../types/CandidateList";
+import {  CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
-import { AgentOrSupply } from "../../types/AgentSupplyList";
+//import { AgentOrSupply } from "../../types/AgentSupplyList";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";

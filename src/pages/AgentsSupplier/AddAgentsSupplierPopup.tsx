@@ -44,7 +44,8 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
     onAgentAdded,
 }) => {
     const [activeTab, setActiveTab] = useState("Agent Details");
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    // const [isSubmitting, setIsSubmitting] = useState(false);
+    const [, setIsSubmitting] = useState(false);
     const tabs = ["Agent Details", "Eligibility & History", "Manpower Info", "Additional Info"];
 
     const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<AgentFormData>({
