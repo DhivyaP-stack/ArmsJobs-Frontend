@@ -7,7 +7,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditOverSeasPopup } from "./EditOverSeasRecruitment";
-import { fetchOverseas, fetchOverseasRecruitmentData, fetchOverseasRecruitmentDataByID } from "../../Commonapicall/Overseasapicall/Overseasapis";
+import { fetchRecruitmentNames, fetchOverseasRecruitmentData, fetchOverseasRecruitmentDataByID } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
 
 interface OverseasRecruitment {
@@ -105,7 +105,7 @@ export const OverSeasRecruitmentView = () => {
     const handleSearch = async (query: string) => {
         // Implement search functionality here
         try {
-            const result = await fetchOverseas(query) as ApiResponse;
+            const result = await fetchRecruitmentNames(query) as ApiResponse;
             if (result && result.data) {
                 setOverseaoption(result.data);
             }
@@ -151,16 +151,9 @@ export const OverSeasRecruitmentView = () => {
     // Direct navigation and data loading handler for contact click
     const handleContactClick = async (recruitmentId: number, e: React.MouseEvent) => {
         e.preventDefault();
-        
-        // Use React Router's navigate instead of window.history
         navigate(`/OverSeasRecruitment/${recruitmentId}`);
-        
-        // Set loading state while fetching
         setIsLoading(true);
-        
-        // Fetch and set data
         await fetchOverseasRecruitmentID(recruitmentId);
-        
         setIsLoading(false);
     };
 

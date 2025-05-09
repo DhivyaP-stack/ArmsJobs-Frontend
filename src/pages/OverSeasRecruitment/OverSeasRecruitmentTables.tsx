@@ -47,6 +47,8 @@ export const OverSeasRecruitmentTable = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [recruitmentToDelete, setRecruitmentToDelete] = useState<{ id: number, company_name: string } | null>(null);
   const [selectedOverseas, setSelectedOverseas] = useState<OverseasRecruitmentAgency | null>(null);
+
+  //Pagination
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {

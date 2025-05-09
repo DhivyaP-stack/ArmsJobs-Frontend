@@ -1,6 +1,5 @@
 // import axios from 'axios';
 import { apiAxios } from '../apiUrl';
-
 interface OverseasRecruitment {
   id: number;
   overseas_recruitment_id: string;
@@ -20,8 +19,6 @@ interface OverseasRecruitment {
   is_deleted: boolean;
   created_at: string;
 }
-
-// New interface for form submission
 interface OverseasRecruitmentFormData {
   company_name: string;
   country: string;
@@ -47,6 +44,7 @@ interface ApiResponse {
   };
 }
 
+//Search table, All, Pagination
 export const fetchOverseasRecruitmentList = async (page: number, search: string | undefined, filterBy: string) => {
   try {
     const response = await apiAxios.get<ApiResponse>(
@@ -63,11 +61,12 @@ export const fetchOverseasRecruitmentList = async (page: number, search: string 
   }
 };
 
+
+//Delete Overseas
 export const deleteOverseasRecruitment = async (id: number): Promise<boolean> => {
   try {
     const formData = new FormData();
-    formData.append('id', id.toString());
-    
+    formData.append('id', id.toString()); 
     const response = await apiAxios.post(`/api/recruitments/delete/`, formData);
     if (response.status === 200) {
       return true;
@@ -87,6 +86,7 @@ export const deleteOverseasRecruitment = async (id: number): Promise<boolean> =>
   }
 };
 
+//Add Overseas
 export const addOverseasRecruitment = async (data: OverseasRecruitmentFormData) => {
   try {
     const response = await apiAxios.post('/api/recruitments/', data);
@@ -97,6 +97,7 @@ export const addOverseasRecruitment = async (data: OverseasRecruitmentFormData) 
   }
 };
 
+//Edit Overseas
 export const updateOverseasRecruitment = async (id: number, data: OverseasRecruitmentFormData) => {
   try {
     const response = await apiAxios.patch(`/api/recruitments/update/${id}/`, data);
@@ -115,6 +116,7 @@ export const updateOverseasRecruitment = async (id: number, data: OverseasRecrui
   }
 };
 
+//Recruitment Names
 export const fetchOverseasRecruitmentData = async () => {
   try {
     const response = await apiAxios.get(`/api/recruitments/names/`);
@@ -128,6 +130,7 @@ export const fetchOverseasRecruitmentData = async () => {
   }
 };
 
+//
 export const fetchOverseasRecruitmentDataByID = async (id: number) => {
   try {
     const response = await apiAxios.get(`/api/recruitments/${id}/`);
@@ -141,7 +144,8 @@ export const fetchOverseasRecruitmentDataByID = async (id: number) => {
   }
 };
 
-export const fetchOverseas = async (query: string) => {
+//search Recruitments Namelist
+export const fetchRecruitmentNames = async (query: string) => {
   try {
     const response = await apiAxios.get(`/api/recruitments/names/`,{
         params: {
