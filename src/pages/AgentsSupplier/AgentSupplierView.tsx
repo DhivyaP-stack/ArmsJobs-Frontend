@@ -80,9 +80,7 @@ export const AgentSupplyView = () => {
         }
     };
 
-
     const filteredCandidates = searchQuer.trim() ? agents : agentSupplier;
-
 
     useEffect(() => {
         const fetchAgent = async () => {

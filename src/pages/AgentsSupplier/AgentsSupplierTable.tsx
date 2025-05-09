@@ -11,7 +11,7 @@ import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 import { useNavigate } from "react-router-dom";
 import { AgentSupplierTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/AgentSupplierTableShimmer";
 import React from "react";
-import {  fetchAgentsList, fetchAgentsPageList } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
+import { fetchAgentsList, fetchAgentsPageList } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
 import { DeleteAgentsPopup } from "./DeleteAgentsPopup";
 
 
@@ -71,12 +71,12 @@ export const AgentSupplierTable = () => {
   const [showDeleteAgentsSupplierPopup, setShowDeleteAgentsPopup] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState<{ id: number, name: string } | null>(null);
   ///const [selectedagents, setSelectedAgents] = useState<any>(null);
- const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
-  
+  const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
+
   const [agents, setAgents] = useState<AgentSupplier[]>([]);
   const [count, setCount] = useState<number>(1);
-  const [search,setSearch]=useState<string>(" ")
-  const [filterBy,setFilterBy]=useState("all")
+  const [search, setSearch] = useState<string>(" ")
+  const [filterBy, setFilterBy] = useState("all")
 
 
 
@@ -143,18 +143,18 @@ export const AgentSupplierTable = () => {
   // };
 
 
-  
+
   const fetchPagination = async () => {
-   
+
     try {
       const response = await fetchAgentsPageList(currentPage, search.trim(), filterBy) as ApiResponse;
-   
+
       setAgents(response?.results?.data || []);
       setCount(response?.count || 1);
     } catch (error) {
       console.error("Error fetching pagination data:", error);
     }
-   
+
   };
 
   useEffect(() => {
@@ -163,7 +163,7 @@ export const AgentSupplierTable = () => {
 
   const handleAgentAdded = () => {
     fetchPagination(); // Now this works correctly
-   
+
   };
 
 
@@ -215,23 +215,22 @@ export const AgentSupplierTable = () => {
 
             {/* Search Input */}
             <div className="relative w-[300px]">
-            <input
-                                    type="text"
-                                    placeholder="Search"
-                                    value={search}
-                                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-                                    className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
-                                />
+              <input
+                type="text"
+                placeholder="Search"
+                value={search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
+              />
               <IoMdSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 text-armsgrey text-[18px]" />
             </div>
 
             {/* Select Dropdown */}
-            {/* <select className="border border-armsgrey px-3 py-2 rounded h-10 relative w-[170px]"> */}
             <select className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer"
-             value={filterBy}
-             onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setFilterBy(e.target.value)}
+              value={filterBy}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
             >
-            <option value="all">All</option>
+              <option value="all">All</option>
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="last7days">Last 7 days</option>
@@ -283,7 +282,7 @@ export const AgentSupplierTable = () => {
                     <tr key={agent.id}
                       onClick={() => navigate(`/AgentSupplyView/${agent.id}`)}
                       className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
-                      <td className="px-2 py-5">{agent.id}</td>
+                      <td className="px-2 py-5">{agent.agent_supplier_id}</td>
                       <td className="px-2 py-5">{agent.name}</td>
                       <td className="px-2 py-5">{agent.mobile_no}</td>
                       <td className="px-2 py-5">{agent.whatsapp_no}</td>
@@ -298,36 +297,36 @@ export const AgentSupplierTable = () => {
                       <td className="px-2 py-5">{agent.status || "-"}</td>
                       <td className="px-2 py-5">{new Date(agent.created_at).toLocaleString()}</td>
                       <td className="px-2 py-5 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
-                        
-                          <div className="flex items-center space-x-2">
-                            {/* Edit Button */}
-                            <div
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row navigation
-                                openEditAgentsSupplierPopup(agent.id); // Open the popup
-                              }}
-                              className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                              <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                              {/* Tooltip */}
-                              <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                                Edit
-                              </div>
-                            </div>
 
-                            {/* Delete Button */}
-                            <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                              <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl"
-                                onClick={(e) => openDeleteAgentsPopup(agent, e)}
-                              />
-                              {/* Tooltip */}
-                              <div
-                                onClick={(e) => openDeleteAgentsPopup(agent, e)}
-                                className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                                Delete
-                              </div>
+                        <div className="flex items-center space-x-2">
+                          {/* Edit Button */}
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent row navigation
+                              openEditAgentsSupplierPopup(agent.id); // Open the popup
+                            }}
+                            className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                            <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
+                            {/* Tooltip */}
+                            <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              Edit
                             </div>
                           </div>
-                        
+
+                          {/* Delete Button */}
+                          <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                            <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl"
+                              onClick={(e) => openDeleteAgentsPopup(agent, e)}
+                            />
+                            {/* Tooltip */}
+                            <div
+                              onClick={(e) => openDeleteAgentsPopup(agent, e)}
+                              className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              Delete
+                            </div>
+                          </div>
+                        </div>
+
                       </td>
                     </tr>
                   ))}
@@ -335,23 +334,23 @@ export const AgentSupplierTable = () => {
               </table>
             </div>
             <Pagination
-          currentPage={currentPage}
-          totalItems={count}
-          itemsPerPage={itemsPerPage}
-          onPageChange={handlePageChange}
-          onItemsPerPageChange={handleItemsPerPageChange}
-        />
+              currentPage={currentPage}
+              totalItems={count}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              onItemsPerPageChange={handleItemsPerPageChange}
+            />
           </>
         )}
       </div>
 
-      {showAddAgentsSupplierPopup && <AddAgentsSupplierPopup closePopup={closeAddAgentsSupplierPopup} 
-       onAgentAdded={handleAgentAdded}  />}
-     {showEditAgentsSupplierPopup && selectedAgentId !== null && (
-  <EditAgentsSupplierPopup
+      {showAddAgentsSupplierPopup && <AddAgentsSupplierPopup closePopup={closeAddAgentsSupplierPopup}
+        onAgentAdded={handleAgentAdded} />}
+      {showEditAgentsSupplierPopup && selectedAgentId !== null && (
+        <EditAgentsSupplierPopup
           closePopup={closeEditAgentsSupplierPopup}
-          agentId={selectedAgentId}  onAgentAdded={handleAgentAdded}  />
-)}
+          agentId={selectedAgentId} onAgentAdded={handleAgentAdded} />
+      )}
 
       {/* {showAddAgentsSupplierPopup && <AddAgentsSupplierPopup closePopup={closeAddAgentsSupplierPopup} />}
       {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />} */}
