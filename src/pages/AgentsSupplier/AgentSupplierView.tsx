@@ -172,7 +172,7 @@ const fetchSingleAgent = async () => {
                     <div className="w-1/4 border-armsBlack border-1 rounded ">
                         <div className="bg-white rounded shadow-sm">
                             <div className="bg-main text-armsWhite p-4 ">
-                                <h2 className="text-base font-semibold">Candidate Names ({filteredCandidates.length})</h2>
+                                <h2 className="text-base font-semibold">Agents/Supplier Names ({filteredCandidates.length})</h2>
                             </div>
                             <div className="p-4">
                                 <input
@@ -202,7 +202,7 @@ const fetchSingleAgent = async () => {
                                     ))}
                                     {filteredCandidates.length === 0 && (
                                         <div className="text-center py-4 text-gray-500">
-                                            No candidates found
+                                            No Agents/Suppliers found
                                         </div>
                                     )}
                                 </div>
