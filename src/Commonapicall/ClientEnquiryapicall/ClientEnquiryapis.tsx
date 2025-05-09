@@ -17,7 +17,7 @@ export const fetchClientEnquiryList = async () => {
 };
 
 //AddClientEnquiry
-export const AddCandidateList = async (
+export const AddClientEnquiryList = async (
     CompanyName: string,
     Email: string,
     ContactPersonName: string,

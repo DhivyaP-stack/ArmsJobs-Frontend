@@ -1,7 +1,4 @@
-
-
-import { useState } from "react";
-import { InputField } from "../../common/InputField";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "../../common/Button";
 //import profileimg from "../../assets/images/profileimg.jpg"
 import { FaUser } from "react-icons/fa6";
@@ -12,119 +9,103 @@ import { IoMdSearch } from "react-icons/io";
 import { OverSeasAddPopup } from "./AddOverSeasRecruitmentPopup";
 import { EditOverSeasPopup } from "./EditOverSeasRecruitment";
 import { useNavigate } from "react-router-dom";
+import { fetchOverseasRecruitmentList } from "../../Commonapicall/Overseasapicall/Overseasapis";
+import { OverseasRecruitmentTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/OverseasRecruitmentTableShimmer";
+import { DeleteOverseasRecruitmentPopup } from "./DeleteOverseasRecruitmentPopupProps";
 
 // Define a Candidate type
 interface OverseasRecruitmentAgency {
-  id: string;
-  companyName: string;
+  id: number;
+  overseas_recruitment_id: string;
+  company_name: string;
   country: string;
-  contactPersonName: string;
-  mobileNo: string;
-  whatsappNo: string;
-  emailId: string;
-  categoriesProvided: string;
-  nationalityOfWorkers: string;
-  mobilizationTime: string;
-  uaeDeploymentExperience: string;
-  relevantDocsUrl: string;
-  comments: string;
+  contact_person_name: string;
+  mobile_no: string;
+  whatsapp_no: string | null;
+  email_address: string;
+  categories_you_can_provide: string;
+  nationality_of_workers: string;
+  mobilization_time: string;
+  uae_deployment_experience: boolean;
+  relevant_docs: string | null;
+  comments: string | null;
   status: string;
-  createdDateTime: string;
+  created_at: string;
 }
 
-// Define mock data for candidates
-const MOCK_RECRUITMENT_AGENCIES: OverseasRecruitmentAgency[] = [
-  {
-    id: "OR001",
-    companyName: "Global Recruiters Ltd.",
-    country: "India",
-    contactPersonName: "Rahul Sharma",
-    mobileNo: "+91 98765 43210",
-    whatsappNo: "+91 98765 43210",
-    emailId: "rahul@globalrecruiters.com",
-    categoriesProvided: "Construction, Hospitality",
-    nationalityOfWorkers: "Indian",
-    mobilizationTime: "30 Days",
-    uaeDeploymentExperience: "10 Years",
-    relevantDocsUrl: "https://example.com/docs/rahul.zip",
-    comments: "Trusted agency for skilled workers.",
-    status: "Active",
-    createdDateTime: "2024-04-26T09:00:00"
-  },
-  {
-    id: "OR002",
-    companyName: "universe Recruiters Ltd.",
-    country: "India",
-    contactPersonName: "Rahul Sharma",
-    mobileNo: "+91 98765 43210",
-    whatsappNo: "+91 98765 43210",
-    emailId: "rahul@globalrecruiters.com",
-    categoriesProvided: "Construction, Hospitality",
-    nationalityOfWorkers: "Indian",
-    mobilizationTime: "30 Days",
-    uaeDeploymentExperience: "10 Years",
-    relevantDocsUrl: "https://example.com/docs/rahul.zip",
-    comments: "Trusted agency for skilled workers.",
-    status: "Active",
-    createdDateTime: "2024-04-26T09:00:00"
-  },
-  {
-    id: "OR003",
-    companyName: "indian Recruiters Ltd.",
-    country: "India",
-    contactPersonName: "Rahul Sharma",
-    mobileNo: "+91 98765 43210",
-    whatsappNo: "+91 98765 43210",
-    emailId: "rahul@globalrecruiters.com",
-    categoriesProvided: "Construction, Hospitality",
-    nationalityOfWorkers: "Indian",
-    mobilizationTime: "30 Days",
-    uaeDeploymentExperience: "10 Years",
-    relevantDocsUrl: "https://example.com/docs/rahul.zip",
-    comments: "Trusted agency for skilled workers.",
-    status: "Active",
-    createdDateTime: "2024-04-26T09:00:00"
-  },
-
-];
-
-
 export const OverSeasRecruitmentTable = () => {
-  // const [recruitmentAgencies, setRecruitmentAgencies] = useState<OverseasRecruitmentAgency[]>(MOCK_RECRUITMENT_AGENCIES);
-  const [recruitmentAgencies] = useState<OverseasRecruitmentAgency[]>(MOCK_RECRUITMENT_AGENCIES);
+  const [recruitmentAgencies, setRecruitmentAgencies] = useState<OverseasRecruitmentAgency[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
-  const indexOfLastRecruitment = currentPage * itemsPerPage;
-  const indexOfFirstRecruitment = indexOfLastRecruitment - itemsPerPage;
-  const currentRecruitmentAgencies = recruitmentAgencies.slice(indexOfFirstRecruitment, indexOfLastRecruitment);
-  const [showOverSeasPopup, setShowOverSeasPopup] = useState<boolean>(false)
-  const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false)
-  const navigate = useNavigate()
-  
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [showOverSeasPopup, setShowOverSeasPopup] = useState<boolean>(false);
+  const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filterBy, setFilterBy] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+  const navigate = useNavigate();
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [recruitmentToDelete, setRecruitmentToDelete] = useState<{ id: number, company_name: string } | null>(null);
+  const [selectedOverseas, setSelectedOverseas] = useState<OverseasRecruitmentAgency | null>(null);
+  const fetchPagination = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetchOverseasRecruitmentList(currentPage, search.trim(), filterBy);
+      if (!response?.results?.data) {
+        setRecruitmentAgencies([]);
+        setTotalCount(0);
+        return;
+      }
+      setRecruitmentAgencies(response.results.data);
+      setTotalCount(response.count || 0);
+    } catch (error) {
+      console.error("Error fetching pagination data:", error);
+      setRecruitmentAgencies([]);
+      setTotalCount(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, search, filterBy]);
+
+  useEffect(() => {
+    fetchPagination();
+  }, [fetchPagination]);
+
   const openOverseasPopup = () => {
-    setShowOverSeasPopup(true)
-  }
+    setShowOverSeasPopup(true);
+  };
 
   const closeOverseasPopup = () => {
-    setShowOverSeasPopup(false)
-  }
+    setShowOverSeasPopup(false);
+  };
 
-  const openEditOverseasPopup = () => {
-    setShowEditOverSeasPopup(true)
-  }
+  const openEditOverseasPopup = (agency: OverseasRecruitmentAgency) => {
+    setShowEditOverSeasPopup(true);
+    setSelectedOverseas(agency);
+  };
 
   const closeEditOverseasPopup = () => {
-    setShowEditOverSeasPopup(false)
-  }
+    setShowEditOverSeasPopup(false);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    //dispatch(setCurrentPage(page));
   };
 
   const handleItemsPerPageChange = (items: number) => {
     setItemsPerPage(items);
-    setCurrentPage(1); // Reset to the first page when items per page changes
+    setCurrentPage(1);
+  };
+
+  const openDeletePopup = (agency: OverseasRecruitmentAgency, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRecruitmentToDelete({ id: agency.id, company_name: agency.company_name });
+    setShowDeletePopup(true);
+  };
+
+  const closeDeletePopup = () => {
+    setShowDeletePopup(false);
+    setRecruitmentToDelete(null);
   };
 
   return (
@@ -157,125 +138,143 @@ export const OverSeasRecruitmentTable = () => {
 
             {/* Search Input */}
             <div className="relative w-[300px]">
-              <InputField
+              <input
                 type="text"
                 placeholder="Search"
+                value={search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
-                label=""
               />
               <IoMdSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 text-armsgrey text-[18px]" />
             </div>
 
             {/* Select Dropdown */}
-            <select className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+            <select 
+              className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer"
+              value={filterBy}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
+            >
               <option value="all">All</option>
-              <option value="Today">Today</option>
-              <option value="Yesterday">Yesterday</option>
-              <option value="Last 7 days">Last 7 days</option>
-              <option value="Last 30 days">Last 30 days</option>
-              <option value="This Month">This Month</option>
-              <option value="Last Year">Last Year</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="last 7 days">Last 7 days</option>
+              <option value="last 30 days">Last 30 days</option>
+              <option value="this month">This Month</option>
+              <option value="last year">Last Year</option>
             </select>
           </div>
         </div>
         {/* Table rendering */}
         <div className="w-full overflow-x-auto">
-          <table className="w-full table-auto text-sm ">
-            <thead className="bg-main text-left">
-              <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
-                <th className="bg-main px-2 py-3  ">Overseas<br /> Recruitment ID</th>
-                <th className="bg-main px-2 py-3 ">company Name </th>
-                <th className="bg-main px-2 py-3 ">Country</th>
-                <th className="bg-main px-2 py-3 ">Cantact Person<br />Name</th>
-                <th className="bg-main px-2 py-3 ">Mobile No</th>
-                <th className="bg-main px-2 py-3 ">WhatsApp No</th>
-                <th className="bg-main px-2 py-3 ">Email ID</th>
-                <th className="bg-main px-2 py-3 ">Catogories you<br /> can Provide</th>
-                <th className="bg-main px-2 py-3 ">Nationality of <br />Workers</th>
-                <th className="bg-main px-2 py-3 ">Mobilization
-                  <br />Time</th>
-                <th className="bg-main px-2 py-3 ">UAE Deployment
-                  <br />
-                  Experience</th>
-                <th className="bg-main px-2 py-3 ">Upload Relevent Documents( License Copy
-                  <br />
-                  / profile/ Exp Certificate etc)
-                </th>
-
-                <th className="bg-main px-2 py-3 ">Comments</th>
-                <th className="bg-main px-2 py-3 ">Status</th>
-                <th className="bg-main px-2 py-3 ">Created Date&Time</th>
-                <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="whitespace-nowrap">
-              {currentRecruitmentAgencies.map((agency) => (
-                <tr key={agency.id} 
-                onClick={() => navigate(`/OverSeasRecruitment/${agency.id}`)}
-                className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
-                  <td className="px-2 py-7">{agency.id}</td>
-                  <td className="px-2 py-7">{agency.companyName}</td>
-                  <td className="px-2 py-7">{agency.country}</td>
-                  <td className="px-2 py-7">{agency.contactPersonName}</td>
-                  <td className="px-2 py-7">{agency.mobileNo}</td>
-                  <td className="px-2 py-7">{agency.whatsappNo}</td>
-                  <td className="px-2 py-7">{agency.emailId}</td>
-                  <td className="px-2 py-7">{agency.categoriesProvided}</td>
-                  <td className="px-2 py-7">{agency.nationalityOfWorkers}</td>
-                  <td className="px-2 py-7">{agency.mobilizationTime}</td>
-                  <td className="px-2 py-7">{agency.uaeDeploymentExperience}</td>
-                  <td className="px-2 py-7">
-                    <a href={agency.relevantDocsUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                      View Docs
-                    </a>
-                  </td>
-                  <td className="px-2 py-7">{agency.comments}</td>
-                  <td className="px-2 py-7">{agency.status}</td>
-                  <td className="px-2 py-7">{new Date(agency.createdDateTime).toLocaleString()}</td>
-                  <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
-                    <td className="px-2 py-3">
-                      <div className="flex items-center space-x-2">
-                        {/* Edit Button */}
-                        <div
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent row navigation
-                          openEditOverseasPopup(); // Open the popup
-                        }}
-                        className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                          <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                            Edit
-                          </div>
-                        </div>
-
-                        {/* Delete Button */}
-                        <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                          <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                            Delete
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </td>
+          {loading ? (
+            <OverseasRecruitmentTableShimmer />
+          ) : (
+            <table className="w-full table-auto text-sm">
+              <thead className="bg-main text-left">
+                <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
+                  <th className="bg-main px-2 py-3">Overseas<br /> Recruitment ID</th>
+                  <th className="bg-main px-2 py-3">Company Name</th>
+                  <th className="bg-main px-2 py-3">Country</th>
+                  <th className="bg-main px-2 py-3">Contact Person<br />Name</th>
+                  <th className="bg-main px-2 py-3">Mobile No</th>
+                  <th className="bg-main px-2 py-3">WhatsApp No</th>
+                  <th className="bg-main px-2 py-3">Email ID</th>
+                  <th className="bg-main px-2 py-3">Categories you<br /> can Provide</th>
+                  <th className="bg-main px-2 py-3">Nationality of <br />Workers</th>
+                  <th className="bg-main px-2 py-3">Mobilization<br />Time</th>
+                  <th className="bg-main px-2 py-3">UAE Deployment<br />Experience</th>
+                  <th className="bg-main px-2 py-3">Relevant Documents</th>
+                  <th className="bg-main px-2 py-3">Comments</th>
+                  <th className="bg-main px-2 py-3">Status</th>
+                  <th className="bg-main px-2 py-3">Created Date&Time</th>
+                  <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
                 </tr>
-              ))}
-            </tbody>
+              </thead>
+              <tbody className="whitespace-nowrap">
+                {recruitmentAgencies.length === 0 ? (
+                  <tr>
+                    <td colSpan={15} className="text-center py-8">
+                      <p className="text-gray-500 text-lg">No Overseas recruitment found for the selected filter.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  recruitmentAgencies.map((agency) => (
+                    <tr key={agency.id} 
+                      onClick={() => navigate(`/OverSeasRecruitment/${agency.id}`)}
+                      className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer"
+                    >
+                      <td className="px-2 py-7">{agency.overseas_recruitment_id}</td>
+                      <td className="px-2 py-7">{agency.company_name}</td>
+                      <td className="px-2 py-7">{agency.country}</td>
+                      <td className="px-2 py-7">{agency.contact_person_name}</td>
+                      <td className="px-2 py-7">{agency.mobile_no}</td>
+                      <td className="px-2 py-7">{agency.whatsapp_no || '-'}</td>
+                      <td className="px-2 py-7">{agency.email_address}</td>
+                      <td className="px-2 py-7">{agency.categories_you_can_provide}</td>
+                      <td className="px-2 py-7">{agency.nationality_of_workers}</td>
+                      <td className="px-2 py-7">{agency.mobilization_time}</td>
+                      <td className="px-2 py-7">{agency.uae_deployment_experience ? 'Yes' : 'No'}</td>
+                      <td className="px-2 py-7">
+                        {agency.relevant_docs ? (
+                          <a href={agency.relevant_docs} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                            View Docs
+                          </a>
+                        ) : '-'}
+                      </td>
+                      <td className="px-2 py-7">{agency.comments || '-'}</td>
+                      <td className="px-2 py-7">{agency.status}</td>
+                      <td className="px-2 py-7">{new Date(agency.created_at).toLocaleString()}</td>
+                      <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
+                        <div className="flex items-center space-x-2">
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditOverseasPopup(agency);
 
-          </table>
+                            }}
+                            className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200"
+                          >
+                            <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
+                            <div className="absolute -top-6.5 bg-armsjobslightblue text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              Edit
+                            </div>
+                          </div>
+
+                          <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                            <MdDelete
+                              onClick={(e) => openDeletePopup(agency, e)}
+                              className="text-white group-hover:text-armsjobslightblue text-xl"
+                            />
+                            <div className="absolute -top-6.5 bg-armsjobslightblue text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              Delete
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
         <Pagination
           currentPage={currentPage}
-          totalItems={recruitmentAgencies.length}
+          totalItems={totalCount}
           itemsPerPage={itemsPerPage}
           onPageChange={handlePageChange}
           onItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
-      {showOverSeasPopup&&<OverSeasAddPopup closePopup={closeOverseasPopup}/>}
-      {showEditOverSeasPopup&&<EditOverSeasPopup closePopup={closeEditOverseasPopup}/>}
+      {showOverSeasPopup && <OverSeasAddPopup closePopup={closeOverseasPopup} refreshData={fetchPagination} />}
+      {showEditOverSeasPopup && selectedOverseas && <EditOverSeasPopup closePopup={closeEditOverseasPopup} refreshData={fetchPagination} editOverseas={selectedOverseas} />}
+      {showDeletePopup && recruitmentToDelete && (
+        <DeleteOverseasRecruitmentPopup
+          closePopup={closeDeletePopup}
+          recruitmentData={recruitmentToDelete}
+          refreshData={fetchPagination}
+        />
+      )}
     </div>
   );
 };

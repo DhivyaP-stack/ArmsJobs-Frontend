@@ -326,7 +326,11 @@ export const ClientEnquiryTable = () => {
           onItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
-      {showAddClientEnquiryPopup && (<ClientEnquiryAddPopup closePopup={closeAddClientEnquiryPopup} />)}
+      {showAddClientEnquiryPopup && 
+      (<ClientEnquiryAddPopup 
+      closePopup={closeAddClientEnquiryPopup}
+      refreshData={refreshClientList}
+       />)}
       {showEditClientEnquiryPopup && (<EditClientEnquiryPopup closePopup={closeEditClientEnquiryPopup} />)}
       {showDeleteClientPopup && clientToDelete && (<DeleteClientPopup closePopup={closeDeleteAgentsPopup} ClientData={clientToDelete} 
       refreshData={refreshClientList} 

@@ -1,0 +1,158 @@
+// import axios from 'axios';
+import { apiAxios } from '../apiUrl';
+
+interface OverseasRecruitment {
+  id: number;
+  overseas_recruitment_id: string;
+  company_name: string;
+  country: string;
+  contact_person_name: string;
+  mobile_no: string;
+  whatsapp_no: string | null;
+  email_address: string;
+  categories_you_can_provide: string;
+  nationality_of_workers: string;
+  mobilization_time: string;
+  uae_deployment_experience: boolean;
+  relevant_docs: string | null;
+  comments: string | null;
+  status: string;
+  is_deleted: boolean;
+  created_at: string;
+}
+
+// New interface for form submission
+interface OverseasRecruitmentFormData {
+  company_name: string;
+  country: string;
+  contact_person_name: string;
+  mobile_no: string;
+  whatsapp_no: string;
+  email_address: string;
+  categories_you_can_provide: string;
+  nationality_of_workers: string;
+  mobilization_time: string;
+  uae_deployment_experience: boolean;
+  comments: string;
+}
+
+interface ApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    status: string;
+    message: string;
+    data: OverseasRecruitment[];
+  };
+}
+
+export const fetchOverseasRecruitmentList = async (page: number, search: string | undefined, filterBy: string) => {
+  try {
+    const response = await apiAxios.get<ApiResponse>(
+      `/api/recruitments/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}`
+    );
+
+    if (!response.data || response.status !== 200) {
+      throw new Error("Failed to fetch overseas recruitment list");
+    }
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error fetching overseas recruitment list:", error);
+    throw error;
+  }
+};
+
+export const deleteOverseasRecruitment = async (id: number): Promise<boolean> => {
+  try {
+    const formData = new FormData();
+    formData.append('id', id.toString());
+    
+    const response = await apiAxios.post(`/api/recruitments/delete/`, formData);
+    if (response.status === 200) {
+      return true;
+    }
+    throw new Error("Failed to delete Overseas Recruitment");
+  } catch (error: unknown) {
+    console.error("Error deleting Overseas Recruitment:", error);
+    if (error && typeof error === "object" && "response" in error) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      throw new Error(
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to delete Overseas Recruitment. Please try again."
+      );
+    }
+    throw new Error("Failed to delete Overseas Recruitment. Please try again.");
+  }
+};
+
+export const addOverseasRecruitment = async (data: OverseasRecruitmentFormData) => {
+  try {
+    const response = await apiAxios.post('/api/recruitments/', data);
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error adding Overseas Recruitment:", error);
+    throw error;
+  }
+};
+
+export const updateOverseasRecruitment = async (id: number, data: OverseasRecruitmentFormData) => {
+  try {
+    const response = await apiAxios.patch(`/api/recruitments/update/${id}/`, data);
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error updating Overseas Recruitment:", error);
+    if (error && typeof error === "object" && "response" in error) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      throw new Error(
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to update Overseas Recruitment. Please try again."
+      );
+    }
+    throw new Error("Failed to update Overseas Recruitment. Please try again.");
+  }
+};
+
+export const fetchOverseasRecruitmentData = async () => {
+  try {
+    const response = await apiAxios.get(`/api/recruitments/names/`);
+    if (!response.data || response.status !== 200) {
+      throw new Error("Failed to fetch overseas recruitment data");
+    }
+    return response.data || [];
+  } catch (error: unknown) {
+    console.error("Error fetching Overseas Recruitment:", error);
+    throw error;
+  }
+};
+
+export const fetchOverseasRecruitmentDataByID = async (id: number) => {
+  try {
+    const response = await apiAxios.get(`/api/recruitments/${id}/`);
+    if (!response.data || response.status !== 200) {
+      throw new Error("Failed to fetch overseas recruitment data");
+    }
+    return response.data;
+  } catch (error: unknown) {    
+    console.error("Error fetching Overseas Recruitment:", error);
+    throw error;
+  }
+};
+
+export const fetchOverseas = async (query: string) => {
+  try {
+    const response = await apiAxios.get(`/api/recruitments/names/`,{
+        params: {
+            search: query
+        }
+    });
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error fetching Overseas Recruitment:", error);
+    throw error;
+  }
+};
+
+

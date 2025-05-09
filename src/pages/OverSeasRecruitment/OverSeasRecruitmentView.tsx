@@ -1,88 +1,126 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Candidate, CandidateRemark } from "../../types/CandidateList";
+import { useParams, useNavigate } from "react-router-dom";
+import { CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
-import { OverSeasView } from "../../types/OverSeasList";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditOverSeasPopup } from "./EditOverSeasRecruitment";
-// import { CandidateViewShimmer } from "../../components/ShimmerLoading";
+import { fetchOverseas, fetchOverseasRecruitmentData, fetchOverseasRecruitmentDataByID } from "../../Commonapicall/Overseasapicall/Overseasapis";
+import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
+
+interface OverseasRecruitment {
+    id: number;
+    overseas_recruitment_id: string;
+    company_name: string;
+    country: string;
+    contact_person_name: string;
+    mobile_no: string;
+    whatsapp_no: string;
+    email_address: string;
+    categories_you_can_provide: string;
+    nationality_of_workers: string;
+    mobilization_time: string;
+    uae_deployment_experience: boolean; 
+    comments: string;
+    relevant_docs: string | null;
+    status: string;
+    created_at: string;
+}
+
+export interface ApiResponse {
+    status: string;
+    message: string;
+    data: OverseasRecruitment[];
+    count: number;
+    next: string | null;
+    previous: string | null;
+}
+
+interface SingleOverseasResponse {
+    data: OverseasRecruitment;
+}
 
 export const OverSeasRecruitmentView = () => {
     const { id } = useParams<{ id: string }>();
-    const [candidate, setCandidate] = useState<Candidate | null>(null);
-    const [overSeasDetail, setOverSeasDetail] = useState<OverSeasView | null>(null)
+    const [overSeasDetail, setOverSeasDetail] = useState<OverseasRecruitment[]>([]);
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
-    const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false)
-    // const [isLoading, setIsLoading] = useState(true);
+    const [oversea, setOversea] = useState<OverseasRecruitment | null>(null);
+    const [overseaoption, setOverseaoption] = useState<OverseasRecruitment[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
     const navigate = useNavigate();
-    // Mock data for demonstration
+    
+    // Function to fetch overseas recruitment data
+    const fetchOverseasRecruitment = async () => {
+        setIsLoading(true); // Show loading state
+        try {
+            const response = await fetchOverseasRecruitmentData() as ApiResponse;
+            if (response && response.data) {
+                setOverSeasDetail(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching overseas recruitment:', error);
+        } finally {
+            setIsLoading(false); // Hide loading state
+        }
+    }
+    
+    // Fetch data for a specific recruitment by ID
+    const fetchOverseasRecruitmentID = async (recruitmentId: number) => {
+        if (!recruitmentId) return;
+        
+        try {
+            const response = await fetchOverseasRecruitmentDataByID(recruitmentId) as SingleOverseasResponse;
+            if (response && response.data) {
+                setOversea(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching overseas recruitment:', error);
+        }
+    }
+    
+    // Initial load of the selected ID
     useEffect(() => {
-        // setIsLoading(true);
-        // Simulate API delay
-        const timer = setTimeout(() => {
-            const mockCandidate: Candidate = {
-                id: "1",
-                name: "Babu Mayan",
-                candidateId: "AJ247",
-                isActive: true,
-                mobileNumber: "+91 9884719615",
-                whatsappNumber: "+91 9551688774",
-                emailId: "kbalaganesh@gmail.com",
-                nationality: "Indian",
-                currentLocation: "Dubai",
-                visaType: "Freelance",
-                availabilityToJoinDate: "25/05/2025",
-                availabilityToJoinPeriod: "1 Week",
-                positionApplyingFor: "N/A",
-                category: "N/A",
-                otherCategory: "N/A",
-                yearsOfUAEExperience: "N/A",
-                skillsAndTasks: "N/A",
-                preferredWorkLocation: "N/A",
-                expectedSalary: "N/A",
-                documents: {
-                    cv: { name: "Babu.doc", size: "470 KB" },
-                    passport: { name: "passport", size: "150 KB" },
-                    insurance: { name: "insurance", size: "145 KB" },
-                    visa: { name: "visa", size: "421 KB" }
-                }
-            };
-            setCandidate(mockCandidate);
-            // Generate mock candidate list
-            const mockCandidateList = Array(13).fill(null).map((_, index) => ({
-                ...mockCandidate,
-                id: String(index + 1),
-                name: index === 0 ? "Babu Mayan" : `Srinithi Ravi ${index + 1}`,
-                candidateId: `AJ${247 + index}`
-            }));
-            setCandidateList(mockCandidateList);
-            // setIsLoading(false);
-        }, 1500); // 1.5 second delay to show loading state
-        return () => clearTimeout(timer);
-    }, [id]);
+        if (id && initialLoad) {
+            setIsLoading(true);
+            fetchOverseasRecruitmentID(Number(id)).finally(() => {
+                setIsLoading(false);
+                setInitialLoad(false);
+            });
+        }
+    }, [id, initialLoad]);
 
     useEffect(() => {
-        const overSeasDetails: OverSeasView = {
-            companyName: "ABC Company",
-            country: "USA",
-            contactPersonName: "John Doe",
-            MobileNumber: "1234567890",
-            whatsupNumber: "1234567890",
-            EmailId: "john@example.com",
-            CatogoryYouCanProvide: "Construction Workers, Engineers",
-            NationalityOfWorker: "USA",
-            MobilizationTime: "2 Weeks",
-            UAEDeploymentExperience: "Yes",
-            AdditionalDetails: "We require skilled labor for a 12-month project in Dubai."
-        };
-        setOverSeasDetail(overSeasDetails);
+       fetchOverseasRecruitment();
     }, []);
+
+    const filteredOverseas = searchQuery.trim() ? overseaoption : overSeasDetail;
+
+    // Add missing handleSearch function
+    const handleSearch = async (query: string) => {
+        // Implement search functionality here
+        try {
+            const result = await fetchOverseas(query) as ApiResponse;
+            if (result && result.data) {
+                setOverseaoption(result.data);
+            }
+        } catch (error) {
+            console.error('Error fetching overseas recruitment:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (searchQuery.trim().length > 0) {
+            handleSearch(searchQuery);
+        } else {
+            setOverseaoption([]); // Clear results if search is empty
+        }
+    }, [searchQuery]);
 
     const handleAddRemark = () => {
         if (newRemark.trim()) {
@@ -98,30 +136,40 @@ export const OverSeasRecruitmentView = () => {
         }
     };
 
-    // Filter candidates based on search query
-    const filteredCandidates = candidateList.filter(c =>
-        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.candidateId.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     const openEditOverseasPopup = () => {
         setShowEditOverSeasPopup(true)
-      }
+    }
     
-      const closeEditOverseasPopup = () => {
-        setShowEditOverSeasPopup(false)
-      }
-    // if (isLoading) {
-    //   return (
-    //     <div className="min-h-screen bg-gray-100">
-    //       <Header />
-    //       <CandidateViewShimmer />
-    //     </div>
-    //   );
-    // }
+    const closeEditOverseasPopup = () => {
+        setShowEditOverSeasPopup(false);
+        setIsLoading(true); // Show loading state
+        fetchOverseasRecruitmentID(Number(id)).finally(() => {
+            setIsLoading(false);
+        });
+    }
 
-    if (!candidate) {
-        return <div>Loading...</div>;
+    // Direct navigation and data loading handler for contact click
+    const handleContactClick = async (recruitmentId: number, e: React.MouseEvent) => {
+        e.preventDefault();
+        
+        // Use React Router's navigate instead of window.history
+        navigate(`/OverSeasRecruitment/${recruitmentId}`);
+        
+        // Set loading state while fetching
+        setIsLoading(true);
+        
+        // Fetch and set data
+        await fetchOverseasRecruitmentID(recruitmentId);
+        
+        setIsLoading(false);
+    };
+
+    if (isLoading && initialLoad) {
+      return <AgentSupplierViewShimmer />;
+    }
+
+    if (!oversea) {
+        return <AgentSupplierViewShimmer />;
     }
 
     return (
@@ -155,7 +203,7 @@ export const OverSeasRecruitmentView = () => {
                     <div className="w-1/4 border-armsBlack border-1 rounded ">
                         <div className="bg-white rounded shadow-sm">
                             <div className="bg-main text-armsWhite p-4 ">
-                                <h2 className="text-base font-semibold">Candidate Names ({filteredCandidates.length})</h2>
+                                <h2 className="text-base font-semibold">Candidate Names ({filteredOverseas.length})</h2>
                             </div>
                             <div className="p-4">
                                 <input
@@ -166,21 +214,19 @@ export const OverSeasRecruitmentView = () => {
                                     className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
                                 />
                                 <div className="space-y-0 max-h-100% overflow-y-auto">
-                                    {filteredCandidates.map((c) => (
-                                        <Link
+                                    {filteredOverseas.length > 0 ? filteredOverseas.map((c) => (
+                                        <div
                                             key={c.id}
-                                            // to={`/Candidate/${id}/${c.id}`}
-                                            to={`/Candidate/${c.id}`}
-                                            className={`block p-3 border-b ${c.id === id} hover:bg-gray-100`}
+                                            onClick={(e) => handleContactClick(c.id, e)}
+                                            className={`block p-3 border-b ${c.id === Number(id) ? 'bg-gray-100' : ''} hover:bg-gray-100 cursor-pointer`}
                                         >
                                             <div className="flex justify-between items-center">
                                                 <div className="flex-grow">
-                                                    <div className="text-sm font-medium">{c.name}</div>
+                                                    <div className="text-sm font-medium">{c.contact_person_name}</div>
                                                 </div>
                                             </div>
-                                        </Link>
-                                    ))}
-                                    {filteredCandidates.length === 0 && (
+                                        </div>
+                                    )) : (
                                         <div className="text-center py-4 text-gray-500">
                                             No candidates found
                                         </div>
@@ -204,28 +250,28 @@ export const OverSeasRecruitmentView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2 w-full">
                                         <div>
                                             <p className="text-xs text-gray-600">Company Name</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.companyName}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.company_name}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Country</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.country}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.country}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Contact Person Name</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.contactPersonName}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.contact_person_name}</p>
                                         </div>
 
                                         <div>
                                             <p className="text-xs text-gray-600">Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.MobileNumber}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.mobile_no}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.whatsupNumber}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.whatsapp_no}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.EmailId}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.email_address}</p>
                                         </div>
                                     </div>
                                     <Button
@@ -245,20 +291,20 @@ export const OverSeasRecruitmentView = () => {
                                     <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Categories You Can Provide</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.CatogoryYouCanProvide}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.categories_you_can_provide}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Nationality of Workers</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.NationalityOfWorker}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.nationality_of_workers}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Mobilization Time
                                             </p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.MobilizationTime}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.mobilization_time}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">UAE Deployment Experience</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.UAEDeploymentExperience}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.uae_deployment_experience ? "Yes" : "No"}</p>
                                         </div>
 
                                     </div>
@@ -270,13 +316,6 @@ export const OverSeasRecruitmentView = () => {
                                         <h2 className="text-xl font-bold">Documents</h2>
                                     </div>
                                     <div className="flex grid-cols-4 gap-4 pt-2">
-                                        {/* {Object.entries(candidate.documents).map(([key, doc]) => (
-                                                <div key={key} className="flex flex-col items-center p-3 rounded hover:bg-gray-50 cursor-pointer">
-                                                    <span className="text-2xl text-armsjobslightblue mb-1 "><IoDocumentText /></span>
-                                                    <span className="text-xs text-gray-600">{doc.name}</span>
-                                                    <span className="text-xs text-gray-400">{doc.size}</span>
-                                                </div>
-                                            ))} */}
                                         {/* Upload CV Section */}
                                         <div>
                                             <h3 className="text-xs text-gray-600 mb-2">Upload CV</h3>
@@ -290,27 +329,10 @@ export const OverSeasRecruitmentView = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Additional Details</p>
-                                            <p className="text-sm font-bold mt-1">{overSeasDetail?.AdditionalDetails}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.comments}</p>
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Job History */}
-                                {/* <div className="w-full border border-main rounded-t-lg p-0 min-h-[300px] bg-white">
-                                    <h3 className="text-armsWhite font-bold bg-main py-2 px-4 rounded-t-lg">Job History</h3>
-                                    <table className="w-full">
-                                        <thead>
-                                            <tr className="text-armsBlack">
-                                                <th className="text-left p-3 text-sm font-bold">Job ID</th>
-                                                <th className="text-left p-3 text-sm font-bold">Company Name</th>
-                                                <th className="text-left p-3 text-sm font-bold">Position</th>
-                                                <th className="text-left p-3 text-sm font-bold">Remarks</th>
-                                                <th className="text-left p-3 text-sm font-bold">Status</th>
-                                                <th className="text-left p-3 text-sm font-bold">Date & Time</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div> */}
                             </div>
                         </div>
 
@@ -374,21 +396,6 @@ export const OverSeasRecruitmentView = () => {
                                                 Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
                                             </p>
                                         </div>
-
-                                        {/* {remarks.map((remark) => (
-                                                <div key={remark.id} className="border-b pb-4">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                                <span className="text-xs">{remark.userName[0]}</span>
-                                                            </div>
-                                                            <span className="text-sm font-medium">{remark.userName}</span>
-                                                        </div>
-                                                        <span className="text-xs text-gray-500">{remark.timestamp}</span>
-                                                    </div>
-                                                    <p className="text-sm text-gray-600">{remark.content}</p>
-                                                </div>
-                                            ))} */}
                                     </div>
                                 </div>
                             </div>
@@ -396,7 +403,13 @@ export const OverSeasRecruitmentView = () => {
                     </div>
                 </div>
             </div>
-              {showEditOverSeasPopup&&<EditOverSeasPopup closePopup={closeEditOverseasPopup}/>}
+              {showEditOverSeasPopup && 
+                <EditOverSeasPopup 
+                  closePopup={closeEditOverseasPopup} 
+                  refreshData={fetchOverseasRecruitment}
+                  editOverseas={oversea}
+                />
+              }
         </div>
         //</div>
     );
