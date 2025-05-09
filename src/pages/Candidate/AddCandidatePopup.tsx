@@ -9,12 +9,12 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddCandidateList, fetchCandidatesList } from "../../Commonapicall/Candidateapicall/Candidateapis";
+import { AddCandidateList} from "../../Commonapicall/Candidateapicall/Candidateapis";
 interface AddCandidatePopupProps {
     // isOpen: boolean;
     closePopup: () => void;
+    refreshData: () => void;
 }
-
 
 // Personal Information Schema
 const personalInfoSchema = zod.object({
@@ -81,6 +81,7 @@ type CandidateFormData = zod.infer<typeof candidateSchema>;
 export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
     // isOpen,
     closePopup,
+    refreshData
 }) => {
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Personal Information");
@@ -106,7 +107,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
         setError(null);
         try {
             // Call the API function with all the form data
-            await AddCandidateList(
+            const response =await AddCandidateList(
                 data.full_name || '',
                 data.mobile_number || '',
                 data.whatsapp_number || '',
@@ -131,12 +132,10 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                 data.referral_contact || ''
             );
             // On success:
-            console.log("Candidate added successfully");
-           
+            console.log("Candidate added successfully", response);
             reset();
             closePopup();
-            fetchCandidatesList();
-            
+            refreshData();
         } catch (error: any) {
             setError(error.message || "Failed to submit form");
         } finally {
@@ -175,7 +174,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                 </div>
                 {/* Content */}
                 <form onSubmit={handleSubmit(onSubmit)} className="h-[calc(100%-150px)] overflow-y-auto">
-
                     {activeTab === "Personal Information" && (
                         <div className="max-w-full mx-auto p-0 pl-1">
                             <div className="flex flex-row gap-1 items-start">
