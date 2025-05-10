@@ -66,7 +66,7 @@ export const fetchOverseasRecruitmentList = async (page: number, search: string 
 export const deleteOverseasRecruitment = async (id: number): Promise<boolean> => {
   try {
     const formData = new FormData();
-    formData.append('id', id.toString()); 
+    formData.append('id', id.toString());
     const response = await apiAxios.post(`/api/recruitments/delete/`, formData);
     if (response.status === 200) {
       return true;
@@ -138,7 +138,7 @@ export const fetchOverseasRecruitmentDataByID = async (id: number) => {
       throw new Error("Failed to fetch overseas recruitment data");
     }
     return response.data;
-  } catch (error: unknown) {    
+  } catch (error: unknown) {
     console.error("Error fetching Overseas Recruitment:", error);
     throw error;
   }
@@ -147,15 +147,37 @@ export const fetchOverseasRecruitmentDataByID = async (id: number) => {
 //search Recruitments Namelist
 export const fetchRecruitmentNames = async (query: string) => {
   try {
-    const response = await apiAxios.get(`/api/recruitments/names/`,{
-        params: {
-            search: query
-        }
+    const response = await apiAxios.get(`/api/recruitments/names/`, {
+      params: {
+        search: query
+      }
     });
     return response.data;
   } catch (error: unknown) {
     console.error("Error fetching Overseas Recruitment:", error);
     throw error;
+  }
+};
+
+//Add Remark
+export const addOverseasRemark = async (overseas_recruitment_id: number, remark: string) => {
+  try {
+    const response = await apiAxios.post('/api/recruitments/remarks/create/', {
+      overseas_recruitment_id,
+      remark
+    });
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error adding remark:", error);
+    if (error && typeof error === "object" && "response" in error) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      throw new Error(
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to add remark. Please try again."
+      );
+    }
+    throw new Error("Failed to add remark. Please try again.");
   }
 };
 

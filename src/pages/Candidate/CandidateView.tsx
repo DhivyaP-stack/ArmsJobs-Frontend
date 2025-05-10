@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 // import { Candidate, CandidateRemark } from "../../types/CandidateList";
 //import {  CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
@@ -9,86 +9,65 @@ import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
 import { FaArrowLeft } from "react-icons/fa6";
 // import { EditCandidatePopup } from "./EditCandidatePopup";
-import { fetchCandidateNames, ViewCandidateName } from "../../Commonapicall/Candidateapicall/Candidateapis";
+import { createRemark, fetchCandidateNames, ViewCandidateName } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
+import { EditCandidatePopup } from "./EditCandidatePopup";
+import { toast } from "react-toastify";
 
-interface CandidateNameResponse {
+// Define API response interfaces
+interface ApiResponse {
     status: string;
     message: string;
-    data: {
-        id: number;
-        full_name: string;
-    }[];
+    data: CandidateApiResponse[];
     count: number;
     next: string | null;
     previous: string | null;
 }
 
-
-
-// Define API response interfaces
-interface ApiResponse<T> {
-    status: string;
-    message: string;
-    data: T;
-    count?: number;
-    next?: string | null;
-    previous?: string | null;
+interface SingleCandidateResponse {
+    data: CandidateApiResponse;
 }
-
 // API Response Data Interface
 interface CandidateApiResponse {
     id: number;
+    candidate_id: number;
+    photo_upload?: string | null;
     full_name: string;
-    candidate_id?: string;
-    mobile_number?: string;
-    whatsapp_number?: string;
-    email?: string;
-    nationality?: string;
-    current_location?: string;
-    visa_type?: string;
-    availability_to_join?: string;
-    position_applying_for?: string;
-    category?: string;
-    other_category?: string;
-    uae_experience_years?: string;
-    skills_tasks?: string;
-    preferred_work_location?: string;
-    expected_salary?: string;
-    languages_spoken?: string;
-    preferred_work_type?: string;
-    currently_employed?: string;
-    additional_notes?: string;
-    referral_name?: string;
-    referral_contact?: string;
-}
-
-interface CandidateDetails {
-    id: number;
-    name: string;
-    candidateId?: string;
-    isActive?: boolean;
-    mobileNumber?: string;
-    whatsappNumber?: string;
-    emailId?: string;
-    nationality?: string;
-    currentLocation?: string;
-    visaType?: string;
-    availabilityToJoinDate?: string;
-    availabilityToJoinPeriod?: string;
-    positionApplyingFor?: string;
-    category?: string;
-    otherCategory?: string;
-    yearsOfUAEExperience?: string;
-    skillsAndTasks?: string;
-    preferredWorkLocation?: string;
-    expectedSalary?: string;
-    languagesSpoken?: string;
-    preferredWorkType?: string;
-    currentlyEmployed?: string;
-    additionalNotes?: string;
-    referralName?: string;
-    referralContact?: string;
+    mobile_number: string;
+    whatsapp_number: string;
+    email: string;
+    nationality: string;
+    current_location: string;
+    visa_type: string;
+    visa_expiry_date: string | null;
+    availability_to_join: string;
+    position_applying_for: string;
+    category: string;
+    other_category: string | null;
+    uae_experience_years: string;
+    skills_tasks: string;
+    preferred_work_location: string;
+    expected_salary: string;
+    upload_cv: string;
+    relevant_docs1: string | null;
+    relevant_docs2: string | null;
+    relevant_docs3: string | null;
+    status: string;
+    remarks: {
+        id: number;
+        remark: string;
+        candidate_full_name: string;
+        created_at: string;
+        updated_at: string;
+    }[];
+    created_at: string;
+    is_deleted: boolean;
+    languages_spoken: string;
+    preferred_work_type: string;
+    currently_employed: boolean;
+    additional_notes: string;
+    referral_name: string;
+    referral_contact: string;
 }
 
 // Toggle Switch Component
@@ -109,153 +88,161 @@ const ToggleSwitch = ({ isActive, onToggle }: { isActive: boolean; onToggle: () 
     );
 };
 
-
 export const CandidateView = () => {
     const { id } = useParams<{ id: string }>();
-    const [candidates, setCandidates] = useState<CandidateDetails[]>([]);
-    const [initialLoading, setInitialLoading] = useState(true); // For first load
-    const [searchLoading, setSearchLoading] = useState(false); // For search operations
-    const [, setDetailsLoading] = useState(false); // For candidate details
-    const [selectedCandidate, setSelectedCandidate] = useState<CandidateDetails | null>(null);
-    ///const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
-   // const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
+    const [candidates, setCandidates] = useState<CandidateApiResponse[]>([]);
+    const [selectedCandidate, setSelectedCandidate] = useState<CandidateApiResponse | null>(null);
     const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
+    const [showcandidateEditPopup, setShowcandidatePopup] = useState<boolean>(false);
+    const [candidate, setcandidate] = useState<CandidateApiResponse>({
+        id: 0,
+        candidate_id: 0,
+        photo_upload: null,
+        full_name: '',
+        mobile_number: '',
+        whatsapp_number: '',
+        email: '',
+        nationality: '',
+        current_location: '',
+        visa_type: '',
+        visa_expiry_date: null,
+        availability_to_join: '',
+        position_applying_for: '',
+        category: '',
+        other_category: null,
+        uae_experience_years: '',
+        skills_tasks: '',
+        preferred_work_location: '',
+        expected_salary: '',
+        upload_cv: '',
+        relevant_docs1: null,
+        relevant_docs2: null,
+        relevant_docs3: null,
+        status: '',
+        remarks: [], // Add this empty array
+        created_at: '',
+        is_deleted: false,
+        languages_spoken: '',
+        preferred_work_type: '',
+        currently_employed: false,
+        additional_notes: '',
+        referral_name: '',
+        referral_contact: ''
+    });
     const navigate = useNavigate();
 
-
-    
-
-    // Fetch all candidate names
-    const loadCandidates = async () => {
+    // Function to fetch all candidates
+    const fetchCandidates = async () => {
+        setIsLoading(true);
         try {
-            // Only set initial loading on first load (when searchQuery is empty)
-            if (!searchQuery) {
-                setInitialLoading(true);
-            } else {
-                setSearchLoading(true);
-            }
-
-            const response = await fetchCandidateNames(searchQuery) as CandidateNameResponse;
-
-            // Transform the API response to match our CandidateDetails interface
-            const transformedCandidates: CandidateDetails[] = response.data.map(candidate => ({
-                id: candidate.id,
-                name: candidate.full_name,
-                // Initialize other fields as empty or undefined
-                candidateId: '',
-                isActive: true,
-                mobileNumber: '',
-                whatsappNumber: '',
-                emailId: '',
-                nationality: '',
-                currentLocation: '',
-                visaType: '',
-                availabilityToJoinDate: '',
-                availabilityToJoinPeriod: '',
-                positionApplyingFor: '',
-                category: '',
-                otherCategory: '',
-                yearsOfUAEExperience: '',
-                skillsAndTasks: '',
-                preferredWorkLocation: '',
-                expectedSalary: '',
-                languagesSpoken: '',
-                preferredWorkType: '',
-                currentlyEmployed: '',
-                additionalNotes: '',
-                referralName: '',
-                referralContact: '',
-            }));
-
-            setCandidates(transformedCandidates);
-
-            // If we have an ID in the URL, fetch and set that candidate's details
-            if (id) {
-                await fetchCandidateDetails(parseInt(id));
+            const response = await fetchCandidateNames() as ApiResponse;
+            if (response && response.data) {
+                setCandidates(response.data);
             }
         } catch (error) {
-            console.error("Error fetching candidates:", error);
+            console.error('Error fetching candidates:', error);
         } finally {
-            setInitialLoading(false);
-            setSearchLoading(false);
+            setIsLoading(false);
         }
     };
 
-
     // Fetch details for a specific candidate
     const fetchCandidateDetails = async (candidateId: number) => {
-        try {
-            setDetailsLoading(true);
-            const response = await ViewCandidateName(candidateId) as ApiResponse<CandidateApiResponse>;
-        
-            if (!response.data) {
-                throw new Error("No data received");
-            }
+        if (!candidateId) return;
 
-            // Transform the API response to match our interface
-            const candidateDetails: CandidateDetails = {
-                id: response.data.id,
-                name: response.data.full_name,
-                candidateId: response.data.candidate_id,
-                mobileNumber: response.data.mobile_number,
-                whatsappNumber: response.data.whatsapp_number,
-                emailId: response.data.email,
-                nationality: response.data.nationality,
-                currentLocation: response.data.current_location,
-                visaType: response.data.visa_type,
-                availabilityToJoinDate: response.data.availability_to_join,
-                positionApplyingFor: response.data.position_applying_for,
-                category: response.data.category,
-                otherCategory: response.data.other_category,
-                yearsOfUAEExperience: response.data.uae_experience_years,
-                skillsAndTasks: response.data.skills_tasks,
-                preferredWorkLocation: response.data.preferred_work_location,
-                expectedSalary: response.data.expected_salary,
-                languagesSpoken: response.data.languages_spoken,
-                preferredWorkType: response.data.preferred_work_type,
-                currentlyEmployed: response.data.currently_employed,
-                additionalNotes: response.data.additional_notes,
-                referralName: response.data.referral_name,
-                referralContact: response.data.referral_contact,
-                isActive: true // Default value since it's not in the API response
-            };
-            setSelectedCandidate(candidateDetails);
+        try {
+            const response = await ViewCandidateName(candidateId) as SingleCandidateResponse;
+            if (response && response.data) {
+                setcandidate(response.data);
+                setSelectedCandidate(response.data);
+            }
         } catch (error) {
-            console.error("Error fetching candidate details:", error);
-        } finally {
-            setDetailsLoading(false);
+            console.error('Error fetching candidate details:', error);
+        }
+    };
+
+    // Initial load of the selected ID
+    useEffect(() => {
+        if (id && initialLoad) {
+            setIsLoading(true);
+            fetchCandidateDetails(Number(id)).finally(() => {
+                setIsLoading(false);
+                setInitialLoad(false);
+            });
+        }
+    }, [id, initialLoad]);
+
+    useEffect(() => {
+        fetchCandidates();
+    }, []);
+
+    // Handle search
+    const handleSearch = async (query: string) => {
+        try {
+            const result = await fetchCandidateNames(query) as ApiResponse;
+            if (result && result.data) {
+                setCandidates(result.data);
+            }
+        } catch (error) {
+            console.error('Error searching candidates:', error);
         }
     };
 
     useEffect(() => {
-        loadCandidates();
-    }, [id, searchQuery]); // Reload when ID changes
+        if (searchQuery.trim().length > 0) {
+            handleSearch(searchQuery);
+        } else {
+            fetchCandidates();
+        }
+    }, [searchQuery]);
 
-    // const handleEditClick = (candidate: Candidate) => {
-    //     setSelectedCandidate(candidate);
-    //     setIsEditPopupOpen(true);
-    // };
+    // Direct navigation and data loading handler for candidate click
+    const handleCandidateClick = async (candidateId: number, e: React.MouseEvent) => {
+        e.preventDefault();
+        navigate(`/Candidate/${candidateId}`);
+        setIsLoading(true);
+        await fetchCandidateDetails(candidateId);
+        setIsLoading(false);
+    };
 
-    // const handleCloseEditPopup = () => {
-    //     setIsEditPopupOpen(false);
-    //     setSelectedCandidate(null);
-    // };
+    const openEditCandidatePopup = () => {
+        setShowcandidatePopup(true)
+    }
 
-    // const handleRefreshData = () => {
-    //     loadCandidates();
-    // };
+    const closeEditCandidatePopup = () => {
+        setShowcandidatePopup(false);
+        setIsLoading(true); // Show loading state
+        fetchCandidateDetails(Number(id)).finally(() => {
+            setIsLoading(false);
+        });
+    }
 
-    // Filter candidates based on search query
-    const filteredCandidates = candidates.filter(candidate =>
-        candidate.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const handleAddRemark = async () => {
+        if (!newRemark.trim() || !id) return;
+        try {
+            await createRemark(Number(id), newRemark);
+            toast.success("Remark added successfully")
+            console.log("Remark added successfully")
+            setNewRemark("");
+            // Refresh remarks after adding new one
+            await fetchCandidateDetails(Number(id));
+        } catch (error) {
+            console.error('Error adding remark:', error);
+            toast.error('Error adding remark');
+        }
+    };
 
-    if (initialLoading) {
+    if (isLoading && initialLoad) {
         return <AgentSupplierViewShimmer />;
     }
-    
+
+    if (!selectedCandidate) {
+        return <AgentSupplierViewShimmer />;
+    }
+
     return (
         <div className="p-4">
             <div className="bg-white px-5 py-1 rounded-lg shadow-sm">
@@ -266,9 +253,7 @@ export const CandidateView = () => {
                         <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
                         <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
                         <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                        <span className="text-gray-500 pt-2 text-sm font-medium underline">Clients</span>
-                        <span className="mx-2 pt-2 text-sm">{"/"}</span>
-                        <span className="text-gray-500 pt-2 text-sm font-medium">View</span>
+                        <span className="text-gray-500 pt-2 text-sm font-medium">Candidate</span>
                     </div>
                     <div className="flex items-center space-x-4 p-3">
                         <Button
@@ -283,10 +268,10 @@ export const CandidateView = () => {
 
                 <div className="flex gap-4">
                     {/* Left Column - Candidate Names */}
-                    <div className="w-1/4 border-armsBlack border-1 rounded ">
+                    <div className="w-1/4 border-armsBlack border-1 rounded">
                         <div className="bg-white rounded shadow-sm">
-                            <div className="bg-main text-armsWhite p-4 ">
-                                <h2 className="text-base font-semibold">Candidate Names ({filteredCandidates.length})</h2>
+                            <div className="bg-main text-armsWhite p-4">
+                                <h2 className="text-base font-semibold">Candidate Names ({candidates.length})</h2>
                             </div>
                             <div className="p-4">
                                 <input
@@ -297,26 +282,19 @@ export const CandidateView = () => {
                                     className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
                                 />
                                 <div className="space-y-0 max-h-100% overflow-y-auto">
-                                    {searchLoading ? (
-                                        <div className="text-center py-4 text-gray-500">
-                                            Searching...
-                                        </div>
-                                    ) : (
-                                        filteredCandidates.map((candidate) => (
-                                            <Link
-                                                key={candidate.id}
-                                                to={`/Candidate/${candidate.id}`}
-                                                className={`block p-3 border-b ${candidate.id === Number(id)} hover:bg-gray-100`}
-                                            >
-                                                <div className="flex justify-between items-center">
-                                                    <div className="flex-grow">
-                                                        <div className="text-sm font-medium">{candidate?.name}</div>
-                                                    </div>
+                                    {candidates.length > 0 ? candidates.map((candidate) => (
+                                        <div
+                                            key={candidate.id}
+                                            onClick={(e) => handleCandidateClick(candidate.id, e)}
+                                            className={`block p-3 border-b ${candidate.id === Number(id) ? 'bg-gray-100' : ''} hover:bg-gray-100 cursor-pointer`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex-grow">
+                                                    <div className="text-sm font-medium">{candidate.full_name}</div>
                                                 </div>
-                                            </Link>
-                                        ))
-                                    )}
-                                    {!searchLoading && filteredCandidates.length === 0 && (
+                                            </div>
+                                        </div>
+                                    )) : (
                                         <div className="text-center py-4 text-gray-500">
                                             No candidates found
                                         </div>
@@ -342,24 +320,23 @@ export const CandidateView = () => {
                                     </div>
                                     <div className="pb-3.5">
                                         <div className="flex items-center gap-2">
-                                            <h2 className="text-2xl font-bold">{selectedCandidate?.name}</h2>
-                                            <span className="text- font-bold">({selectedCandidate?.candidateId})</span>
+                                            <h2 className="text-2xl font-bold">{selectedCandidate?.full_name}</h2>
                                             <div className="scale-70">
-                                                <ToggleSwitch isActive={selectedCandidate?.isActive || false} onToggle={() => { }} />
+                                                <ToggleSwitch isActive={true} onToggle={() => { }} />
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-4 mt-4">
                                             <div>
                                                 <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="font-bold">{selectedCandidate?.mobileNumber}</p>
+                                                <p className="font-bold">{selectedCandidate?.mobile_number}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Whatsapp Number</p>
-                                                <p className="font-bold">{selectedCandidate?.whatsappNumber}</p>
+                                                <p className="font-bold">{selectedCandidate?.whatsapp_number}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="font-bold">{selectedCandidate?.emailId}</p>
+                                                <p className="font-bold">{selectedCandidate?.email}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Nationality</p>
@@ -367,13 +344,14 @@ export const CandidateView = () => {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Current Location</p>
-                                                <p className="font-bold">{selectedCandidate?.currentLocation}</p>
+                                                <p className="font-bold">{selectedCandidate?.current_location}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <Button
-                                  //  onClick={() => selectedCandidate && handleEditClick(selectedCandidate)}
+                                    onClick={openEditCandidatePopup}
+                                    //  onClick={() => selectedCandidate && handleEditClick(selectedCandidate)}
                                     buttonType="button"
                                     buttonTitle="Edit"
                                     className="mb-30 px-4 py-1 bg-armsjobslightblue text-armsWhite font-semibol border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue text-sm"
@@ -390,15 +368,11 @@ export const CandidateView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Visa Type</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.visaType}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.visa_type}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Availability to join</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.availabilityToJoinDate}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Notice Period</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.availabilityToJoinPeriod}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.availability_to_join}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -412,7 +386,7 @@ export const CandidateView = () => {
                                     <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Position Applying For</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.positionApplyingFor}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.position_applying_for}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Category</p>
@@ -420,35 +394,35 @@ export const CandidateView = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Any Other Category</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.otherCategory}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.other_category}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Years of UAE Experience</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.yearsOfUAEExperience}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.uae_experience_years}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Skills & Tasks You Can Perform</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.skillsAndTasks}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.skills_tasks}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Preferred Work Location</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferredWorkLocation}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferred_work_location}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Expected Salary (AED)</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.expectedSalary}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.expected_salary}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Language Spoken</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.languagesSpoken}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.languages_spoken}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Preferred Work Type</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferredWorkType}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferred_work_type}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Currently Employed?</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.currentlyEmployed}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.currently_employed ? 'Yes' : 'No'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -509,16 +483,16 @@ export const CandidateView = () => {
                                     <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Additional Notes or Information</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.additionalNotes}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.additional_notes}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Referral Contact Details</p>
                                             <p className="text-xs text-gray-600">Name</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referralName}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referral_name}</p>
                                         </div>
                                         <div className="pt-4">
                                             <p className="text-xs text-gray-600">Contact</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referralContact}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referral_contact}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -560,52 +534,41 @@ export const CandidateView = () => {
                                     // placeholder="Add a remark..."
                                     />
                                     <Button
-                                        onClick={() => { }}
+                                        onClick={handleAddRemark}
                                         buttonType="button"
                                         buttonTitle="Add"
                                         className="mx-auto px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                     />
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
                                         {/* Static remarks data */}
-                                        <div className="border-b pb-4">
-                                            <div className="flex max-xl:flex-col items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={Profileimg}
-                                                            alt="profileImg"
-                                                            className="w-full h-full object-cover"
-                                                        />
+                                        {selectedCandidate?.remarks?.length > 0 ? (
+                                            selectedCandidate.remarks.map((remark) => (
+                                                <div key={remark.id} className="border-b pb-4">
+                                                    <div className="flex max-xl:flex-col items-center justify-between mb-2">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                                <img
+                                                                    src={Profileimg}
+                                                                    alt="profileImg"
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            </div>
+                                                            <span className="text-sm font-medium">
+                                                                {remark.candidate_full_name || "Unknown"}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-gray-500">
+                                                            {new Date(remark.created_at).toLocaleString()}
+                                                        </span>
                                                     </div>
-                                                    <span className="text-sm font-medium">Amjad</span>
+                                                    <p className="text-sm text-gray-600">{remark.remark}</p>
                                                 </div>
-                                                <span className="text-xs text-gray-500">14-02-2025 10:25:12</span>
-                                            </div>
-                                            <p className="text-sm text-gray-600">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
+                                            ))
+                                        ) : (
+                                            <p className="text-sm text-gray-500 text-center py-4">
+                                                No remarks yet
                                             </p>
-                                        </div>
-
-                                        <div className="border-b pb-4">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="flex max-xl:flex-col items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={Profileimg}
-                                                            alt="profileImg"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <span className="text-sm font-medium">Swetha</span>
-                                                </div>
-                                                <span className="text-xs text-gray-500">13-02-2025 15:02:40</span>
-                                            </div>
-                                            <p className="text-sm text-gray-600">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
-                                            </p>
-                                        </div>
+                                        )}
 
                                         {/* {remarks.map((remark) => (
                                                 <div key={remark.id} className="border-b pb-4">
@@ -635,6 +598,13 @@ export const CandidateView = () => {
                     //editCandidate={selectedCandidate}
                 />
             )} */}
+            {showcandidateEditPopup && (
+                <EditCandidatePopup
+                    closePopup={closeEditCandidatePopup}
+                    refreshData={fetchCandidateNames}
+                    editCandidate={candidate}
+                />
+            )}
         </div>
     );
 };

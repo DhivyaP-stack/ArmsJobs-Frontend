@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditOverSeasPopup } from "./EditOverSeasRecruitment";
-import { fetchRecruitmentNames, fetchOverseasRecruitmentData, fetchOverseasRecruitmentDataByID } from "../../Commonapicall/Overseasapicall/Overseasapis";
+import { fetchRecruitmentNames, fetchOverseasRecruitmentData, fetchOverseasRecruitmentDataByID, addOverseasRemark } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
+import { z } from "zod";
+import { toast } from "react-toastify";
 
 interface OverseasRecruitment {
     id: number;
@@ -22,11 +23,18 @@ interface OverseasRecruitment {
     categories_you_can_provide: string;
     nationality_of_workers: string;
     mobilization_time: string;
-    uae_deployment_experience: boolean; 
+    uae_deployment_experience: boolean;
     comments: string;
     relevant_docs: string | null;
     status: string;
     created_at: string;
+    recruitment_remarks: {
+        id: number;
+        remark: string;
+        company_name: string;
+        created_at: string;
+        updated_at: string;
+    }[];
 }
 
 export interface ApiResponse {
@@ -42,10 +50,14 @@ interface SingleOverseasResponse {
     data: OverseasRecruitment;
 }
 
+// Add this before the component
+const remarkSchema = z.object({
+    remark: z.string().min(1, "Remark is required").max(500, "Remark must be less than 500 characters")
+});
+
 export const OverSeasRecruitmentView = () => {
     const { id } = useParams<{ id: string }>();
     const [overSeasDetail, setOverSeasDetail] = useState<OverseasRecruitment[]>([]);
-    const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false)
@@ -54,7 +66,8 @@ export const OverSeasRecruitmentView = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     const navigate = useNavigate();
-    
+    const [remarkError, setRemarkError] = useState<string | null>(null);
+
     // Function to fetch overseas recruitment data
     const fetchOverseasRecruitment = async () => {
         setIsLoading(true); // Show loading state
@@ -69,11 +82,11 @@ export const OverSeasRecruitmentView = () => {
             setIsLoading(false); // Hide loading state
         }
     }
-    
+
     // Fetch data for a specific recruitment by ID
     const fetchOverseasRecruitmentID = async (recruitmentId: number) => {
         if (!recruitmentId) return;
-        
+
         try {
             const response = await fetchOverseasRecruitmentDataByID(recruitmentId) as SingleOverseasResponse;
             if (response && response.data) {
@@ -83,7 +96,7 @@ export const OverSeasRecruitmentView = () => {
             console.error('Error fetching overseas recruitment:', error);
         }
     }
-    
+
     // Initial load of the selected ID
     useEffect(() => {
         if (id && initialLoad) {
@@ -96,7 +109,7 @@ export const OverSeasRecruitmentView = () => {
     }, [id, initialLoad]);
 
     useEffect(() => {
-       fetchOverseasRecruitment();
+        fetchOverseasRecruitment();
     }, []);
 
     const filteredOverseas = searchQuery.trim() ? overseaoption : overSeasDetail;
@@ -122,24 +135,42 @@ export const OverSeasRecruitmentView = () => {
         }
     }, [searchQuery]);
 
-    const handleAddRemark = () => {
-        if (newRemark.trim()) {
-            const remark: CandidateRemark = {
-                id: Date.now().toString(),
-                userId: "current-user-id",
-                userName: "Amjad",
-                timestamp: new Date().toLocaleString(),
-                content: newRemark
-            };
-            setRemarks([...remarks, remark]);
-            setNewRemark("");
+    const handleAddRemark = async () => {
+        try {
+            // Validate the remark
+            const validationResult = remarkSchema.safeParse({ remark: newRemark });
+            if (!validationResult.success) {
+                const errorMessage = validationResult.error.errors[0]?.message || "Invalid remark";
+                setRemarkError(errorMessage);
+                toast.error(errorMessage);
+                return;
+            }
+            if (!oversea?.id) {
+                toast.error("Overseas recruitment ID is required");
+                return;
+            }
+            setRemarkError(null);
+            // Call the API to add the remark
+            const response = await addOverseasRemark(oversea.id, newRemark);
+            console.log(response);
+            if (response) {
+                // Clear the remark input
+                setNewRemark("");
+                // Refresh the data to show the new remark
+                await fetchOverseasRecruitmentID(oversea.id);
+                toast.success("Remark added successfully");
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to add remark";
+            toast.error(errorMessage);
+            console.error("Error adding remark:", error);
         }
     };
 
     const openEditOverseasPopup = () => {
         setShowEditOverSeasPopup(true)
     }
-    
+
     const closeEditOverseasPopup = () => {
         setShowEditOverSeasPopup(false);
         setIsLoading(true); // Show loading state
@@ -158,7 +189,7 @@ export const OverSeasRecruitmentView = () => {
     };
 
     if (isLoading && initialLoad) {
-      return <AgentSupplierViewShimmer />;
+        return <AgentSupplierViewShimmer />;
     }
 
     if (!oversea) {
@@ -240,39 +271,39 @@ export const OverSeasRecruitmentView = () => {
 
                                     </div>
                                     <div className="flex justify-start  ">
-                                    <div className="grid grid-cols-3 gap-4 pt-2 w-full">
-                                        <div>
-                                            <p className="text-xs text-gray-600">Company Name</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.company_name}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Country</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.country}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Contact Person Name</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.contact_person_name}</p>
-                                        </div>
+                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Company Name</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.company_name}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Country</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.country}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Contact Person Name</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.contact_person_name}</p>
+                                            </div>
 
-                                        <div>
-                                            <p className="text-xs text-gray-600">Mobile Number</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.mobile_no}</p>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.mobile_no}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">WhatsApp Number</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.whatsapp_no}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.email_address}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.whatsapp_no}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-600">Email ID</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.email_address}</p>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        onClick={openEditOverseasPopup}
-                                        buttonType="button"
-                                        buttonTitle="Edit"
-                                        className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
-                                    />
+                                        <Button
+                                            onClick={openEditOverseasPopup}
+                                            buttonType="button"
+                                            buttonTitle="Edit"
+                                            className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
+                                        />
                                     </div>
                                 </div>
 
@@ -338,11 +369,17 @@ export const OverSeasRecruitmentView = () => {
                                 <div className="p-4">
                                     <textarea
                                         value={newRemark}
-                                        onChange={(e) => setNewRemark(e.target.value)}
-                                        className="w-full p-3 border-2 border-armsgrey rounded mb-2 text-sm bg-armsWhite"
+                                        onChange={(e) => {
+                                            setNewRemark(e.target.value);
+                                            setRemarkError(null); // Clear error when user types
+                                        }}
+                                        className={`w-full p-3 border-2 ${remarkError ? 'border-red-500' : 'border-armsgrey'} rounded mb-2 text-sm bg-armsWhite`}
                                         rows={4}
-                                    // placeholder="Add a remark..."
+                                        placeholder="Add a remark..."
                                     />
+                                    {remarkError && (
+                                        <p className="text-red-500 text-xs mb-2">{remarkError}</p>
+                                    )}
                                     <Button
                                         onClick={handleAddRemark}
                                         buttonType="button"
@@ -350,45 +387,31 @@ export const OverSeasRecruitmentView = () => {
                                         className="mx-auto px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                     />
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
-                                        {/* Static remarks data */}
-                                        <div className="border-b pb-4">
-                                            <div className="flex max-xl:flex-col items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={Profileimg}
-                                                            alt="profileImg"
-                                                            className="w-full h-full object-cover"
-                                                        />
+                                        {oversea?.recruitment_remarks?.map((remark) => (
+                                            <div key={remark.id} className="border-b pb-4">
+                                                <div className="flex max-xl:flex-col items-center justify-between mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                            <img
+                                                                src={Profileimg}
+                                                                alt="profileImg"
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <span className="text-sm font-medium">{remark.company_name}</span>
                                                     </div>
-                                                    <span className="text-sm font-medium">Amjad</span>
+                                                    <span className="text-xs text-gray-500">
+                                                        {new Date(remark.created_at).toLocaleString()}
+                                                    </span>
                                                 </div>
-                                                <span className="text-xs text-gray-500">14-02-2025 10:25:12</span>
+                                                <p className="text-sm text-gray-600">{remark.remark}</p>
                                             </div>
-                                            <p className="text-sm text-gray-600">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
-                                            </p>
-                                        </div>
-                                        <div className="border-b pb-4">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="flex max-xl:flex-col items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={Profileimg}
-                                                            alt="profileImg"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <span className="text-sm font-medium">Swetha</span>
-                                                </div>
-                                                <span className="text-xs text-gray-500">13-02-2025 15:02:40</span>
+                                        ))}
+                                        {(!oversea?.recruitment_remarks || oversea.recruitment_remarks.length === 0) && (
+                                            <div className="text-center py-4 text-gray-500">
+                                                No remarks found
                                             </div>
-                                            <p className="text-sm text-gray-600">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
-                                            </p>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -396,13 +419,13 @@ export const OverSeasRecruitmentView = () => {
                     </div>
                 </div>
             </div>
-              {showEditOverSeasPopup && 
-                <EditOverSeasPopup 
-                  closePopup={closeEditOverseasPopup} 
-                  refreshData={fetchOverseasRecruitment}
-                  editOverseas={oversea}
+            {showEditOverSeasPopup &&
+                <EditOverSeasPopup
+                    closePopup={closeEditOverseasPopup}
+                    refreshData={fetchOverseasRecruitment}
+                    editOverseas={oversea}
                 />
-              }
+            }
         </div>
         //</div>
     );

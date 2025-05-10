@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 
+
 interface EditCandidatePopupProps {
     // isOpen: boolean;
     closePopup: () => void;
@@ -118,7 +119,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
     // isOpen,
     closePopup,
     editCandidate,
-    refreshData
+    refreshData,
 }) => {
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Personal Information");

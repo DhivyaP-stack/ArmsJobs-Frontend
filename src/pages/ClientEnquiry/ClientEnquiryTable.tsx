@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { InputField } from "../../common/InputField";
 import { Button } from "../../common/Button";
 //import profileimg from "../../assets/images/profileimg.jpg"
@@ -10,22 +10,10 @@ import { IoMdSearch } from "react-icons/io";
 import { ClientEnquiryAddPopup } from "./AddClientEnquiryPopup";
 import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
 import { useNavigate } from "react-router-dom";
-import { fetchClientEnquiryList } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis"
+import { filterClientEnquiryList } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis"
 import { ClientEnquiryTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/ClientEnquiryTableShimmer"
 import { DeleteClientPopup } from "./DeleteClientEnquiryPopup";
 import { NotifyError } from "../../common/Toast/ToastMessage";
-
-// Define a Candidate type
-interface ClientEnquiryApiResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: {
-    status: string;
-    message: string;
-    data: ClientEnquiryList[];
-  };
-}
 
 interface ClientEnquiryList {
   id: number;
@@ -62,30 +50,61 @@ export const ClientEnquiryTable = () => {
   const indexOfLastClientEnquiry = currentPage * itemsPerPage;
   const indexOfFirstClient = indexOfLastClientEnquiry - itemsPerPage;
   const currentClientEnquiry = clientEnquiry.slice(indexOfFirstClient, indexOfLastClientEnquiry);
-  const [clientToDelete, setclientToDelete] = useState<{ id: string, name:string } | null>(null);
+  const [clientToDelete, setclientToDelete] = useState<{ id: string, name: string } | null>(null);
+  const [search, setSearch] = useState("");
+  console.log('search', search)
+  const [filterBy, setFilterBy] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await fetchClientEnquiryList() as ClientEnquiryApiResponse;
+  //       console.log("Full API response:", response); // Debug log
+  //       if (response?.results?.data) {
+  //         console.log("Client enquiry data:", response.results.data); // Debug log
+  //         setClientEnquiry(response.results.data);
+  //       } else {
+  //         console.log("No data found in response");
+  //         setClientEnquiry([]);
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to fetch client enquiries:", err);
+  //       setClientEnquiry([]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+
+
+  //Pagination
+  const fetchPagination = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy);
+      if (!response?.results?.data) {
+        setClientEnquiry([]);
+        setTotalCount(0);
+        return;
+      }
+      setClientEnquiry(response?.results?.data);
+      setTotalCount(response.count || 0);
+    } catch (error) {
+      console.error("Error fetching pagination data:", error);
+      setClientEnquiry([]);
+      setTotalCount(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, search, filterBy]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetchClientEnquiryList() as ClientEnquiryApiResponse;
-        console.log("Full API response:", response); // Debug log
-        if (response?.results?.data) {
-          console.log("Client enquiry data:", response.results.data); // Debug log
-          setClientEnquiry(response.results.data);
-        } else {
-          console.log("No data found in response");
-          setClientEnquiry([]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch client enquiries:", err);
-        setClientEnquiry([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    fetchPagination();
+  }, [fetchPagination]);
 
   // Debug log for current state
   useEffect(() => {
@@ -93,19 +112,18 @@ export const ClientEnquiryTable = () => {
     console.log("Current page items:", currentClientEnquiry);
   }, [clientEnquiry, currentClientEnquiry]);
 
-
-  
-    const refreshClientList = async () => {
-      try {
-        setLoading(true);
-        const response = await  fetchClientEnquiryList() as ClientEnquiryApiResponse;
-        setClientEnquiry(response?.results?.data);
-      } catch (err) {
-        NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
-      } finally {
-        setLoading(false);
-      }
-    };
+  //refreshClientList
+  const refreshClientList = async () => {
+    try {
+      setLoading(true);
+      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy);
+      setClientEnquiry(response?.results?.data);
+    } catch (err) {
+      NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openAddClientEnquiryPopup = () => {
     setShowAddClientEnquiryPopup(true)
@@ -133,7 +151,6 @@ export const ClientEnquiryTable = () => {
     setShowDeletedClientPopup(false);
     setclientToDelete(null);
   }
-
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -176,7 +193,8 @@ export const ClientEnquiryTable = () => {
             <div className="relative w-[300px]">
               <InputField
                 type="text"
-                placeholder="Search"
+                placeholder="Search" value={search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
                 label=""
               />
@@ -184,14 +202,17 @@ export const ClientEnquiryTable = () => {
             </div>
 
             {/* Select Dropdown */}
-            <select className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+            <select
+              value={filterBy}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
+              className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
               <option value="all">All</option>
-              <option value="Today">Today</option>
-              <option value="Yesterday">Yesterday</option>
-              <option value="Last 7 days">Last 7 days</option>
-              <option value="Last 30 days">Last 30 days</option>
-              <option value="This Month">This Month</option>
-              <option value="Last Year">Last Year</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="last7days">Last 7 days</option>
+              <option value="last30days">Last 30 days</option>
+              <option value="thismonth">This Month</option>
+              <option value="lastyear">Last Year</option>
             </select>
           </div>
         </div>
@@ -320,20 +341,20 @@ export const ClientEnquiryTable = () => {
         </div>
         <Pagination
           currentPage={currentPage}
-          totalItems={clientEnquiry.length}
+          totalItems={totalCount}
           itemsPerPage={itemsPerPage}
           onPageChange={handlePageChange}
           onItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
-      {showAddClientEnquiryPopup && 
-      (<ClientEnquiryAddPopup 
-      closePopup={closeAddClientEnquiryPopup}
-      refreshData={refreshClientList}
-       />)}
+      {showAddClientEnquiryPopup &&
+        (<ClientEnquiryAddPopup
+          closePopup={closeAddClientEnquiryPopup}
+          refreshData={refreshClientList}
+        />)}
       {showEditClientEnquiryPopup && (<EditClientEnquiryPopup closePopup={closeEditClientEnquiryPopup} />)}
-      {showDeleteClientPopup && clientToDelete && (<DeleteClientPopup closePopup={closeDeleteAgentsPopup} ClientData={clientToDelete} 
-      refreshData={refreshClientList} 
+      {showDeleteClientPopup && clientToDelete && (<DeleteClientPopup closePopup={closeDeleteAgentsPopup} ClientData={clientToDelete}
+        refreshData={refreshClientList}
       />)}
     </div>
   );

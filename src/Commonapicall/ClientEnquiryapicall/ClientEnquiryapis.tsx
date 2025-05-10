@@ -1,19 +1,69 @@
 import { apiAxios } from '../apiUrl';
 
-// Get CandidateList
-export const fetchClientEnquiryList = async () => {
-    try {
-        const response = await apiAxios.get('/api/client-enquiries/');
+// // Get CandidateList
+// export const fetchClientEnquiryList = async () => {
+//     try {
+//         const response = await apiAxios.get('/api/client-enquiries/');
 
-        if (!response.data || response.status !== 200) {
-            throw new Error("Failed to fetch client-enquires");
-        }
-        console.log("ClientEnquiry API response", response.data);
-        return response.data;
-    } catch (error: any) {
-        console.error("Error fetching client enquires:", error.response?.data?.message || error.message);
-        throw new Error(error.response?.data?.message || "Unable to fetch client enquires. Please try again later.");
+//         if (!response.data || response.status !== 200) {
+//             throw new Error("Failed to fetch client-enquires");
+//         }
+//         console.log("ClientEnquiry API response", response.data);
+//         return response.data;
+//     } catch (error: any) {
+//         console.error("Error fetching client enquires:", error.response?.data?.message || error.message);
+//         throw new Error(error.response?.data?.message || "Unable to fetch client enquires. Please try again later.");
+//     }
+// };
+
+interface ClientEnquiryApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    status: string;
+    message: string;
+    data: ClientEnquiryList[];
+  };
+}
+
+interface ClientEnquiryList {
+  id: number;
+  client_enquiry_id: string;
+  company_name: string;
+  email: string;
+  contact_person_name: string;
+  mobile_number: string;
+  nature_of_work: string;
+  project_location: string;
+  project_duration: string;
+  categories_required: string;
+  quantity_required: string;
+  project_start_date: string;
+  kitchen_facility: boolean;
+  transportation_provided: boolean;
+  accommodation_provided: boolean;
+  remarks: string | null;
+  query_type: string;
+  status: string;
+  is_deleted: boolean;
+  created_at: string;
+}
+
+//List,Search, All, Pagination
+export const filterClientEnquiryList = async (page: number, search: string | undefined, filterBy: string) => {
+  try {
+    const response = await apiAxios.get<ClientEnquiryApiResponse>(
+      `/api/client-enquiries/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}`
+    );
+    if (!response.data || response.status !== 200) {
+      throw new Error("Failed to fetch Client Enquiry list");
     }
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error fetching Client Enquiry list:", error);
+    throw error;
+  }
 };
 
 //AddClientEnquiry
@@ -87,4 +137,40 @@ export const deleteClientEnquiry = async (Id: string) => {
             "Failed to delete client enquiry. Please try again."
         );
     }
+};
+
+
+// ViewPAge --> ClientEnquiry Names List
+export const fetchClientEnquiryNames = async (search?:string) => {
+  try {
+    const response = await apiAxios.get('/api/client-enquiries/names/',
+      {
+      params: { search },
+    });
+    if (response.status !== 200 || !response.data) {
+      throw new Error('Failed to fetch ClientEnquiry names');
+    }
+    console.log('ClientEnquiry Names List:', response.data); // Optional
+    return response.data;
+  } catch (error: any) {
+    console.error('Error fetching ClientEnquiry names:', error.response?.data?.message || error.message);
+    throw new Error(error.response?.data?.message || 'Unable to fetch ClientEnquiry names.');
+  }
+};
+
+//ViewCandidateNamw
+export const ViewClientNameById = async (
+  id: number,
+ ) => {
+  try {
+    const response = await apiAxios.get(`/api/client-enquiries/${id}/`)
+    if (response.status !== 200) {
+      throw new Error('Failed to submit ClientEnquiry data');
+    }
+    console.log('ClientEnquiry updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting ClientEnquiry:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
+  }
 };

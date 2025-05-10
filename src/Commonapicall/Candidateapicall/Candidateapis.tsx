@@ -245,7 +245,7 @@ export const ViewCandidateName = async (
   id: number,
  ) => {
   try {
-    const response = await apiAxios.patch(`/api/candidates/update/${id}/`)
+    const response = await apiAxios.get(`/api/candidates/${id}/`)
     if (response.status !== 200) {
       throw new Error('Failed to submit candidate data');
     }
@@ -269,6 +269,34 @@ export const filterCandidateList = async (page: number, search: string | undefin
     return response.data;
   } catch (error: unknown) {
     console.error("Error fetching overseas recruitment list:", error);
+    throw error;
+  }
+};
+
+//Remark
+export const createRemark = async (candidate_id: number, remark: string) => {
+  try {
+    const formData = new FormData();
+    formData.append('candidate_id', candidate_id.toString());
+    formData.append('remark', remark);
+
+    const response = await apiAxios.post(
+      '/api/remarks/create/',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    if (!response.data || response.status !== 201) {
+      throw new Error('Failed to create remark');
+    }
+
+    return response.data;
+  } catch (error: unknown) {
+    console.error('Error creating remark:', error);
     throw error;
   }
 };

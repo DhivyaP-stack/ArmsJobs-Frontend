@@ -1,101 +1,138 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Candidate, CandidateRemark } from "../../types/CandidateList";
+import { useParams, useNavigate } from "react-router-dom";
+import { CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
-import { ClientEnquiry } from "../../types/ClientEnquiryList";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
+import { ViewClientNameById, fetchClientEnquiryNames } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis";
+import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
+
+interface ApiResponse {
+    status: string;
+    message: string;
+    data: ClientEnquiryResponse[];
+    count: number;
+    next: string | null;
+    previous: string | null;
+}
+
+
+interface SingleClientEnquiryResponse {
+    data: ClientEnquiryResponse;
+}
+// API Response Data Interface
+interface ClientEnquiryResponse {
+    id: number;
+    client_enquiry_id: string;
+    company_name: string;
+    email: string;
+    contact_person_name: string;
+    mobile_number: string;
+    nature_of_work: string;
+    project_location: string; project_duration
+    : string;
+    categories_required: string;
+    quantity_required: string;
+    project_start_date: string; // ISO date string
+    kitchen_facility: boolean;
+    transportation_provided: boolean;
+    accommodation_provided: boolean;
+    remarks: string;
+    query_type: string;
+    status: boolean;
+    is_deleted: boolean;
+    created_at: string; // ISO datetime string
+}
+
 
 export const ClientEnquiryView = () => {
     const { id } = useParams<{ id: string }>();
-    const [candidate, setCandidate] = useState<Candidate | null>(null);
-    const [ClientEnquiry, setClientEnquiry] = useState<ClientEnquiry | null>(null)
+    const [ClientEnquiry, setClientEnquiry] = useState<ClientEnquiryResponse[]>([]);
+    const [selectedClientEnquiry, setSelectedClientEnquiry] = useState<ClientEnquiryResponse | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
-    const [candidateList, setCandidateList] = useState<Candidate[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-     const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false)
+    const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false)
     // const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
-    // Mock data for demonstration
+    // Function to fetch all candidates
+    const fetchClientNames = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchClientEnquiryNames() as ApiResponse;
+            if (response && response.data) {
+                setClientEnquiry(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching candidates:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    // Fetch details for a specific candidate
+    const fetchClientDetails = async (clientEnquiryId: number) => {
+        if (!clientEnquiryId) return;
+        try {
+            const response = await ViewClientNameById(clientEnquiryId) as SingleClientEnquiryResponse;
+            if (response && response.data) {
+                setSelectedClientEnquiry(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching candidate details:', error);
+        }
+    };
+
+    // Initial load of the selected ID
     useEffect(() => {
-        // setIsLoading(true);
-        // Simulate API delay
-        const timer = setTimeout(() => {
-            const mockCandidate: Candidate = {
-                id: "1",
-                name: "Babu Mayan",
-                candidateId: "AJ247",
-                isActive: true,
-                mobileNumber: "+91 9884719615",
-                whatsappNumber: "+91 9551688774",
-                emailId: "kbalaganesh@gmail.com",
-                nationality: "Indian",
-                currentLocation: "Dubai",
-                visaType: "Freelance",
-                availabilityToJoinDate: "25/05/2025",
-                availabilityToJoinPeriod: "1 Week",
-                positionApplyingFor: "N/A",
-                category: "N/A",
-                otherCategory: "N/A",
-                yearsOfUAEExperience: "N/A",
-                skillsAndTasks: "N/A",
-                preferredWorkLocation: "N/A",
-                expectedSalary: "N/A",
-                documents: {
-                    cv: { name: "Babu.doc", size: "470 KB" },
-                    passport: { name: "passport", size: "150 KB" },
-                    insurance: { name: "insurance", size: "145 KB" },
-                    visa: { name: "visa", size: "421 KB" }
-                }
-            };
-            setCandidate(mockCandidate);
-
-            // Generate mock candidate list
-            const mockCandidateList = Array(13).fill(null).map((_, index) => ({
-                ...mockCandidate,
-                id: String(index + 1),
-                name: index === 0 ? "Babu Mayan" : `Srinithi Ravi ${index + 1}`,
-                candidateId: `AJ${247 + index}`
-            }));
-            setCandidateList(mockCandidateList);
-            // setIsLoading(false);
-        }, 1500); // 1.5 second delay to show loading state
-
-        return () => clearTimeout(timer);
-    }, [id]);
-
+        if (id && initialLoad) {
+            setIsLoading(true);
+            fetchClientDetails(Number(id)).finally(() => {
+                setIsLoading(false);
+                setInitialLoad(false);
+            });
+        }
+    }, [id, initialLoad]);
 
     useEffect(() => {
-
-
-        const ClientEnquiry: ClientEnquiry = {
-            CompanyName: "Global BuildCorp Ltd.",
-            EmailID: "contact@buildcorp.com",
-            ContactPersonName: "Emily Roberts",
-            MobileNumber: "+1-202-555-0147",
-            NatureOfWork: "Construction and Civil Engineering",
-            ProjectLocation: "Doha, Qatar",
-            CategoriesRequired: "Masons, Electricians, Welders",
-            QuantityRequiredPerCategory: "Masons: 20, Electricians: 10, Welders: 15",
-            ProjectDuration: "18 Months",
-            ProjectStartDate: "2025-06-01",
-            KitchenFacilitiesProvided: "Yes",
-            TransportationProvided: "Yes",
-            AccommodationProvided: "Yes",
-            QueryType: "Manpower Requirement",
-            RemarksNotes: "Workers should have GCC experience. Preferably English-speaking."
-        };
-
-
-
-        setClientEnquiry(ClientEnquiry);
+        fetchClientNames();
     }, []);
+
+    // Handle search
+    const handleSearch = async (query: string) => {
+        try {
+            const result = await fetchClientEnquiryNames(query) as ApiResponse;
+            if (result && result.data) {
+                setClientEnquiry(result.data);
+            }
+        } catch (error) {
+            console.error('Error searching candidates:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (searchQuery.trim().length > 0) {
+            handleSearch(searchQuery);
+        } else {
+            fetchClientNames();
+        }
+    }, [searchQuery]);
+
+    const handleCandidateClick = async (clientEnquiryId: number, e: React.MouseEvent) => {
+        e.preventDefault();
+        navigate(`/ClientEnquiry/${clientEnquiryId}`);
+        setIsLoading(true);
+        await fetchClientDetails(clientEnquiryId);
+        setIsLoading(false);
+    };
 
     const handleAddRemark = () => {
         if (newRemark.trim()) {
@@ -111,12 +148,6 @@ export const ClientEnquiryView = () => {
         }
     };
 
-    // Filter candidates based on search query
-    const filteredCandidates = candidateList.filter(c =>
-        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.candidateId.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     // if (isLoading) {
     //   return (
     //     <div className="min-h-screen bg-gray-100">
@@ -128,14 +159,18 @@ export const ClientEnquiryView = () => {
 
     const openEditClientEnquiryPopup = () => {
         setShowEditClientEnquiryPopup(true)
-      }
-    
-      const closeEditClientEnquiryPopup = () => {
-        setShowEditClientEnquiryPopup(false)
-      }
+    }
 
-    if (!candidate) {
-        return <div>Loading...</div>;
+    const closeEditClientEnquiryPopup = () => {
+        setShowEditClientEnquiryPopup(false)
+    }
+
+    if (isLoading && initialLoad) {
+        return <AgentSupplierViewShimmer />;
+    }
+
+    if (!ClientEnquiry) {
+        return <div><AgentSupplierViewShimmer /></div>;
     }
 
     return (
@@ -165,11 +200,11 @@ export const ClientEnquiryView = () => {
                 </div>
 
                 <div className="flex gap-4">
-                    {/* Left Column - Candidate Names */}
-                    <div className="w-1/4 border-armsBlack border-1 rounded ">
+                    {/* Left Column - ClientEnquiry Names */}
+                    <div className="w-1/4 border-armsBlack border-1 rounded">
                         <div className="bg-white rounded shadow-sm">
-                            <div className="bg-main text-armsWhite p-4 ">
-                                <h2 className="text-base font-semibold">Candidate Names ({filteredCandidates.length})</h2>
+                            <div className="bg-main text-armsWhite p-4">
+                                <h2 className="text-base font-semibold">ContactPerson Names ({ClientEnquiry.length})</h2>
                             </div>
                             <div className="p-4">
                                 <input
@@ -180,26 +215,21 @@ export const ClientEnquiryView = () => {
                                     className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
                                 />
                                 <div className="space-y-0 max-h-100% overflow-y-auto">
-                                    {filteredCandidates.map((c) => (
-                                        <Link
-                                            key={c.id}
-                                            // to={`/Candidate/${id}/${c.id}`}
-                                            to={`/Candidate/${c.id}`}
-                                            className={`block p-3 border-b ${c.id === id} hover:bg-gray-100
-                                                    `}
+                                    {ClientEnquiry.length > 0 ? ClientEnquiry.map((clientenquiry) => (
+                                        <div
+                                            key={clientenquiry.id}
+                                            onClick={(e) => handleCandidateClick(clientenquiry.id, e)}
+                                            className={`block p-3 border-b ${clientenquiry.id === Number(id) ? 'bg-gray-100' : ''} hover:bg-gray-100 cursor-pointer`}
                                         >
                                             <div className="flex justify-between items-center">
                                                 <div className="flex-grow">
-                                                    <div className="text-sm font-medium">{c.name}</div>
-                                                    {/* <div className="text-xs text-gray-500 mt-1">ID: {c.candidateId}</div> */}
+                                                    <div className="text-sm font-medium">{clientenquiry.contact_person_name}</div>
                                                 </div>
-                                                {/* <div className={`w-2 h-2 rounded-full ${c.isActive ? 'bg-green-500' : 'bg-gray-400'}`} /> */}
                                             </div>
-                                        </Link>
-                                    ))}
-                                    {filteredCandidates.length === 0 && (
+                                        </div>
+                                    )) : (
                                         <div className="text-center py-4 text-gray-500">
-                                            No candidates found
+                                            No Contact Persons found
                                         </div>
                                     )}
                                 </div>
@@ -220,19 +250,19 @@ export const ClientEnquiryView = () => {
                                         <div className="grid grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
                                             <div>
                                                 <p className="text-xs text-gray-600">Company Name</p>
-                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.CompanyName}</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.company_name}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.EmailID}</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.email}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Contact Person Name</p>
-                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.ContactPersonName}</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.contact_person_name}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="text-sm font-bold mt-1">{ClientEnquiry?.MobileNumber}</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.mobile_number}</p>
                                             </div>
                                         </div>
                                         <Button
@@ -252,27 +282,27 @@ export const ClientEnquiryView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Nature of Work</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.NatureOfWork}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.nature_of_work}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Location</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.ProjectLocation}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_location}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Duration</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.ProjectDuration}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_duration}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Categories Required</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.CategoriesRequired}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.categories_required}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Quantity Required (per category)</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.QuantityRequiredPerCategory}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.quantity_required}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Start Date</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.ProjectStartDate}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_start_date}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -285,15 +315,15 @@ export const ClientEnquiryView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Kitchen Facilities Provided?</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.KitchenFacilitiesProvided}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.kitchen_facility}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Transportation Provided</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.TransportationProvided}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.transportation_provided}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Accommodation Provided?</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.AccommodationProvided}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.accommodation_provided}</p>
                                         </div>
 
                                     </div>
@@ -307,11 +337,11 @@ export const ClientEnquiryView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Query Type</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.QueryType}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.query_type}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Remarks / Notes</p>
-                                            <p className="text-sm font-bold mt-1">{ClientEnquiry?.RemarksNotes}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.remarks}</p>
                                         </div>
                                     </div>
                                 </div>
