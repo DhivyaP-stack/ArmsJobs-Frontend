@@ -224,12 +224,12 @@ export const CandidateTable = () => {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
               className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
               <option value="all">All</option>
-              <option value="Today">Today</option>
-              <option value="Yesterday">Yesterday</option>
-              <option value="Last 7 days">Last 7 days</option>
-              <option value="Last 30 days">Last 30 days</option>
-              <option value="This Month">This Month</option>
-              <option value="Last Year">Last Year</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="last7days">Last 7 days</option>
+              <option value="last30days">Last 30 days</option>
+              <option value="thismonth">This Month</option>
+              <option value="lastyear">Last Year</option>
             </select>
           </div>
         </div>
