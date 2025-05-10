@@ -1,6 +1,59 @@
 
 import { apiAxios } from '../apiUrl';
 
+interface ApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    status: string;
+    message: string;
+    data: CandidateList[];
+  };
+}
+
+interface CandidateList {
+ id: number;
+  candidate_id: number;
+  photo_upload?: string | null;
+  full_name: string;
+  mobile_number: string;
+  whatsapp_number: string;
+  email: string;
+  nationality: string;
+  current_location: string;
+  visa_type: string;
+  visa_expiry_date: string | null;
+  availability_to_join: string;
+  position_applying_for: string;
+  category: string;
+  other_category?: string | null;
+  uae_experience_years: string;
+  skills_tasks: string;
+  preferred_work_location: string;
+  expected_salary: string;
+  upload_cv: string;
+  relevant_docs1?: string | null;
+  relevant_docs2?: string | null;
+  relevant_docs3?: string | null;
+  status: string;
+  created_at: string;
+  is_deleted: boolean;
+  remarks: {
+    id: number;
+    remark: string;
+    candidate_full_name: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  languages_spoken: string;
+  preferred_work_type: string;
+  currently_employed: boolean;
+  additional_notes: string;
+  referral_name: string;
+  referral_contact: string;
+}
+
 // Get CandidateList
 export const fetchCandidatesList = async () => {
   try {
@@ -176,7 +229,6 @@ export const fetchCandidateNames = async (search?:string) => {
       {
       params: { search },
     });
-
     if (response.status !== 200 || !response.data) {
       throw new Error('Failed to fetch candidate names');
     }
@@ -205,34 +257,18 @@ export const ViewCandidateName = async (
   }
 };
 
-// // Search in viewpage
-// export const ViewSearch = async (searchQuery: string = '') => {
-//   try {
-//     // Construct the URL with the search query
-//     const response = await apiAxios.get(`/api/candidates/names/?search=${encodeURIComponent(searchQuery)}`);
-
-//     if (!response.data || response.status !== 200) {
-//       throw new Error("Failed to fetch candidates");
-//     }
-
-//     console.log("Candidatesearch API response", response.data);
-
-//     return response.data;
-    
-//   } catch (error: any) {
-//     console.error("Error fetching candidates:", error.response?.data?.message || error.message);
-//     throw new Error(error.response?.data?.message || "Unable to fetch candidates. Please try again later.");
-//   }
-// };
-
-// export const ViewSearch = async (query: string): Promise<CandidateNames[]> => {
-//   try {
-//     const res = await apiAxios.get<CandidateSearchResponse>("/api/candidates/names/", {
-//       params: { search: query },
-//     });
-//     return res.data.data;
-//   } catch (error) {
-//     console.error("Error fetching Candidate names", error);
-//     return [];
-//   }
-// };
+//Search, All, Pagination
+export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string) => {
+  try {
+    const response = await apiAxios.get<ApiResponse>(
+      `/api/candidates/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}`
+    );
+    if (!response.data || response.status !== 200) {
+      throw new Error("Failed to fetch overseas recruitment list");
+    }
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error fetching overseas recruitment list:", error);
+    throw error;
+  }
+};

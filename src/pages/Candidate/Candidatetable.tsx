@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { InputField } from "../../common/InputField";
 import { Button } from "../../common/Button";
 import profileimg from "../../assets/images/profileimg.jpg"
@@ -10,24 +10,24 @@ import { IoMdSearch } from "react-icons/io";
 import { MdDelete, MdModeEdit, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { EditCandidatePopup } from "./EditCandidatePopup";
 import { Pagination } from "../../common/Pagination";
-import { fetchCandidatesList } from "../../Commonapicall/Candidateapicall/Candidateapis";
+import { filterCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { NotifyError } from "../../common/Toast/ToastMessage";
 import { CandidateTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/CommonTableShimmer";
 import { DeleteCandidatePopup } from "./DeleteCandidatePopup";
 
-interface CandidatesApiResponse {
-  status: string;
-  message: string;
-  data: CandidateList[];
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: CandidatesApiResponse; // <- this is the real structure of the response
-}
+// interface CandidatesApiResponse {
+//   status: string;
+//   message: string;
+//   data: CandidateList[];
+//   count: number;
+//   next: string | null;
+//   previous: string | null;
+//   results: CandidatesApiResponse; // <- this is the real structure of the response
+// }
 
 // Define a Candidate type
 interface CandidateList {
-  id:number;
+  id: number;
   candidate_id: number;
   photo_upload?: string | null;
   full_name: string;
@@ -75,35 +75,39 @@ export const CandidateTable = () => {
   const [showEditCandidatePopup, setShowEditCandidatePopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const indexOfLastCandidate = currentPage * itemsPerPage;
-  const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
-  const currentCandidate = candidatesData.slice(indexOfFirstCandidate, indexOfLastCandidate);
+  // const indexOfLastCandidate = currentPage * itemsPerPage;
+  // const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
+  // const currentCandidate = candidatesData.slice(indexOfFirstCandidate, indexOfLastCandidate);
   const [showDeleteCandidatePopup, setShowDeleteCandidatePopup] = useState(false);
   const [candidateToDelete, setcandidateToDelete] = useState<{ id: number, name: string } | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+  const [search, setSearch] = useState("");
+  console.log('search',search)
+  const [filterBy, setFilterBy] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCandidate = async () => {
-      try {
-        setLoading(true);
-        const response = await fetchCandidatesList() as CandidatesApiResponse;
-        setCandidatesData(response.results.data);
-      } catch (err) {
-        NotifyError("Failed to fetch candidates");
-        console.log("Error fetching candidates:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCandidate();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCandidate = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await fetchCandidatesList() as CandidatesApiResponse;
+  //       setCandidatesData(response.results.data);
+  //     } catch (err) {
+  //       NotifyError("Failed to fetch candidates");
+  //       console.log("Error fetching candidates:", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchCandidate();
+  // }, []);
 
 
   const refreshCandidateList = async () => {
     try {
       setLoading(true);
-      const response = await fetchCandidatesList() as CandidatesApiResponse;
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy);
       setCandidatesData(response?.results?.data);
     } catch (err) {
       NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
@@ -111,6 +115,32 @@ export const CandidateTable = () => {
       setLoading(false);
     }
   };
+
+  //Pagination
+  const fetchPagination = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy);
+      if (!response?.results?.data) {
+        setCandidatesData([]);
+        setTotalCount(0);
+        return;
+      }
+      setCandidatesData(response?.results?.data);
+      setTotalCount(response.count || 0);
+    } catch (error) {
+      console.error("Error fetching pagination data:", error);
+      setCandidatesData([]);
+      setTotalCount(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, search, filterBy]);
+
+
+  useEffect(() => {
+    fetchPagination();
+  }, [fetchPagination]);
 
   const openAddCandidatePopup = () => {
     setShowAddCandidatePopup(true);
@@ -120,7 +150,7 @@ export const CandidateTable = () => {
     setShowAddCandidatePopup(false)
   }
 
-  const openEditCandidatePopup = (candidate:any) => {
+  const openEditCandidatePopup = (candidate: any) => {
     setShowEditCandidatePopup(true);
     setSelectedCandidate(candidate);
   }
@@ -148,8 +178,6 @@ export const CandidateTable = () => {
     setItemsPerPage(items);
     setCurrentPage(1); // Reset to the first page when items per page changes
   };
-
-
 
   return (
     <div className="p-6">
@@ -182,6 +210,8 @@ export const CandidateTable = () => {
               <InputField
                 type="text"
                 placeholder="Search"
+                value={search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
                 label=""
               />
@@ -189,7 +219,10 @@ export const CandidateTable = () => {
             </div>
 
             {/* Select Dropdown */}
-            <select className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+            <select
+              value={filterBy}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
+              className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
               <option value="all">All</option>
               <option value="Today">Today</option>
               <option value="Yesterday">Yesterday</option>
@@ -206,7 +239,7 @@ export const CandidateTable = () => {
           <CandidateTableShimmer />
         ) : (
           <div className="w-full overflow-x-auto">
-            {currentCandidate.length === 0 ? (
+            {candidatesData.length === 0 ? (
               <div className="text-center py-4">No candidates found</div>
             ) : (
               <table className="w-full table-auto text-sm ">
@@ -237,14 +270,14 @@ export const CandidateTable = () => {
                   </tr>
                 </thead>
                 <tbody className="whitespace-nowrap ">
-                  {currentCandidate.map((candidate) => (
+                  {candidatesData.map((candidate) => (
                     <tr key={candidate.candidate_id}
                       onClick={() => navigate(`/Candidate/${candidate.id}`)}
                       className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
                       <td className="px-2 py-7">{candidate.candidate_id}</td>
                       <td className="px-2 py-1">
                         {candidate.photo_upload ? (
-                          <img src={candidate.photo_upload }
+                          <img src={candidate.photo_upload}
                             alt={candidate.photo_upload}
                             className="w-10 h-10 rounded-full"
                           />
@@ -348,7 +381,7 @@ export const CandidateTable = () => {
         )}
         <Pagination
           currentPage={currentPage}
-          totalItems={candidatesData.length}
+          totalItems={totalCount}
           itemsPerPage={itemsPerPage}
           onPageChange={handlePageChange}
           onItemsPerPageChange={handleItemsPerPageChange}
@@ -356,11 +389,11 @@ export const CandidateTable = () => {
       </div>
       {showAddCandidatePopup && <AddCandidatePopup closePopup={closeAddCategoryPopup} refreshData={refreshCandidateList} />}
       {showEditCandidatePopup && selectedCandidate && (
-      <EditCandidatePopup 
-      closePopup={closeEditCategoryPopup} 
-      editCandidate={selectedCandidate}
-      refreshData={refreshCandidateList}
-      />)}
+        <EditCandidatePopup
+          closePopup={closeEditCategoryPopup}
+          editCandidate={selectedCandidate}
+          refreshData={refreshCandidateList}
+        />)}
       {showDeleteCandidatePopup && candidateToDelete && (<DeleteCandidatePopup closePopup={closeDeleteAgentsPopup} CandidateData={candidateToDelete} refreshData={refreshCandidateList} />)}
     </div>
   );

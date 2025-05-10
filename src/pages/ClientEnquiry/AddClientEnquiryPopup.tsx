@@ -155,7 +155,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                             {/* Company Name */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Company Name<span className="text-red-500">*</span>
+                                                    Company Name
                                                 </label>
                                                 <InputField
                                                     type="text"
