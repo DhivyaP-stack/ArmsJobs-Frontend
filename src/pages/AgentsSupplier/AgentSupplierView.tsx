@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
@@ -33,7 +32,6 @@ const remarkSchema = z.object({
 
 export const AgentSupplyView = () => {
     const { id } = useParams<{ id: string }>();
-    const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [agentSupplier, setAgentSupplier] = useState<AgentSupplier[]>([]);
     const [searchQuer, setSearchQuer] = useState("");
@@ -394,7 +392,6 @@ export const AgentSupplyView = () => {
                                                 No remarks yet
                                             </p>
                                         )}
-
                                     </div>
                                 </div>
                             </div>
