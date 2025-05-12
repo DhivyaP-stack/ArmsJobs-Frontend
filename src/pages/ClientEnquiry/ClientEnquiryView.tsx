@@ -234,7 +234,7 @@ export const ClientEnquiryView = () => {
                     <div className="w-1/4 border-armsBlack border-1 rounded">
                         <div className="bg-white rounded shadow-sm">
                             <div className="bg-main text-armsWhite p-4">
-                                <h2 className="text-base font-semibold">ContactPerson Names ({ClientEnquiry.length})</h2>
+                                <h2 className="text-base font-semibold">Contact Person Names ({ClientEnquiry.length})</h2>
                             </div>
                             <div className="p-4">
                                 <input
@@ -345,15 +345,15 @@ export const ClientEnquiryView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Kitchen Facilities Provided?</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.kitchen_facility}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.kitchen_facility ? 'Yes' : 'No'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Transportation Provided</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.transportation_provided}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.transportation_provided ? 'Yes' : 'No'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Accommodation Provided?</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.accommodation_provided}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.accommodation_provided ? 'Yes' : 'No'}</p>
                                         </div>
 
                                     </div>

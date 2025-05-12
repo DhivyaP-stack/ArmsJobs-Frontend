@@ -40,6 +40,13 @@ export interface AgentSupplier {
   is_deleted: boolean;
   status: string;
   created_at: string;
+   agent_remarks: {
+    id: number;
+    remark: string;
+    agent_supplier_name: string;
+    created_at: string;  // ISO date-time string
+    updated_at: string;  
+  }[];
 }
 
 

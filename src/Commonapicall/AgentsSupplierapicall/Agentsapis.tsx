@@ -143,3 +143,25 @@ export const fetchAgentsPageList = async (page: number, search: string | undefin
     console.error("Error fetching agents list:", error);
   }
 };
+
+//Add Agents Remark
+export const addAgentRemark = async (agent_supplier_id: number, remark: string) => {
+  try {
+    const response = await apiAxios.post('/api/agents/remarks/create/', {
+      agent_supplier_id,
+      remark
+    });
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error adding remark:", error);
+    if (error && typeof error === "object" && "response" in error) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      throw new Error(
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to add remark. Please try again."
+      );
+    }
+    throw new Error("Failed to add remark. Please try again.");
+  }
+};

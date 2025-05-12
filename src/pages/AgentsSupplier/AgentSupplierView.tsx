@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import {  CandidateRemark } from "../../types/CandidateList";
+import { CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
@@ -8,8 +8,10 @@ import { Button } from "../../common/Button";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditAgentsSupplierPopup } from "./EditAgentSupplierPopup";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
-import { fetchAgents, fetchAgentsList, fetchAgentsListById } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
+import { addAgentRemark, fetchAgents, fetchAgentsList, fetchAgentsListById } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
 import { AgentSupplier, ApiResponse } from "./AgentsSupplierTable";
+import { toast } from "react-toastify";
+import { z } from "zod";
 
 export interface Agent {
     id: number;
@@ -24,8 +26,12 @@ export interface AgentSearchResponse {
     previous: string | null;
 }
 
+const remarkSchema = z.object({
+    remark: z.string().min(1, "Remark is required").max(500, "Remark must be less than 500 characters")
+});
+
+
 export const AgentSupplyView = () => {
-    
     const { id } = useParams<{ id: string }>();
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
@@ -33,29 +39,31 @@ export const AgentSupplyView = () => {
     const [searchQuer, setSearchQuer] = useState("");
     const [showEditAgentsSupplierPopup, setShowEditAgentsSupplierPopup] = useState(false);
     const [agent, setAgent] = useState<AgentSupplier | null>(null);
+    const [agents, setAgents] = useState<Agent[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [agentId, setAgentId] = useState<number | null>(null);
+    const [remarkError, setRemarkError] = useState<string | null>(null);
+
     const navigate = useNavigate();
+
     const openEditAgentsSupplierPopup = () => {
         setShowEditAgentsSupplierPopup(true);
     }
     const closeEditAgentsSupplierPopup = () => {
         setShowEditAgentsSupplierPopup(false)
     }
-    const [agents, setAgents] = useState<Agent[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [agentId,setAgentId]=useState<number | null>(null)
-    
+
     const handleSearch = async (query: string) => {
         try {
             const result = await fetchAgents(query);
             setAgents(result);
         } catch (err) {
             console.error("Search error", err);
-        } 
+        }
         // finally {
         //     setLoading(false);
         // }
     };
-
 
     useEffect(() => {
         if (searchQuer.trim().length > 0) {
@@ -65,18 +73,53 @@ export const AgentSupplyView = () => {
         }
     }, [searchQuer]);
 
+    const handleAddRemark = async () => {
+        try {
+            // Validate the remark
+            const validationResult = remarkSchema.safeParse({ remark: newRemark });
+            if (!validationResult.success) {
+                const errorMessage = validationResult.error.errors[0]?.message || "Invalid remark";
+                setRemarkError(errorMessage);
+                toast.error(errorMessage);
+                return;
+            }
+            if (!agent?.id) {
+                toast.error("Agent ID is required");
+                return;
+            }
+            setRemarkError(null);
 
-    const handleAddRemark = () => {
-        if (newRemark.trim()) {
-            const remark: CandidateRemark = {
-                id: Date.now().toString(),
-                userId: "current-user-id",
-                userName: "Amjad",
-                timestamp: new Date().toLocaleString(),
-                content: newRemark
-            };
-            setRemarks([...remarks, remark]);
-            setNewRemark("");
+            // Call the API to add the remark
+            const response = await addAgentRemark(agent.id, newRemark);
+
+            if (response) {
+                // Create a new remark object with all required fields
+                const newRemarkObj = {
+                    id: Date.now(), // Use ID from response if available
+                    remark: newRemark,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    agent_supplier_name: agent.name,
+                    // Add any other required fields from your AgentRemark interface
+                };
+
+                // Update the local state with the new remark
+                setAgent(prev => {
+                    if (!prev) return null;
+                    return {
+                        ...prev,
+                        agent_remarks: [...prev.agent_remarks, newRemarkObj]
+                    };
+                });
+
+                // Clear the remark input
+                setNewRemark("");
+                toast.success("Remark added successfully");
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to add remark";
+            toast.error(errorMessage);
+            console.error("Error adding remark:", error);
         }
     };
 
@@ -86,13 +129,11 @@ export const AgentSupplyView = () => {
         const fetchAgent = async () => {
             setLoading(true);
             try {
-
                 const response = await fetchAgentsList() as ApiResponse;
                 console.log("response?.data?.data", response?.results?.data)
                 setAgentSupplier(response?.results?.data);
                 //setTotalItems(response.count);
             } catch (err) {
-
                 console.error("Error fetching candidates:", err);
             } finally {
                 setLoading(false);
@@ -110,31 +151,29 @@ export const AgentSupplyView = () => {
     }, [id]);
 
 
-// Define fetchSingleAgent outside useEffect so it can be reused
-const fetchSingleAgent = async () => {
-    try {
-      if (id) {
-        const response = await fetchAgentsListById(Number(id));
-        setAgent(response);
-        setAgentId(response.id);   
-      }
-    } catch (err) {
-      console.error("Error fetching agent by ID:", err);
-    }
-  };
-  
-  // Initial fetch
-  useEffect(() => {
-    fetchSingleAgent();
-  }, [id]);
-  
-  // Handler for when agent is updated
-  const handleAgentAdded = () => {
-    fetchSingleAgent(); // Now this works correctly
-  };
+    // Define fetchSingleAgent outside useEffect so it can be reused
+    const fetchSingleAgent = async () => {
+        try {
+            if (id) {
+                const response = await fetchAgentsListById(Number(id));
+                setAgent(response);
+                setAgentId(response.id);
+            }
+        } catch (err) {
+            console.error("Error fetching agent by ID:", err);
+        }
+    };
 
+    // Initial fetch
+    useEffect(() => {
+        fetchSingleAgent();
+    }, [id]);
 
-  
+    // Handler for when agent is updated
+    const handleAgentAdded = () => {
+        fetchSingleAgent(); // Now this works correctly
+    };
+
     if (loading) {
         return <AgentSupplierViewShimmer />;
     }
@@ -220,7 +259,7 @@ const fetchSingleAgent = async () => {
                                     </div>
                                     <div className="flex justify-start ">
                                         <div className="grid grid-cols-3 gap-4 pt-2 -full">
-                                        <div>
+                                            <div>
                                                 <p className="text-xs text-gray-600">Name of Agent</p>
                                                 <p className="text-sm font-bold mt-1">{agent?.name}</p>
                                             </div>
@@ -252,7 +291,7 @@ const fetchSingleAgent = async () => {
                                         <h2 className="text-xl font-bold">Eligibility & History</h2>
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 pt-2">
-                                    <div>
+                                        <div>
                                             <p className="text-xs text-gray-600">Can the agent do recruitment?</p>
                                             <p className="text-sm font-bold mt-1">{agent?.can_recruit}</p>
                                         </div>
@@ -272,7 +311,7 @@ const fetchSingleAgent = async () => {
                                         <h2 className="text-xl font-bold">Manpower info</h2>
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 pt-2">
-                                    <div>
+                                        <div>
                                             <p className="text-xs text-gray-600">Categories You Can Supply</p>
                                             <p className="text-sm font-bold mt-1">{agent?.supply_categories}</p>
                                         </div>
@@ -299,7 +338,7 @@ const fetchSingleAgent = async () => {
                                     </div>
                                 </div>
 
-                               
+
                             </div>
                         </div>
 
@@ -312,11 +351,17 @@ const fetchSingleAgent = async () => {
                                 <div className="p-4">
                                     <textarea
                                         value={newRemark}
-                                        onChange={(e) => setNewRemark(e.target.value)}
-                                        className="w-full p-3 border-2 border-armsgrey rounded mb-2 text-sm bg-armsWhite"
+                                        onChange={(e) => {
+                                            setNewRemark(e.target.value);
+                                            setRemarkError(null); // Clear error when user types
+                                        }}
+                                        className={`w-full p-3 border-2 ${remarkError ? 'border-red-500' : 'border-armsgrey'} rounded mb-2 text-sm bg-armsWhite`}
                                         rows={4}
-                                    // placeholder="Add a remark..."
+                                        placeholder="Add a remark..."
                                     />
+                                    {remarkError && (
+                                        <p className="text-red-500 text-xs mb-2">{remarkError}</p>
+                                    )}
                                     <Button
                                         onClick={handleAddRemark}
                                         buttonType="button"
@@ -324,61 +369,32 @@ const fetchSingleAgent = async () => {
                                         className="mx-auto px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                     />
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
-                                        {/* Static remarks data */}
-                                        <div className="border-b pb-4">
-                                            <div className="flex max-xl:flex-col  items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={Profileimg}
-                                                            alt="profileImg"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <span className="text-sm font-medium">Amjad</span>
-                                                </div>
-                                                <span className="text-xs text-gray-500">14-02-2025 10:25:12</span>
-                                            </div>
-                                            <p className="text-sm text-gray-600">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
-                                            </p>
-                                        </div>
-
-                                        <div className="border-b pb-4">
-                                            <div className="flex max-xl:flex-col items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={Profileimg}
-                                                            alt="profileImg"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <span className="text-sm font-medium">Swetha</span>
-                                                </div>
-                                                <span className="text-xs text-gray-500">13-02-2025 15:02:40</span>
-                                            </div>
-                                            <p className="text-sm text-gray-600">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
-                                            </p>
-                                        </div>
-
-                                        {/* {remarks.map((remark) => (
-                                                <div key={remark.id} className="border-b pb-4">
-                                                    <div className="flex items-center justify-between mb-2">
+                                        {/*Remarks*/}
+                                        {agent?.agent_remarks && agent.agent_remarks.length > 0 ? (
+                                            agent.agent_remarks.map((comment, index) => (
+                                                <div key={index} className="border-b pb-4">
+                                                    <div className="flex max-xl:flex-col items-center justify-between mb-2">
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                                <span className="text-xs">{remark.userName[0]}</span>
+                                                                <img
+                                                                    src={Profileimg}
+                                                                    alt="profileImg"
+                                                                    className="w-full h-full object-cover"
+                                                                />
                                                             </div>
-                                                            <span className="text-sm font-medium">{remark.userName}</span>
+                                                            <span className="text-sm font-medium">{agent.name}</span>
                                                         </div>
-                                                        <span className="text-xs text-gray-500">{remark.timestamp}</span>
+                                                        <span className="text-xs text-gray-500">  {new Date(comment.created_at).toLocaleDateString()}</span>
                                                     </div>
-                                                    <p className="text-sm text-gray-600">{remark.content}</p>
+                                                    <p className="text-sm text-gray-600">{comment.remark}</p>
                                                 </div>
-                                            ))} */}
+                                            ))
+                                             ) : (
+                                            <p className="text-sm text-gray-500 text-center py-4">
+                                                No remarks yet
+                                            </p>
+                                        )}
+
                                     </div>
                                 </div>
                             </div>
@@ -387,7 +403,11 @@ const fetchSingleAgent = async () => {
                 </div>
             </div>
             {/* {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />} */}
-            {showEditAgentsSupplierPopup && agentId !== null &&<EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} agentId={agentId}  onAgentAdded={handleAgentAdded}         />}
+            {showEditAgentsSupplierPopup && agentId !== null &&
+                <EditAgentsSupplierPopup
+                    closePopup={closeEditAgentsSupplierPopup}
+                    agentId={agentId}
+                    onAgentAdded={handleAgentAdded} />}
         </div>
         // </div>
     );
