@@ -119,6 +119,59 @@ export const AddClientEnquiryList = async (
     }
 };
 
+
+//EditClientEnquiry
+export const EditClientEnquiry = async (
+  id: number,
+  CompanyName: string, 
+  Email: string, 
+  ContactPersonName: string, 
+  MobileNumber:string, 
+  NatureofWork:string,
+  ProjectLocation:string,
+  ProjectDuration:string,
+  CategoriesRequired:string,
+  QuantityRequired:string,
+  ProjectStartDtae:string,
+  KitchenFacility:string,
+  TransportationProvided:string,
+  AccomodationProvided:string,
+  Remarks:string,
+  QueryType:string,
+ ) => {
+  try {
+    const formData = new FormData();
+    formData.append('company_name', CompanyName);
+    formData.append('email',Email);
+    formData.append('contact_person_name', ContactPersonName);
+    formData.append('mobile_number', MobileNumber);
+    formData.append('nature_of_work', NatureofWork);
+    formData.append('project_location', ProjectLocation);
+    formData.append('project_duration', ProjectDuration);
+    formData.append('categories_required',CategoriesRequired);
+    formData.append('quantity_required', QuantityRequired);
+    formData.append('project_start_date', ProjectStartDtae);
+    formData.append('kitchen_facility', KitchenFacility);
+    formData.append('transportation_provided',TransportationProvided);
+    formData.append('accommodation_provided', AccomodationProvided);
+    formData.append('remarks', Remarks);
+    formData.append('query_type', QueryType);
+    const response = await apiAxios.patch(`/api/client-enquiries/update/${id}/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to submit candidate data');
+    }
+    console.log('Candidate updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting candidate:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
+  }
+};
+
 //DeleteCandidate
 export const deleteClientEnquiry = async (Id: string) => {
     try {

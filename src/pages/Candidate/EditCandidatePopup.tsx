@@ -541,18 +541,6 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                     />
                                                     No
                                                 </label>
-                                                {/* <label className="relative flex items-center gap-2 pl-7 text-gray-600 cursor-pointer">
-                                                                        <input
-                                                                            type="radio"
-                                                                            name="currentlyemployed"
-                                                                            value="no"
-                                                                            className="peer absolute left-[-9999px]"
-                                                                        />
-                                                                        <span className="absolute left-0 top-0 w-[18px] h-[18px] border border-armsBlack rounded-full bg-white"></span>
-                                                                        <span className="after:content-[''] after:w-[12px] after:h-[12px] after:bg-armsjobslightblue after:absolute after:top-[4px] after:left-[4px] after:rounded-full after:transition-all after:scale-0 after:opacity-0 peer-checked:after:scale-100 peer-checked:after:opacity-100"></span>
-                                                                        No
-                                                                    </label> */}
-
                                             </div>
                                         </div>
                                         {/* </div> */}

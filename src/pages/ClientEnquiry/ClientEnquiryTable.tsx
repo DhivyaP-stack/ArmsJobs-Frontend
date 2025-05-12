@@ -55,33 +55,11 @@ export const ClientEnquiryTable = () => {
   console.log('search', search)
   const [filterBy, setFilterBy] = useState("");
   const [totalCount, setTotalCount] = useState(0);
+  const [selectedClientEnquiry, setSelectedClientEnquiry] = useState<any>(null);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await fetchClientEnquiryList() as ClientEnquiryApiResponse;
-  //       console.log("Full API response:", response); // Debug log
-  //       if (response?.results?.data) {
-  //         console.log("Client enquiry data:", response.results.data); // Debug log
-  //         setClientEnquiry(response.results.data);
-  //       } else {
-  //         console.log("No data found in response");
-  //         setClientEnquiry([]);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to fetch client enquiries:", err);
-  //       setClientEnquiry([]);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  
 
-
-
-  //Pagination
+  //Get ClientEnquirylist, Pagination, search , All
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
@@ -119,7 +97,7 @@ export const ClientEnquiryTable = () => {
       const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy);
       setClientEnquiry(response?.results?.data);
     } catch (err) {
-      NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
+      NotifyError(err instanceof Error ? err.message : "Failed to fetch clientEnquiry");
     } finally {
       setLoading(false);
     }
@@ -133,8 +111,9 @@ export const ClientEnquiryTable = () => {
     setShowAddClientEnquiryPopup(false)
   }
 
-  const openEditClientEnquiryPopup = () => {
+  const openEditClientEnquiryPopup = (clientEnquiry: any) => {
     setShowEditClientEnquiryPopup(true)
+    setSelectedClientEnquiry(clientEnquiry);
   }
 
   const closeEditClientEnquiryPopup = () => {
@@ -283,13 +262,13 @@ export const ClientEnquiryTable = () => {
                         <td className="px-2 py-2">{client.project_duration || '-'}</td>
                         <td className="px-2 py-2">{client.project_location || '-'}</td>
                         <td className="px-2 py-2">
-                          {client.kitchen_facility ? 'Yes' : 'No'}
+                          {client.kitchen_facility ? 'yes' : 'no'}
                         </td>
                         <td className="px-2 py-2">
-                          {client.transportation_provided ? 'Yes' : 'No'}
+                          {client.transportation_provided ? 'yes' : 'no'}
                         </td>
                         <td className="px-2 py-2">
-                          {client.accommodation_provided ? 'Yes' : 'No'}
+                          {client.accommodation_provided ? 'yes' : 'no'}
                         </td>
                         <td className="px-2 py-2">{client.categories_required || '-'}</td>
                         <td className="px-2 py-2">{client.quantity_required || '-'}</td>
@@ -309,12 +288,17 @@ export const ClientEnquiryTable = () => {
                             <div
                               onClick={(e) => {
                                 e.stopPropagation();
-                                openEditClientEnquiryPopup();
+                                openEditClientEnquiryPopup(client);
                               }}
                               className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200"
                             >
                               <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                              <div className="absolute -top-6.5 bg-armsjobslightblue text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              <div 
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row navigation
+                                openEditClientEnquiryPopup(client); // Open the popup
+                              }}
+                              className="absolute -top-6.5 bg-armsjobslightblue text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
                                 Edit
                               </div>
                             </div>
@@ -352,10 +336,20 @@ export const ClientEnquiryTable = () => {
           closePopup={closeAddClientEnquiryPopup}
           refreshData={refreshClientList}
         />)}
-      {showEditClientEnquiryPopup && (<EditClientEnquiryPopup closePopup={closeEditClientEnquiryPopup} />)}
-      {showDeleteClientPopup && clientToDelete && (<DeleteClientPopup closePopup={closeDeleteAgentsPopup} ClientData={clientToDelete}
-        refreshData={refreshClientList}
+
+      {showEditClientEnquiryPopup && selectedClientEnquiry &&
+        (<EditClientEnquiryPopup
+          closePopup={closeEditClientEnquiryPopup}
+          editClientEnquiry={selectedClientEnquiry}
+          refreshData={refreshClientList}
       />)}
+
+      {showDeleteClientPopup && clientToDelete &&
+        (<DeleteClientPopup
+          closePopup={closeDeleteAgentsPopup}
+          ClientData={clientToDelete}
+          refreshData={refreshClientList}
+        />)}
     </div>
   );
 };

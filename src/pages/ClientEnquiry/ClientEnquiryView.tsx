@@ -57,7 +57,29 @@ export const ClientEnquiryView = () => {
     const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false)
+    const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false);
+    const [clientenquiry, setclientenquiry] = useState<ClientEnquiryResponse>({
+        id: 0,
+        client_enquiry_id: '',
+        company_name: '',
+        email: '',
+        contact_person_name: '',
+        mobile_number: '',
+        nature_of_work: '',
+        project_location: '',
+        project_duration: '',
+        categories_required: '',
+        quantity_required: '',
+        project_start_date: '',
+        kitchen_facility: false,
+        transportation_provided: false,
+        accommodation_provided: false,
+        remarks: '',
+        query_type: '',
+        status: false,
+        is_deleted: false,
+        created_at: ''
+    });
     // const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
@@ -85,6 +107,7 @@ export const ClientEnquiryView = () => {
             const response = await ViewClientNameById(clientEnquiryId) as SingleClientEnquiryResponse;
             if (response && response.data) {
                 setSelectedClientEnquiry(response.data);
+                setclientenquiry(response.data);
             }
         } catch (error) {
             console.error('Error fetching candidate details:', error);
@@ -161,8 +184,15 @@ export const ClientEnquiryView = () => {
         setShowEditClientEnquiryPopup(true)
     }
 
-    const closeEditClientEnquiryPopup = () => {
-        setShowEditClientEnquiryPopup(false)
+    // const closeEditClientEnquiryPopup = () => {
+    //     setShowEditClientEnquiryPopup(false)
+    // }
+     const closeEditClientEnquiryPopup = () => {
+        setShowEditClientEnquiryPopup(false);
+        setIsLoading(true); // Show loading state
+        fetchClientDetails(Number(id)).finally(() => {
+            setIsLoading(false);
+        });
     }
 
     if (isLoading && initialLoad) {
@@ -481,7 +511,12 @@ export const ClientEnquiryView = () => {
                     </div>
                 </div>
             </div>
-            {showEditClientEnquiryPopup && (<EditClientEnquiryPopup closePopup={closeEditClientEnquiryPopup} />)}
+            {showEditClientEnquiryPopup &&
+                (<EditClientEnquiryPopup
+                    closePopup={closeEditClientEnquiryPopup}
+                    refreshData={fetchClientEnquiryNames}
+                    editClientEnquiry={clientenquiry}
+                />)}
         </div>
         // </div>
     );
