@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { CandidateRemark } from "../../types/CandidateList";
+//import { CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import Profileimg from "../../assets/images/profileimg.jpg"
+//import Profileimg from "../../assets/images/profileimg.jpg"
 import { Button } from "../../common/Button";
 import { FaArrowLeft } from "react-icons/fa6";
 import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
@@ -54,8 +54,8 @@ export const ClientEnquiryView = () => {
     const [selectedClientEnquiry, setSelectedClientEnquiry] = useState<ClientEnquiryResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
-    const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
-    const [newRemark, setNewRemark] = useState("");
+    // const [remarks, setRemarks] = useState<CandidateRemark[]>([]);
+    // const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false);
     const [clientenquiry, setclientenquiry] = useState<ClientEnquiryResponse>({
@@ -157,19 +157,19 @@ export const ClientEnquiryView = () => {
         setIsLoading(false);
     };
 
-    const handleAddRemark = () => {
-        if (newRemark.trim()) {
-            const remark: CandidateRemark = {
-                id: Date.now().toString(),
-                userId: "current-user-id",
-                userName: "Amjad",
-                timestamp: new Date().toLocaleString(),
-                content: newRemark
-            };
-            setRemarks([...remarks, remark]);
-            setNewRemark("");
-        }
-    };
+    // const handleAddRemark = () => {
+    //     if (newRemark.trim()) {
+    //         const remark: CandidateRemark = {
+    //             id: Date.now().toString(),
+    //             userId: "current-user-id",
+    //             userName: "Amjad",
+    //             timestamp: new Date().toLocaleString(),
+    //             content: newRemark
+    //         };
+    //         setRemarks([...remarks, remark]);
+    //         setNewRemark("");
+    //     }
+    // };
 
     // if (isLoading) {
     //   return (
@@ -429,7 +429,7 @@ export const ClientEnquiryView = () => {
                         </div>
 
                         {/* Right Column - Remarks */}
-                        <div className="flex-[1.5] p-2 ">
+                        {/* <div className="flex-[1.5] p-2 ">
                             <div className="bg-gray-100 rounded shadow-sm">
                                 <div className="bg-main text-armsWhite p-3 rounded-t flex justify-between items-center">
                                     <h2 className="text-base font-semibold">Remarks</h2>
@@ -440,7 +440,7 @@ export const ClientEnquiryView = () => {
                                         onChange={(e) => setNewRemark(e.target.value)}
                                         className="w-full p-3 border-2 border-armsgrey rounded mb-2 text-sm bg-armsWhite"
                                         rows={4}
-                                    // placeholder="Add a remark..."
+                                    
                                     />
                                     <Button
                                         onClick={handleAddRemark}
@@ -449,7 +449,7 @@ export const ClientEnquiryView = () => {
                                         className="mx-auto px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                     />
                                     <div className="mt-4 space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
-                                        {/* Static remarks data */}
+                                      
                                         <div className="border-b pb-4">
                                             <div className="flex  max-xl:flex-col items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
@@ -489,25 +489,10 @@ export const ClientEnquiryView = () => {
                                                 Quisque pharetra tempus lorem non tempus. In pulvinar arcu eget imperdiet finibus.
                                             </p>
                                         </div>
-
-                                        {/* {remarks.map((remark) => (
-                                                <div key={remark.id} className="border-b pb-4">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                                <span className="text-xs">{remark.userName[0]}</span>
-                                                            </div>
-                                                            <span className="text-sm font-medium">{remark.userName}</span>
-                                                        </div>
-                                                        <span className="text-xs text-gray-500">{remark.timestamp}</span>
-                                                    </div>
-                                                    <p className="text-sm text-gray-600">{remark.content}</p>
-                                                </div>
-                                            ))} */}
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

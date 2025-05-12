@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../../common/Button';
 import { IoCloseCircle } from 'react-icons/io5';
 import { deleteClientEnquiry } from '../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis';
+import { toast } from 'react-toastify';
 
 interface DeleteClientPopupProps {
   closePopup: () => void;
@@ -17,25 +18,24 @@ export const DeleteClientPopup: React.FC<DeleteClientPopupProps> = ({
   ClientData, 
   refreshData 
 }) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleClientDelete = async () => {
-    setLoading(true);
+
     setError(null);
     try {
       const success = await deleteClientEnquiry(ClientData.id);
       if (success) {
         closePopup();
         refreshData();
+        toast.success("ClientEnquiry Deleted Successfully")
       } else {
         setError("Failed to delete agent. Please try again.");
+         toast.error("Failed to delete agent. Please try again.");
       }
     } catch (error: any) {
       setError(error.message || "Failed to delete agent. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (
@@ -44,7 +44,7 @@ export const DeleteClientPopup: React.FC<DeleteClientPopupProps> = ({
         <div className="relative bg-white rounded-[5px] w-4/12 mx-auto px-5 py-5">
           <div className="relative mb-10">
             <h2 className="text-2xl text-armsBlack font-semibold pb-3 border-b-2 border-armsgrey ">Delete Client Enquiry</h2>
-            <div className="absolute inset-x-0 bottom-[-20px] mx-auto bg-armsgrey rounded-md w-full h-0.5"></div>
+            <div className="absolute inset-x-0 bottom-[-20px] mx-auto rounded-md w-full h-0.5"></div>
           </div>
 
           {/* Close Button */}
@@ -78,8 +78,7 @@ export const DeleteClientPopup: React.FC<DeleteClientPopupProps> = ({
                 <Button
                   onClick={handleClientDelete}
                   buttonType="submit"
-                  buttonTitle={loading ? "Deleting..." : "Delete"}
-                  disabled={loading}
+                  buttonTitle="Delete"
                   className="bg-armsjobslightblue text-lg text-armsWhite font-semibold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                 />
               </div>

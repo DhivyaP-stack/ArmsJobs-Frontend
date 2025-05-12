@@ -9,25 +9,26 @@ import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateOverseasRecruitment } from "../../Commonapicall/Overseasapicall/Overseasapis";
+import { toast } from "react-toastify";
 
 // Define the interface
 interface OverseasRecruitmentAgency {
-  id: number;
-  overseas_recruitment_id: string;
-  company_name: string;
-  country: string;
-  contact_person_name: string;
-  mobile_no: string;
-  whatsapp_no: string | null;
-  email_address: string;
-  categories_you_can_provide: string;
-  nationality_of_workers: string;
-  mobilization_time: string;
-  uae_deployment_experience: boolean;
-  relevant_docs: string | null;
-  comments: string | null;
-  status: string;
-  created_at: string;
+    id: number;
+    overseas_recruitment_id: string;
+    company_name: string;
+    country: string;
+    contact_person_name: string;
+    mobile_no: string;
+    whatsapp_no: string | null;
+    email_address: string;
+    categories_you_can_provide: string;
+    nationality_of_workers: string;
+    mobilization_time: string;
+    uae_deployment_experience: boolean;
+    relevant_docs: string | null;
+    comments: string | null;
+    status: string;
+    created_at: string;
 }
 
 interface OverSeasAddPopupProps {
@@ -86,7 +87,6 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Company Details");
     const tabs = ['Company Details', "Recruitment Info", "Documents & Notes"];
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const {
@@ -119,12 +119,11 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
     }, [editOverseas, setValue]);
 
     const onSubmit = async (data: OverseasRecruitmentFormData) => {
-        setLoading(true);
         setError(null);
 
         // Convert uae_deployment_experience string to boolean
         const uaeExperience = data.uae_deployment_experience === "yes";
-        
+
         try {
             // Prepare request data
             const requestData = {
@@ -140,21 +139,21 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                 uae_deployment_experience: uaeExperience,
                 comments: data.comments || ''
             };
-            
+
             // Call API to update overseas recruitment
             const response = await updateOverseasRecruitment(editOverseas.id, requestData);
-            
+
             // On success:
             console.log("Overseas recruitment updated successfully", response);
             reset();
             closePopup();
             refreshData();
+            toast.success("Overseas recruitment updated successfully");
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Failed to update form";
             setError(errorMessage);
             console.error("Error updating recruitment:", errorMessage);
-        } finally {
-            setLoading(false);
+            toast.error("Error updating recruitment");
         }
     };
 
@@ -430,8 +429,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                             <Button
                                 onClick={handleSubmit(onSubmit)}
                                 buttonType="button"
-                                buttonTitle={loading ? "Updating..." : "Submit"}
-                                disabled={loading}
+                                buttonTitle="Submit"
                                 className="bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                             />
                         </div>

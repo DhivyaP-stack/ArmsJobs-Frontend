@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 interface AddAgentsSupplierPopupProps {
     closePopup: () => void;
@@ -68,15 +69,15 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
 
             if (response.status === 200 || response.status === 201) {
                 console.log('Agent added successfully');
+                toast.success('Agent added successfully');
                 closePopup();
-                window.location.reload();
                 if (onAgentAdded) onAgentAdded();
             } else {
                 throw new Error("Failed to add agent");
             }
         } catch (error) {
             console.error("Error adding agent:", error);
-          
+            toast.error("Error adding agent");
         } finally {
             setIsSubmitting(false);
         }

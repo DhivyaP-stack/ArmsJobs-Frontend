@@ -10,6 +10,7 @@ import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
+import { toast } from "react-toastify";
 
 
 interface EditCandidatePopupProps {
@@ -198,12 +199,14 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                 data.referral_contact || ''
             );
             // On success:
-            console.log("Candidate Updated successfully", response);
             reset();
             closePopup();
             refreshData();
+            console.log("Candidate Updated successfully", response);
+            toast.success("Candidate Updated successfully");
         } catch (error: any) {
             setError(error.message || "Failed to submit form");
+            toast.error("Failed to submit form");
         } finally {
             setLoading(false);
         }

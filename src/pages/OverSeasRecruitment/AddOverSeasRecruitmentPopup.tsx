@@ -9,6 +9,7 @@ import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addOverseasRecruitment } from "../../Commonapicall/Overseasapicall/Overseasapis";
+import { toast } from "react-toastify";
 
 interface OverSeasAddPopupProps {
     // isOpen: boolean;
@@ -65,7 +66,6 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
     const [activeTab, setActiveTab] = useState("Company Details");
     // const tabs = ["Personal Information", "Visa & Work Eligibility", "Job Information", "Documents Upload"];
     const tabs = ['Company Details', "Recruitment Info", "Documents & Notes"];
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const {
@@ -81,12 +81,11 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
     });
 
     const onSubmit = async (data: OverseasRecruitmentFormData) => {
-        setLoading(true);
         setError(null);
-        
+
         // Convert uae_deployment_experience string to boolean
         const uaeExperience = data.uae_deployment_experience === "yes";
-        
+
         try {
             // Prepare request data
             const requestData = {
@@ -108,12 +107,12 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
             reset();
             closePopup();
             if (refreshData) refreshData();
+            toast.success("Overseas recruitment added successfully");
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Failed to submit form";
             setError(errorMessage);
             console.error("Error adding recruitment:", errorMessage);
-        } finally {
-            setLoading(false);
+            toast.error("Error adding recruitment");
         }
     };
 
@@ -147,14 +146,14 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
                         </button>
                     ))}
                 </div>
-                
+
                 {/* Error message display */}
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mb-4 rounded">
                         {error}
                     </div>
                 )}
-                
+
                 <form onSubmit={handleSubmit(onSubmit)} className="h-[calc(100%-150px)] overflow-y-auto">
                     {/* Company Details */}
                     {activeTab === "Company Details" && (
@@ -388,16 +387,14 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
                                 buttonType="button"
                                 buttonTitle="Cancel"
                                 className="px-7 py-2.5 cursor-pointer text-armsBlack rounded-sm font-semibold hover:bg-gray-200"
-                                disabled={loading}
                             />
                         </div>
                         <div>
                             <Button
                                 onClick={handleSubmit(onSubmit)}
                                 buttonType="button"
-                                buttonTitle={loading ? "Submitting..." : "Submit"}
+                                buttonTitle="Submit"
                                 className="bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={loading}
                             />
                         </div>
                     </div>

@@ -8,6 +8,7 @@ import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddClientEnquiryList } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis";
+import { toast } from "react-toastify";
 interface ClientEnquiryAddPopupProps {
     // isOpen: boolean;
     closePopup: () => void;
@@ -102,12 +103,14 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                 data.query_type || '',
             );
             // On success:
-            console.log("Candidate added successfully", response);
+            console.log("ClientEnquiry added successfully", response);
             reset();
             closePopup();
             refreshData();
+            toast.success("ClientEnquiry added successfully");
         } catch (error: any) {
             setError(error.message || "Failed to submit form");
+            toast.error("Failed to submit form");
         } finally {
             setLoading(false);
         }

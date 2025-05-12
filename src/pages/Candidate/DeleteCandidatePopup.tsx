@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../../common/Button';
 import { IoCloseCircle } from 'react-icons/io5';
 import { deleteCandidate } from '../../Commonapicall/Candidateapicall/Candidateapis';
+import { toast } from 'react-toastify/unstyled';
 
 interface DeleteCandidatePopupProps {
   closePopup: () => void;
@@ -12,16 +13,14 @@ interface DeleteCandidatePopupProps {
   refreshData: () => void;
 }
 
-export const DeleteCandidatePopup: React.FC<DeleteCandidatePopupProps> = ({ 
-  closePopup, 
-  CandidateData, 
-  refreshData 
+export const DeleteCandidatePopup: React.FC<DeleteCandidatePopupProps> = ({
+  closePopup,
+  CandidateData,
+  refreshData
 }) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAgentDelete = async () => {
-    setLoading(true);
     setError(null);
 
     try {
@@ -29,14 +28,15 @@ export const DeleteCandidatePopup: React.FC<DeleteCandidatePopupProps> = ({
       if (success) {
         closePopup();
         refreshData();
+        toast.success("Candidate Deleted Successfully")
       } else {
         setError("Failed to delete agent. Please try again.");
+        toast.error("Failed to delete agent. Please try again.")
       }
     } catch (error: any) {
       setError(error.message || "Failed to delete agent. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+      toast.error("Failed to delete agent. Please try again.");
+    } 
   };
 
   return (
@@ -79,8 +79,7 @@ export const DeleteCandidatePopup: React.FC<DeleteCandidatePopupProps> = ({
                 <Button
                   onClick={handleAgentDelete}
                   buttonType="submit"
-                  buttonTitle={loading ? "Deleting..." : "Delete"}
-                  disabled={loading}
+                  buttonTitle="Delete"
                   className="bg-armsjobslightblue text-lg text-armsWhite font-semibold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                 />
               </div>

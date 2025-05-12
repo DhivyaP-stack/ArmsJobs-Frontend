@@ -10,6 +10,7 @@ import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditClientEnquiry } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis";
+import { toast } from "react-toastify";
 
 interface EditClientEnquiryAddPopupProps {
     // isOpen: boolean;
@@ -100,8 +101,8 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
         setValue,
     } = useForm<ClientEnquiryFormData>({
         resolver: zodResolver(clientenquirySchema),
-         defaultValues: {
-            kitchen_facility: "no", 
+        defaultValues: {
+            kitchen_facility: "no",
             transportation_provided: "no",
             accommodation_provided: "no"
         },
@@ -151,12 +152,14 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                 data.query_type || '',
             );
             // On success:
-            console.log("ClientEnquiry updated  successfully", response);
             reset();
             closePopup();
             refreshData();
+            console.log("ClientEnquiry updated  successfully", response);
+            toast.success("ClientEnquiry updated  successfully");
         } catch (error: any) {
             setError(error.message || "Failed to submit form");
+            toast.error("Failed to submit form");
         } finally {
             setLoading(false);
         }

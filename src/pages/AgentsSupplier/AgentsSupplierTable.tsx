@@ -81,7 +81,7 @@ export const AgentSupplierTable = () => {
   const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
   const [agents, setAgents] = useState<AgentSupplier[]>([]);
   const [count, setCount] = useState<number>(1);
-  const [search, setSearch] = useState<string>(" ")
+  const [search, setSearch] = useState<string>("")
   const [filterBy, setFilterBy] = useState("all")
 
   // Simulate loading state
@@ -221,9 +221,9 @@ export const AgentSupplierTable = () => {
             <div className="relative w-[300px]">
               <input
                 type="text"
-                placeholder="Search"
                 value={search}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                placeholder="Search"
                 className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
               />
               <IoMdSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 text-armsgrey text-[18px]" />

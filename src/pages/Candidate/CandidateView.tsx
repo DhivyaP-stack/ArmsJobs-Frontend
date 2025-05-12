@@ -569,21 +569,6 @@ export const CandidateView = () => {
                                                 No remarks found
                                             </p>
                                         )}
-
-                                        {/* {remarks.map((remark) => (
-                                                <div key={remark.id} className="border-b pb-4">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                                <span className="text-xs">{remark.userName[0]}</span>
-                                                            </div>
-                                                            <span className="text-sm font-medium">{remark.userName}</span>
-                                                        </div>
-                                                        <span className="text-xs text-gray-500">{remark.timestamp}</span>
-                                                    </div>
-                                                    <p className="text-sm text-gray-600">{remark.content}</p>
-                                                </div>
-                                            ))} */}
                                     </div>
                                 </div>
                             </div>
@@ -591,13 +576,6 @@ export const CandidateView = () => {
                     </div>
                 </div>
             </div>
-            {/* {isEditPopupOpen && selectedCandidate && (
-                <EditCandidatePopup
-                    closePopup={handleCloseEditPopup}
-                    refreshData={handleRefreshData}
-                    //editCandidate={selectedCandidate}
-                />
-            )} */}
             {showcandidateEditPopup && (
                 <EditCandidatePopup
                     closePopup={closeEditCandidatePopup}

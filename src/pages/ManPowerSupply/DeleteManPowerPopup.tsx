@@ -3,6 +3,7 @@ import { Button } from '../../common/Button';
 import { IoCloseCircle } from 'react-icons/io5';
 
 import { deleteManPowerData } from '../../Commonapicall/ManpowerSupplyapicall/Manpowerapis';
+import { toast } from 'react-toastify';
 
 interface DeleteManPowePopupProps {
   closePopup: () => void;
@@ -21,11 +22,9 @@ export const DeleteManPowerPopup: React.FC<DeleteManPowePopupProps> = ({
   refreshData ,
   manpowerName
 }) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleManPowerDelete = async () => {
-    setLoading(true);
     setError(null);
 
     try {
@@ -33,13 +32,13 @@ export const DeleteManPowerPopup: React.FC<DeleteManPowePopupProps> = ({
       if (success) {
         closePopup();
         refreshData();
+        toast.success("Manpower Deleted successfully")
       } else {
         setError("Failed to delete ManPower. Please try again.");
+        toast.error("Failed to delete ManPower. Please try again.");
       }
     } catch (error: any) {
       setError(error.message || "Failed to delete ManPower. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -83,8 +82,7 @@ export const DeleteManPowerPopup: React.FC<DeleteManPowePopupProps> = ({
                 <Button
                   onClick={handleManPowerDelete}
                   buttonType="submit"
-                  buttonTitle={loading ? "Deleting..." : "Delete"}
-                  disabled={loading}
+                  buttonTitle="Delete"
                   className="bg-armsjobslightblue text-lg text-armsWhite font-semibold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                 />
               </div>

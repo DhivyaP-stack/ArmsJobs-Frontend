@@ -100,7 +100,6 @@ export const AgentSupplyView = () => {
                     agent_supplier_name: agent.name,
                     // Add any other required fields from your AgentRemark interface
                 };
-
                 // Update the local state with the new remark
                 setAgent(prev => {
                     if (!prev) return null;
@@ -109,7 +108,6 @@ export const AgentSupplyView = () => {
                         agent_remarks: [...prev.agent_remarks, newRemarkObj]
                     };
                 });
-
                 // Clear the remark input
                 setNewRemark("");
                 toast.success("Remark added successfully");

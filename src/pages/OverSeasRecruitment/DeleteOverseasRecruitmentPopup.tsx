@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../../common/Button';
 import { IoCloseCircle } from 'react-icons/io5';
 import { deleteOverseasRecruitment } from '../../Commonapicall/Overseasapicall/Overseasapis';
+import { toast } from 'react-toastify';
 
 interface DeleteOverseasRecruitmentPopupProps {
   closePopup: () => void;
@@ -14,24 +15,23 @@ export const DeleteOverseasRecruitmentPopup: React.FC<DeleteOverseasRecruitmentP
   recruitmentData,
   refreshData,
 }) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleDelete = async () => {
-    setLoading(true);
     setError(null);
     try {
       const success = await deleteOverseasRecruitment(recruitmentData.id);
       if (success) {
         closePopup();
         refreshData();
+        toast.success("Overseas recruitment Deleted successfully");
       } else {
         setError("Failed to delete. Please try again.");
+        toast.error("Failed to delete. Please try again.");
       }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Failed to delete. Please try again.");
-    } finally {
-      setLoading(false);
+      toast.error("Failed to delete. Please try again.");
     }
   };
 
@@ -54,7 +54,7 @@ export const DeleteOverseasRecruitmentPopup: React.FC<DeleteOverseasRecruitmentP
             <div className="pt-5">
               <div className="flex items-center justify-center space-x-5">
                 <Button onClick={closePopup} buttonType="button" buttonTitle="Cancel" className="px-7 py-2.5 text-armsBlack rounded-sm font-semibold hover:bg-gray-200 cursor-pointer" />
-                <Button onClick={handleDelete} buttonType="submit" buttonTitle={loading ? "Deleting..." : "Delete"} disabled={loading} className="bg-armsjobslightblue text-lg text-armsWhite font-semibold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue" />
+                <Button onClick={handleDelete} buttonType="submit" buttonTitle="Delete"  className="bg-armsjobslightblue text-lg text-armsWhite font-semibold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue" />
               </div>
             </div>
           </div>

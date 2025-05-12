@@ -71,7 +71,7 @@ export const ManPowerSupplyTable = () => {
   // const currentManPower = manPower.slice(indexOfFirstManPower, indexOfLastManPower);
   const [showAddManpowerPopup, setShowAddManpowerPopup] = useState(false);
   const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
-  const [search, setSearch] = useState<string>(" ")
+  const [search, setSearch] = useState<string>("")
   const [count, setCount] = useState<number>(1);
   const [filterBy, setFilterBy] = useState("all")
   const [manPowersuppliers, setManPowerSuppliers] = useState<ManpowerSupplier[]>([]);
