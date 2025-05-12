@@ -41,7 +41,7 @@ export const DeleteOverseasRecruitmentPopup: React.FC<DeleteOverseasRecruitmentP
         <div className="relative bg-white rounded-[5px] w-4/12 mx-auto px-5 py-5">
           <div className="relative mb-10">
             <h2 className="text-2xl text-mindfulBlack font-semibold pb-3 border-b-2 border-armsgrey ">Delete Overseas Recruitment</h2>
-            <div className="absolute inset-x-0 bottom-[-20px] mx-auto bg-armsgrey rounded-md w-full h-0.5"></div>
+            <div className="absolute inset-x-0 bottom-[-20px] mx-auto rounded-md w-full h-0.5"></div>
           </div>
           <div onClick={closePopup} className="absolute top-5 right-5 w-fit cursor-pointer">
             <IoCloseCircle className="text-mindfulGrey text-[32px]"/>

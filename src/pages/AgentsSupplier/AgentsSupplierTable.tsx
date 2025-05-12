@@ -40,12 +40,12 @@ export interface AgentSupplier {
   is_deleted: boolean;
   status: string;
   created_at: string;
-   agent_remarks: {
+  agent_remarks: {
     id: number;
     remark: string;
     agent_supplier_name: string;
     created_at: string;  // ISO date-time string
-    updated_at: string;  
+    updated_at: string;
   }[];
 }
 
@@ -79,21 +79,16 @@ export const AgentSupplierTable = () => {
   const [agentToDelete, setAgentToDelete] = useState<{ id: number, name: string } | null>(null);
   ///const [selectedagents, setSelectedAgents] = useState<any>(null);
   const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
-
   const [agents, setAgents] = useState<AgentSupplier[]>([]);
   const [count, setCount] = useState<number>(1);
   const [search, setSearch] = useState<string>(" ")
   const [filterBy, setFilterBy] = useState("all")
-
-
-
 
   // Simulate loading state
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500); // Show shimmer for 1.5 seconds
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -149,19 +144,14 @@ export const AgentSupplierTable = () => {
   //   setAgentToDelete(null);
   // };
 
-
-
   const fetchPagination = async () => {
-
     try {
       const response = await fetchAgentsPageList(currentPage, search.trim(), filterBy) as ApiResponse;
-
       setAgents(response?.results?.data || []);
       setCount(response?.count || 1);
     } catch (error) {
       console.error("Error fetching pagination data:", error);
     }
-
   };
 
   useEffect(() => {
@@ -351,19 +341,23 @@ export const AgentSupplierTable = () => {
         )}
       </div>
 
-      {showAddAgentsSupplierPopup && <AddAgentsSupplierPopup closePopup={closeAddAgentsSupplierPopup}
-        onAgentAdded={handleAgentAdded} />}
+      {showAddAgentsSupplierPopup &&
+        <AddAgentsSupplierPopup
+          closePopup={closeAddAgentsSupplierPopup}
+          onAgentAdded={handleAgentAdded} />}
+
       {showEditAgentsSupplierPopup && selectedAgentId !== null && (
         <EditAgentsSupplierPopup
           closePopup={closeEditAgentsSupplierPopup}
           agentId={selectedAgentId} onAgentAdded={handleAgentAdded} />
       )}
 
-      {/* {showAddAgentsSupplierPopup && <AddAgentsSupplierPopup closePopup={closeAddAgentsSupplierPopup} />}
-      {showEditAgentsSupplierPopup && <EditAgentsSupplierPopup closePopup={closeEditAgentsSupplierPopup} />} */}
-      {/* {showDeleteAgentsSupplierPopup && agentToDelete && (<DeleteAgentsPopup closePopup={closeDeleteAgentsPopup} agentData={agentToDelete} refreshData={refreshAgentList}/>)} */}
-      {showDeleteAgentsSupplierPopup && agentToDelete && (<DeleteAgentsPopup closePopup={closeDeleteAgentsPopup} agentData={agentToDelete} refreshData={refreshAgentList} />
-      )}
+      {showDeleteAgentsSupplierPopup && agentToDelete &&
+        (<DeleteAgentsPopup
+          closePopup={closeDeleteAgentsPopup}
+          agentData={agentToDelete}
+          refreshData={refreshAgentList} />
+        )}
     </div>
   );
 };
