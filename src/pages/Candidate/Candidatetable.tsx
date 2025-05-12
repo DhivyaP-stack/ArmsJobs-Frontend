@@ -12,7 +12,7 @@ import { EditCandidatePopup } from "./EditCandidatePopup";
 import { Pagination } from "../../common/Pagination";
 import { filterCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { NotifyError } from "../../common/Toast/ToastMessage";
-import { CandidateTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/CommonTableShimmer";
+import { CandidateTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/CandidateTableShimmer";
 import { DeleteCandidatePopup } from "./DeleteCandidatePopup";
 
 // interface CandidatesApiResponse {
@@ -75,9 +75,6 @@ export const CandidateTable = () => {
   const [showEditCandidatePopup, setShowEditCandidatePopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  // const indexOfLastCandidate = currentPage * itemsPerPage;
-  // const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
-  // const currentCandidate = candidatesData.slice(indexOfFirstCandidate, indexOfLastCandidate);
   const [showDeleteCandidatePopup, setShowDeleteCandidatePopup] = useState(false);
   const [candidateToDelete, setcandidateToDelete] = useState<{ id: number, name: string } | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
@@ -86,23 +83,6 @@ export const CandidateTable = () => {
   const [filterBy, setFilterBy] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const fetchCandidate = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await fetchCandidatesList() as CandidatesApiResponse;
-  //       setCandidatesData(response.results.data);
-  //     } catch (err) {
-  //       NotifyError("Failed to fetch candidates");
-  //       console.log("Error fetching candidates:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchCandidate();
-  // }, []);
-
 
   const refreshCandidateList = async () => {
     try {
@@ -116,7 +96,7 @@ export const CandidateTable = () => {
     }
   };
 
-  //Pagination
+  //Candidatelist, Pagination, Search, All
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
@@ -291,16 +271,16 @@ export const CandidateTable = () => {
                           </div>
                         )}
                       </td>
-                      <td className="px-2 py-1">{candidate.full_name}</td>
-                      <td className="px-2 py-1">{candidate.mobile_number}</td>
-                      <td className="px-2 py-1">{candidate.whatsapp_number}</td>
-                      <td className="px-2 py-1">{candidate.email}</td>
-                      <td className="px-2 py-1">{candidate.nationality}</td>
-                      <td className="px-2 py-1">{candidate.current_location}</td>
-                      <td className="px-2 py-1">{candidate.visa_type}</td>
-                      <td className="px-2 py-1">{candidate.visa_expiry_date}</td>
-                      <td className="px-2 py-1">{candidate.availability_to_join}</td>
-                      <td className="px-2 py-1">{candidate.position_applying_for}</td>
+                      <td className="px-2 py-1">{candidate.full_name || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.mobile_number || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.whatsapp_number || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.email || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.nationality || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.current_location || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.visa_type || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.visa_expiry_date || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.availability_to_join || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.position_applying_for || "N/A"}</td>
                       <td className="px-2 py-1">
                         {candidate.category}
                         {candidate.other_category && ` (${candidate.other_category})`}
@@ -329,12 +309,13 @@ export const CandidateTable = () => {
                         )}
                       </td>
                       <td className="px-2 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs ${candidate.status === 'Active' ? 'bg-green-100 text-green-800' :
-                          candidate.status === 'Hired' ? 'bg-blue-100 text-blue-800' :
-                            candidate.status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
-                          }`}>
-                          {candidate.status}
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${candidate.status
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}
+                        >
+                          {candidate.status ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className="px-2 py-3">{new Date(candidate.created_at).toLocaleString()}</td>

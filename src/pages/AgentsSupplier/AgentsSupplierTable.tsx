@@ -73,7 +73,7 @@ export const AgentSupplierTable = () => {
   const navigate = useNavigate();
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState<string | null>(null);
-  const [, setLoading] = useState(true);
+
   const [, setError] = useState<string | null>(null);
   const [showDeleteAgentsSupplierPopup, setShowDeleteAgentsPopup] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState<{ id: number, name: string } | null>(null);
@@ -158,11 +158,18 @@ export const AgentSupplierTable = () => {
     fetchPagination();
   }, [currentPage, search, filterBy]);
 
+  // const handleAgentAdded = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     await fetchPagination(); // Wait for the data to be fetched
+  //   } finally {
+  //     setIsLoading(false); // Always turn off loading when done
+  //   }
+  // };
+
   const handleAgentAdded = () => {
     fetchPagination(); // Now this works correctly
-
   };
-
 
   // const handleDeleteClick = (agent: AgentSupplier, e: React.MouseEvent) => {
   //   e.stopPropagation();
@@ -172,13 +179,13 @@ export const AgentSupplierTable = () => {
   // Add a refresh function to update the list after deletion
   const refreshAgentList = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetchAgentsList() as ApiResponse;
       setAgents(response?.results?.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch agents");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -279,19 +286,28 @@ export const AgentSupplierTable = () => {
                     <tr key={agent.id}
                       onClick={() => navigate(`/AgentSupplyView/${agent.id}`)}
                       className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
-                      <td className="px-2 py-5">{agent.agent_supplier_id}</td>
-                      <td className="px-2 py-5">{agent.name}</td>
-                      <td className="px-2 py-5">{agent.mobile_no}</td>
-                      <td className="px-2 py-5">{agent.whatsapp_no}</td>
-                      <td className="px-2 py-5">{agent.email}</td>
+                      <td className="px-2 py-5">{agent.agent_supplier_id || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.name || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.mobile_no || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.whatsapp_no || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.email || "N/A"}</td>
                       <td className="px-2 py-5">{agent.can_recruit ? "Yes" : "No"}</td>
-                      <td className="px-2 py-5">{agent.associated_earlier}</td>
-                      <td className="px-2 py-5">{agent.can_supply_manpower}</td>
-                      <td className="px-2 py-5">{agent.supply_categories}</td>
-                      <td className="px-2 py-5">{agent.quantity_estimates}</td>
-                      <td className="px-2 py-5">{agent.areas_covered}</td>
-                      <td className="px-2 py-5">{agent.additional_notes || "-"}</td>
-                      <td className="px-2 py-5">{agent.status || "-"}</td>
+                      <td className="px-2 py-5">{agent.associated_earlier || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.can_supply_manpower || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.supply_categories || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.quantity_estimates || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.areas_covered || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.additional_notes || "N/A"}</td>
+                      <td className="px-2 py-5">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${agent.status
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}
+                        >
+                          {agent.status ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
                       <td className="px-2 py-5">{new Date(agent.created_at).toLocaleString()}</td>
                       <td className="px-2 py-5 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
 
@@ -349,7 +365,10 @@ export const AgentSupplierTable = () => {
       {showEditAgentsSupplierPopup && selectedAgentId !== null && (
         <EditAgentsSupplierPopup
           closePopup={closeEditAgentsSupplierPopup}
-          agentId={selectedAgentId} onAgentAdded={handleAgentAdded} />
+          agentId={selectedAgentId}
+          onAgentAdded={handleAgentAdded}
+          refreshData={refreshAgentList}
+        />
       )}
 
       {showDeleteAgentsSupplierPopup && agentToDelete &&

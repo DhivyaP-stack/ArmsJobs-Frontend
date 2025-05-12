@@ -389,7 +389,7 @@ export const AgentSupplyView = () => {
                                             ))
                                              ) : (
                                             <p className="text-sm text-gray-500 text-center py-4">
-                                                No remarks yet
+                                                No remarks found
                                             </p>
                                         )}
                                     </div>
@@ -404,7 +404,9 @@ export const AgentSupplyView = () => {
                 <EditAgentsSupplierPopup
                     closePopup={closeEditAgentsSupplierPopup}
                     agentId={agentId}
-                    onAgentAdded={handleAgentAdded} />}
+                    onAgentAdded={handleAgentAdded} 
+                    refreshData={fetchAgentsList}
+                    />}
         </div>
         // </div>
     );

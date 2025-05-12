@@ -11,7 +11,8 @@ import { EditOverSeasPopup } from "./EditOverSeasRecruitment";
 import { useNavigate } from "react-router-dom";
 import { fetchOverseasRecruitmentList } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { OverseasRecruitmentTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/OverseasRecruitmentTableShimmer";
-import { DeleteOverseasRecruitmentPopup } from "./DeleteOverseasRecruitmentPopupProps";
+import { DeleteOverseasRecruitmentPopup } from "./DeleteOverseasRecruitmentPopup";
+import { IoDocumentText } from "react-icons/io5";
 
 // Define a Candidate type
 interface OverseasRecruitmentAgency {
@@ -151,7 +152,7 @@ export const OverSeasRecruitmentTable = () => {
             </div>
 
             {/* Select Dropdown */}
-            <select 
+            <select
               className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer"
               value={filterBy}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
@@ -196,35 +197,44 @@ export const OverSeasRecruitmentTable = () => {
                 {recruitmentAgencies.length === 0 ? (
                   <tr>
                     <td colSpan={15} className="text-center py-8">
-                      <p className="text-gray-500 text-lg">No Overseas recruitment found for the selected filter.</p>
+                      <p className="text-center py-4">No Overseas recruitment found</p>
                     </td>
                   </tr>
                 ) : (
                   recruitmentAgencies.map((agency) => (
-                    <tr key={agency.id} 
+                    <tr key={agency.id}
                       onClick={() => navigate(`/OverSeasRecruitment/${agency.id}`)}
                       className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer"
                     >
                       <td className="px-2 py-7">{agency.overseas_recruitment_id}</td>
-                      <td className="px-2 py-7">{agency.company_name}</td>
-                      <td className="px-2 py-7">{agency.country}</td>
-                      <td className="px-2 py-7">{agency.contact_person_name}</td>
-                      <td className="px-2 py-7">{agency.mobile_no}</td>
-                      <td className="px-2 py-7">{agency.whatsapp_no || '-'}</td>
-                      <td className="px-2 py-7">{agency.email_address}</td>
-                      <td className="px-2 py-7">{agency.categories_you_can_provide}</td>
-                      <td className="px-2 py-7">{agency.nationality_of_workers}</td>
-                      <td className="px-2 py-7">{agency.mobilization_time}</td>
+                      <td className="px-2 py-7">{agency.company_name || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.country || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.contact_person_name || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.mobile_no || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.whatsapp_no || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.email_address || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.categories_you_can_provide || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.nationality_of_workers || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.mobilization_time || 'N/A'}</td>
                       <td className="px-2 py-7">{agency.uae_deployment_experience ? 'Yes' : 'No'}</td>
                       <td className="px-2 py-7">
                         {agency.relevant_docs ? (
                           <a href={agency.relevant_docs} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                            View Docs
+                           <IoDocumentText />
                           </a>
-                        ) : '-'}
+                        ) : 'N/A'}
                       </td>
-                      <td className="px-2 py-7">{agency.comments || '-'}</td>
-                      <td className="px-2 py-7">{agency.status}</td>
+                      <td className="px-2 py-7">{agency.comments || 'N/A'}</td>
+                      <td className="px-2 py-7">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${agency.status
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}
+                        >
+                          {agency.status ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
                       <td className="px-2 py-7">{new Date(agency.created_at).toLocaleString()}</td>
                       <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
                         <div className="flex items-center space-x-2">
