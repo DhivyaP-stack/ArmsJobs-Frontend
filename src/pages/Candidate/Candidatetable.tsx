@@ -238,6 +238,7 @@ export const CandidateTable = () => {
                     <th className="bg-main px-2 py-3 ">Availability to join</th>
                     <th className="bg-main px-2 py-3 ">Position Applying For</th>
                     <th className="bg-main px-2 py-3 ">Category</th>
+                    <th className="bg-main px-2 py-3 ">Any Other Category</th>
                     <th className="bg-main px-2 py-3 ">Years of UAE Experience</th>
                     <th className="bg-main px-2 py-3 ">Skills & Tasks You can Perform</th>
                     <th className="bg-main px-2 py-3 ">Preferred Work Location</th>
@@ -282,31 +283,28 @@ export const CandidateTable = () => {
                       <td className="px-2 py-1">{candidate.availability_to_join || "N/A"}</td>
                       <td className="px-2 py-1">{candidate.position_applying_for || "N/A"}</td>
                       <td className="px-2 py-1">
-                        {candidate.category}
-                        {candidate.other_category && ` (${candidate.other_category})`}
+                        {candidate.category  || "N/A"}
                       </td>
-                      <td className="px-2 py-1">{candidate.uae_experience_years}</td>
-                      <td className="px-2 py-1">{candidate.skills_tasks}</td>
-                      <td className="px-2 py-1">{candidate.preferred_work_location}</td>
-                      <td className="px-2 py-1">{candidate.expected_salary}</td>
+                       <td className="px-2 py-1">
+                        {candidate.other_category  || "N/A"}
+                      </td>
+                      <td className="px-2 py-1">{candidate.uae_experience_years || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.skills_tasks || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.preferred_work_location || "N/A"}</td>
+                      <td className="px-2 py-1">{candidate.expected_salary || "N/A"}</td>
                       <td className="px-2 py-1">
                         <a href={candidate.upload_cv} target="_blank" className="text-armsjobslightblue flex text-lg items-center gap-1">
                           <IoDocumentText /> 2
                         </a>
                       </td>
                       <td className="px-2 py-3">
-                        {candidate.relevant_docs2 ? (
-                          <a
-                            href={candidate.relevant_docs2}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                       
+                          <div
                             className="text-armsjobslightblue text-lg flex items-center gap-1"
                           >
                             <IoDocumentText /> 2
-                          </a>
-                        ) : (
-                          <span className="text-gray-400 text-sm">No Doc</span>
-                        )}
+                          </div>
+                       
                       </td>
                       <td className="px-2 py-3">
                         <span

@@ -70,23 +70,6 @@ interface CandidateApiResponse {
     referral_contact: string;
 }
 
-// Toggle Switch Component
-// const ToggleSwitch = ({ isActive, onToggle }: { isActive: boolean; onToggle: () => void }) => {
-//     ///const { id } = useParams<{ id: string }>();
-//     return (
-//         <div
-//             className="relative inline-flex items-center cursor-pointer"
-//             onClick={onToggle}
-//         >
-//             <div className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${isActive ? 'bg-green-600' : 'bg-red-500'}`}>
-//                 <div className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${isActive ? 'translate-x-6' : 'translate-x-1'} top-1`} />
-//             </div>
-//             <span className={`ml-2 text-xs ${isActive ? 'text-green-600' : 'text-red-500'}`}>
-//                 {isActive ? 'Active' : 'Inactive'}
-//             </span>
-//         </div>
-//     );
-// };
 const ToggleSwitch = ({ isActive, onToggle }: { isActive: boolean; onToggle: () => void }) => {
     return (
         <div
