@@ -335,6 +335,7 @@ interface ManpowerEditPopupProps {
     supplierId: number;
     onUpdate: () => void;
     onAgentAdded?: () => void;
+    refreshData: () => void;
 }
 
 export interface ManpowerRemark {
@@ -370,7 +371,8 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
     closePopup,
     supplierId,
     onUpdate,
-    onAgentAdded
+    onAgentAdded,
+    refreshData,
 }) => {
     const [activeTab, setActiveTab] = useState("Company Details");
     const [isLoading, setIsLoading] = useState(true);
@@ -457,6 +459,7 @@ const handleSubmit = async () => {
 
         onUpdate();
         closePopup();
+        refreshData();
     } catch (error) {
         console.error("Error updating supplier:", error);
     }

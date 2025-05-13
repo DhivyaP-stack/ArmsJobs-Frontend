@@ -368,6 +368,9 @@ import { EditManpowerPopup } from "./EditManpowerSupplyPopup";
 import { useNavigate } from "react-router-dom";
 import { fetchManpowerList, fetchManPowerSupplyList } from "../../Commonapicall/ManpowerSupplyapicall/Manpowerapis";
 import { DeleteManPowerPopup } from "./DeleteManPowerPopup";
+import { ManpowerTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/ManpowerTableShimmer";
+import { IoDocumentText } from "react-icons/io5";
+import React from "react";
 interface ManpowerRemark {
   id: number;
   remark: string;
@@ -376,7 +379,7 @@ interface ManpowerRemark {
 }
 // Define a Candidate type
 export interface ManpowerSupplier {
-  
+
   id: number;
   supplier_id: string;
   company_name: string;
@@ -399,7 +402,7 @@ export interface ManpowerSupplier {
 }
 
 export interface ManpowerSupplierResponse {
- // data: ManpowerSupplierResponse | PromiseLike<ManpowerSupplierResponse>;
+  // data: ManpowerSupplierResponse | PromiseLike<ManpowerSupplierResponse>;
   count: number;
   next: string | null;
   previous: string | null;
@@ -417,24 +420,33 @@ export interface SingleManpowerSupplierResponse {
 }
 export const ManPowerSupplyTable = () => {
   // const [manPower, setManPower] = useState<ManPowerSupply[]>(MOCK_MANPOWER_DATA);
- 
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
- 
-  
- // const currentManPower = manPower.slice(indexOfFirstManPower, indexOfLastManPower);
+
+
+  // const currentManPower = manPower.slice(indexOfFirstManPower, indexOfLastManPower);
   const [showAddManpowerPopup, setShowAddManpowerPopup] = useState(false);
   const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
-const [search,setSearch]=useState<string>(" ")
-const [count, setCount] = useState<number>(1);
-const [filterBy,setFilterBy]=useState("all")
+  const [search, setSearch] = useState<string>("")
+  const [count, setCount] = useState<number>(1);
+  const [filterBy, setFilterBy] = useState("all")
   const [manPowersuppliers, setManPowerSuppliers] = useState<ManpowerSupplier[]>([]);
-const [showDeleteManPoweSupplierPopup, setShowDeleteManPowerPopup] = useState(false);
-const [ManPoweToDelete, setManPowerToDelete] = useState<{ id: number, name: string } | null>(null);
-const[manPowerId,setManPowerId]=useState<number | null>(null);
+  const [showDeleteManPoweSupplierPopup, setShowDeleteManPowerPopup] = useState(false);
+  const [ManPoweToDelete, setManPowerToDelete] = useState<{ id: number, name: string } | null>(null);
+  const [manPowerId, setManPowerId] = useState<number | null>(null);
   const navigate = useNavigate()
-  const [, setLoading] = useState(true);
-const [, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
+
+
+    // Simulate loading state
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500); // Show shimmer for 1.5 seconds
+    return () => clearTimeout(timer);
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -455,54 +467,54 @@ const [, setError] = useState<string | null>(null);
   }
 
   const openEditManpowerPopup = (id: number) => {
-  setManPowerId(id)
+    setManPowerId(id)
     setShowEditManpowerPopup(true);
   }
 
   const closeEditManpowerPopup = () => {
-  setManPowerId(null)
+    setManPowerId(null)
     setShowEditManpowerPopup(false)
   }
 
 
   const openDeleteManPowerPopup = (manPower: ManpowerSupplier, e: React.MouseEvent) => {
-      e.stopPropagation();
-      setManPowerToDelete({ id: manPower.id, name: manPower.company_name });
-      setShowDeleteManPowerPopup(true);
-    };
-  
-    const closeDeleteManPowerPopup = () => {
-      setShowDeleteManPowerPopup(false);
-      setManPowerToDelete(null);
+    e.stopPropagation();
+    setManPowerToDelete({ id: manPower.id, name: manPower.company_name });
+    setShowDeleteManPowerPopup(true);
+  };
+
+  const closeDeleteManPowerPopup = () => {
+    setShowDeleteManPowerPopup(false);
+    setManPowerToDelete(null);
+  }
+
+
+  const fetchPagination = async () => {
+
+    try {
+      const response = await fetchManPowerSupplyList(currentPage, search.trim(), filterBy) as ManpowerSupplierResponse;
+      console.log("hhhhhhhhhhhhhh", response)
+      setManPowerSuppliers(response?.results?.data || []);
+      // setManPowerId(response?.results?.data?.map((m)=>m.id))
+      setCount(response?.count || 1);
+    } catch (error) {
+      console.error("Error fetching pagination data:", error);
     }
 
-   
-    const fetchPagination = async () => {
-     
-      try {
-        const response = await fetchManPowerSupplyList(currentPage,search.trim(),filterBy) as ManpowerSupplierResponse;
-     console.log("hhhhhhhhhhhhhh",response)
-        setManPowerSuppliers(response?.results?.data || []);
-      // setManPowerId(response?.results?.data?.map((m)=>m.id))
-        setCount(response?.count || 1);
-      } catch (error) {
-        console.error("Error fetching pagination data:", error);
-      }
-     
-    };
+  };
 
-     useEffect(() => {
-        fetchPagination();
-      }, [currentPage, search, filterBy]);
-    
-
-      const handleAgentAdded = () => {
-        fetchPagination(); // Now this works correctly
-       
-      };
+  useEffect(() => {
+    fetchPagination();
+  }, [currentPage, search, filterBy]);
 
 
-const refreshAgentList = async () => {
+  const handleAgentAdded = () => {
+    fetchPagination(); // Now this works correctly
+
+  };
+
+
+  const refreshAgentList = async () => {
     try {
       setLoading(true);
       const response = await fetchManpowerList() as ManpowerSupplierResponse;
@@ -543,22 +555,22 @@ const refreshAgentList = async () => {
 
             {/* Search Input */}
             <div className="relative w-[300px]">
-               <input
-                                                 type="text"
-                                                 placeholder="Search"
-                                                 value={search}
-                                                 onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-                                                 className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
-                                             />
+              <input
+                type="text"
+                placeholder="Search"
+                value={search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                className="w-full rounded-[5px] border-[1px] border-armsgrey pl-2 pr-2 py-1.5 focus-within:outline-none"
+              />
               <IoMdSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 text-armsgrey text-[18px]" />
             </div>
 
             {/* Select Dropdown */}
             <select className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer"
-             value={filterBy}
-             onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setFilterBy(e.target.value)}
+              value={filterBy}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
             >
-            <option value="all">All</option>
+              <option value="all">All</option>
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="last7days">Last 7 days</option>
@@ -571,111 +583,142 @@ const refreshAgentList = async () => {
 
         {/* Table rendering */}
         <div className="w-full overflow-x-auto">
-          <table className="w-full table-auto text-sm ">
-            <thead className="bg-main text-left">
-              <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
-                <th className="bg-main px-2 py-3  ">Manpower <br /> Supplier ID</th>
-                <th className="bg-main px-2 py-3 ">Company Name</th>
-                <th className="bg-main px-2 py-3 ">Contact Person<br />Name </th>
-                <th className="bg-main px-2 py-3 ">Mobile No</th>
-                <th className="bg-main px-2 py-3 ">WhatsApp No</th>
-                <th className="bg-main px-2 py-3 ">Email ID</th>
-                <th className="bg-main px-2 py-3 ">Office Location</th>
-                <th className="bg-main px-2 py-3 ">Catagorise Available</th>
-                <th className="bg-main px-2 py-3 ">Quantity per
-                  <br />
-                  Catagory
-                </th>
-                <th className="bg-main px-2 py-3 ">Upload Trade
-                  <br />Licence
-                </th>
-                <th className="bg-main px-2 py-3 ">Upload Company<br />Licence (if any)(optional)</th>
-                <th className="bg-main px-2 py-3 ">Previous Experience in <br />Manpower Supply</th>
-                <th className="bg-main px-2 py-3 ">If Worked Earlier <br />With Arms</th>
-                <th className="bg-main px-2 py-3 ">Comments</th>
-                <th className="bg-main px-2 py-3 ">Status</th>
-                <th className="bg-main px-2 py-3 ">Created Date&Time</th>
-                <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="whitespace-nowrap">
-              {manPowersuppliers.map((manpower, index) => (
-                <tr key={index}
-                onClick={() => navigate(`/ManPowerSupplyView/${manpower.id}`)}
-                className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
-                  <td className="px-2 py-3">{manpower.supplier_id}</td>
-                  <td className="px-2 py-3">{manpower.company_name}</td>
-                  <td className="px-2 py-3">{manpower.contact_person_name || "-"}</td>
-                  <td className="px-2 py-3">{manpower.mobile_no}</td>
-                  <td className="px-2 py-3">{manpower.whatsapp_no}</td>
-                  <td className="px-2 py-3">{manpower.email}</td>
-                  <td className="px-2 py-3">{manpower.office_location}</td>
-                  <td className="px-2 py-3">{manpower.categories_available}</td>
-                  <td className="px-2 py-3">{manpower.quantity_per_category}</td>
-                  <td className="px-2 py-3">{manpower.trade_license}</td>
-                  <td className="px-2 py-3">{manpower.company_license}</td>
-                  <td className="px-2 py-3">{manpower.previous_experience}</td>
-                  <td className="px-2 py-3">{manpower.worked_with_arms_before}</td>
-                  <td className="px-2 py-3">{manpower.comments}</td>
-                  <td className="px-2 py-3">{manpower.status}</td>
-                  <td className="px-2 py-3">{new Date(manpower.created_at).toLocaleString()}</td> 
-                  
-                  {/* Action buttons (like View / Edit) */}
-                  <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
-                    <td className="px-2 py-3">
-                      <div className="flex items-center space-x-2">
-                        {/* Edit Button */}
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent row navigation
-                            openEditManpowerPopup(manpower.id); // Open the popup
-                          }}
-                          className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                          <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                            Edit
+          {loading ? (
+            <ManpowerTableShimmer />
+          ) : (
+            <div className="w-full overflow-x-auto">
+              {manPowersuppliers.length === 0 ? (
+                <div className="text-center py-4">No Manpower found</div>
+              ) : (
+                <table className="w-full table-auto text-sm ">
+                  <thead className="bg-main text-left">
+                    <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
+                      <th className="bg-main px-2 py-3  ">Manpower <br /> Supplier ID</th>
+                      <th className="bg-main px-2 py-3 ">Company Name</th>
+                      <th className="bg-main px-2 py-3 ">Contact Person<br />Name </th>
+                      <th className="bg-main px-2 py-3 ">Mobile No</th>
+                      <th className="bg-main px-2 py-3 ">WhatsApp No</th>
+                      <th className="bg-main px-2 py-3 ">Email ID</th>
+                      <th className="bg-main px-2 py-3 ">Office Location</th>
+                      <th className="bg-main px-2 py-3 ">Catagorise Available</th>
+                      <th className="bg-main px-2 py-3 ">Quantity per
+                        <br />
+                        Catagory
+                      </th>
+                      <th className="bg-main px-2 py-3 ">Upload Trade
+                        <br />Licence
+                      </th>
+                      <th className="bg-main px-2 py-3 ">Upload Company<br />Licence (if any)(optional)</th>
+                      <th className="bg-main px-2 py-3 ">Previous Experience in <br />Manpower Supply</th>
+                      <th className="bg-main px-2 py-3 ">If Worked Earlier <br />With Arms</th>
+                      <th className="bg-main px-2 py-3 ">Comments</th>
+                      <th className="bg-main px-2 py-3 ">Status</th>
+                      <th className="bg-main px-2 py-3 ">Created Date&Time</th>
+                      <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="whitespace-nowrap">
+                    {manPowersuppliers.map((manpower, index) => (
+                      <tr key={index}
+                        onClick={() => navigate(`/ManPowerSupplyView/${manpower.id}`)}
+                        className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
+                        <td className="px-2 py-3">{manpower.supplier_id || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.company_name || 'N/A'}</td>
+                        <td className="px-2 py-3">{manpower.contact_person_name || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.mobile_no || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.whatsapp_no || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.email || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.office_location || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.categories_available || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.quantity_per_category || "N/A"}</td>
+                        <td className="px-2 py-3">
+                          <div className="text-armsjobslightblue flex text-lg items-center gap-1">
+                            <IoDocumentText /> {manpower.trade_license}
                           </div>
-                        </div>
+                        </td>
+                        <td className="px-2 py-3">
+                          <div className="text-armsjobslightblue flex text-lg items-center gap-1">
+                            <IoDocumentText /> {manpower.company_license}
+                          </div>
+                        </td>
+                        <td className="px-2 py-3">{manpower.previous_experience || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.worked_with_arms_before || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.comments || "N/A"}</td>
+                        <td className="px-2 py-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs ${manpower.status
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                              }`}
+                          >
+                            {manpower.status ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="px-2 py-3">{new Date(manpower.created_at).toLocaleString() || "N/A"}</td>
 
-                        {/* Delete Button */}
-                        <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue 
+                        {/* Action buttons (like View / Edit) */}
+                        <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
+                          <td className="px-2 py-3">
+                            <div className="flex items-center space-x-2">
+                              {/* Edit Button */}
+                              <div
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Prevent row navigation
+                                  openEditManpowerPopup(manpower.id); // Open the popup
+                                }}
+                                className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                                <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
+                                {/* Tooltip */}
+                                <div
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Prevent row navigation
+                                    openEditManpowerPopup(manpower.id); // Open the popup
+                                  }}
+                                  className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                  Edit
+                                </div>
+                              </div>
+
+                              {/* Delete Button */}
+                              <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue 
                         rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white
                          hover:border-armsjobslightblue transition-all duration-200"
-                         onClick={(e) => openDeleteManPowerPopup(manpower, e)}
-                         >
-                          <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl" />
-                          {/* Tooltip */}
-                          <div 
-                            onClick={(e) => openDeleteManPowerPopup(manpower, e)}
-                          className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                            Delete
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                                onClick={(e) => openDeleteManPowerPopup(manpower, e)}
+                              >
+                                <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl" />
+                                {/* Tooltip */}
+                                <div
+                                  onClick={(e) => openDeleteManPowerPopup(manpower, e)}
+                                  className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                  Delete
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+          <Pagination
+            currentPage={currentPage}
+            totalItems={count}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={handleItemsPerPageChange}
+          />
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalItems={count}
-          itemsPerPage={itemsPerPage}
-          onPageChange={handlePageChange}
-          onItemsPerPageChange={handleItemsPerPageChange}
-        />
+        {showAddManpowerPopup && <AddManpowerPopup closePopup={closeAddManpowerPopup} onAgentAdded={handleAgentAdded} refreshData={refreshAgentList} />}
+        {showEditManpowerPopup && <EditManpowerPopup closePopup={closeEditManpowerPopup} supplierId={Number(manPowerId)} onUpdate={fetchPagination} onAgentAdded={handleAgentAdded} refreshData={refreshAgentList}/>}
+        {showDeleteManPoweSupplierPopup && ManPoweToDelete && (<DeleteManPowerPopup closePopup={closeDeleteManPowerPopup} ManPowerData={ManPoweToDelete} refreshData={refreshAgentList} manpowerName={"ManPower/Supply"} />
+        )}
       </div>
-      {showAddManpowerPopup && <AddManpowerPopup closePopup={closeAddManpowerPopup} onAgentAdded={handleAgentAdded} />}
-      {showEditManpowerPopup && <EditManpowerPopup closePopup={closeEditManpowerPopup} supplierId={Number(manPowerId)} onUpdate={fetchPagination }  onAgentAdded={handleAgentAdded} />}
-      {showDeleteManPoweSupplierPopup && ManPoweToDelete && (<DeleteManPowerPopup closePopup={closeDeleteManPowerPopup} ManPowerData={ManPoweToDelete} refreshData={refreshAgentList} manpowerName={"ManPower/Supply"} />
-            )}
     </div>
   );
 };
-
 
 
 

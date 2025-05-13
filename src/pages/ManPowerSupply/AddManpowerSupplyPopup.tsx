@@ -319,6 +319,8 @@
 
 
 
+
+
 import React, { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { Button } from "../../common/Button";
@@ -333,6 +335,7 @@ interface ManpowerAddPopupProps {
   closePopup: () => void;
   onSuccess?: () => void; // Optional success callback
   onAgentAdded?: () => void;
+  refreshData: () => void;
 }
 
 // Define types based on API response
@@ -383,7 +386,8 @@ type ManPowerFormData = z.infer<typeof manpowerSupplierSchema>;
 export const AddManpowerPopup: React.FC<ManpowerAddPopupProps> = ({
   closePopup,
   onSuccess,
-  onAgentAdded
+  onAgentAdded,
+  refreshData,
 }) => {
   const [activeTab, setActiveTab] = useState("Company Details");
   const tabs = ['Company Details', "Manpower Information", "Documents", "Experience", "Additional"];
@@ -410,7 +414,7 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
     console.log("Raw form data:", data); // Debug raw data
   
     const formData = new FormData();
-    formData.append("company_name", data.company_name);
+    formData.append("company_name", data.company_name??"");
     formData.append("contact_person_name", data.contact_person_name);
     formData.append("mobile_no", data.mobile_no);
     formData.append("whatsapp_no", data.whatsapp_no);
@@ -456,6 +460,7 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
       console.log("API response:", response.data); // Debug response
       closePopup();
       onSuccess?.();
+      refreshData();
     } catch (error) {
       console.error("Detailed error:", error); // Detailed error logging
     } finally {
@@ -516,11 +521,6 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
                                                 />
-                                                {/* {errors.company_name && (
-                                                    <p className="text-red-500 text-xs mt-1">
-                                                        {errors.company_name.message}
-                                                    </p>
-                                                )} */}
                                             </div>
                                             
                                             {/* Contact Person Name */}
