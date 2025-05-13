@@ -523,7 +523,7 @@ const handleSubmit = async () => {
                                         {/* Contact Person */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Contact Person
+                                                Contact Person Name<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="text"
@@ -537,7 +537,7 @@ const handleSubmit = async () => {
                                         {/* Mobile Number */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Mobile Number
+                                                Mobile Number<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="text"
@@ -551,7 +551,7 @@ const handleSubmit = async () => {
                                         {/* WhatsApp Number */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                WhatsApp Number
+                                                WhatsApp Number<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="text"
@@ -565,7 +565,7 @@ const handleSubmit = async () => {
                                         {/* Email ID */}
                                         <div>
                                             <label className="text-sm font-semibold mb-1">
-                                                Email ID
+                                                Email ID<span className="text-red-500">*</span>
                                             </label>
                                             <InputField
                                                 type="email"

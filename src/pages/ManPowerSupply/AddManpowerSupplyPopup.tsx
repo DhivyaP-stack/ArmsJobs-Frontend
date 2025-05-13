@@ -352,7 +352,7 @@ const manpowerRemarkSchema = z.object({
 });
 
 const manpowerSupplierSchema = z.object({
-  company_name: z.string().min(1, "Company name is required"),
+  company_name: z.string().optional(),
   contact_person_name: z.string().min(1, "Contact person name is required"),
   mobile_no: z.string().min(1, "Mobile number is required"),
   whatsapp_no: z.string().min(1, "WhatsApp number is required"),
@@ -516,17 +516,17 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
                                                 />
-                                                {errors.company_name && (
+                                                {/* {errors.company_name && (
                                                     <p className="text-red-500 text-xs mt-1">
                                                         {errors.company_name.message}
                                                     </p>
-                                                )}
+                                                )} */}
                                             </div>
                                             
                                             {/* Contact Person Name */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Contact Person Name
+                                                    Contact Person Name<span className="text-red-500">*</span>
                                                 </label>
                                                 <InputField
                                                     type="text"
@@ -545,7 +545,7 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
                                             {/* Mobile Number */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Mobile Number
+                                                    Mobile Number<span className="text-red-500">*</span>
                                                 </label>
                                                 <InputField
                                                     type="tele"
@@ -563,7 +563,7 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
                                             {/* WhatsApp Number */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    WhatsApp Number
+                                                    WhatsApp Number<span className="text-red-500">*</span>
                                                 </label>
                                                 <InputField
                                                     type="tele"
@@ -581,7 +581,7 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
                                             {/* Email ID */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Email ID
+                                                    Email ID<span className="text-red-500">*</span>
                                                 </label>
                                                 <InputField
                                                     type="email"
