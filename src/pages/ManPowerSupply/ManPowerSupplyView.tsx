@@ -890,7 +890,9 @@ export const ManPowerSupplyView = () => {
             </div>
             {showEditManpowerPopup && <EditManpowerPopup closePopup={closeEditManpowerPopup} supplierId={Number(id)} onUpdate={function (): void {
                 throw new Error("Function not implemented.");
-            }} onAgentAdded={handleAgentAdded} />}
+            } } onAgentAdded={handleAgentAdded} refreshData={function (): void {
+                throw new Error("Function not implemented.");
+            } } />}
         </div>
         // </div>
     );

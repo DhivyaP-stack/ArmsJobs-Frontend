@@ -329,6 +329,7 @@ import { InputField } from "../../common/InputField";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 import { fetchSupplierData, updateSupplier } from "../../Commonapicall/ManpowerSupplyapicall/Manpowerapis";
+import { toast } from "react-toastify";
 
 interface ManpowerEditPopupProps {
     closePopup: () => void;
@@ -460,6 +461,7 @@ const handleSubmit = async () => {
         onUpdate();
         closePopup();
         refreshData();
+        toast.success("Manpower Updated Successfully");
     } catch (error) {
         console.error("Error updating supplier:", error);
     }

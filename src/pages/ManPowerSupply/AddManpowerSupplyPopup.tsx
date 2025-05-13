@@ -330,6 +330,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 interface ManpowerAddPopupProps {
   closePopup: () => void;
@@ -461,6 +462,7 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
       closePopup();
       onSuccess?.();
       refreshData();
+      toast.success("Mnapower Added Successfully"); // Debug response
     } catch (error) {
       console.error("Detailed error:", error); // Detailed error logging
     } finally {
