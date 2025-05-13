@@ -446,8 +446,7 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
             }
         }
     };
-
-
+    
     
 const handleSubmit = async () => {
     try {

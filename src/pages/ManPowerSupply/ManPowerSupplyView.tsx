@@ -455,6 +455,7 @@ import { addManPowerRemark, fetchManpowerList, fetchManPowerListById, fetchManPo
 import { ManpowerSupplier, ManpowerSupplierResponse } from "./ManPowerSupplyTable";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
 
 export interface ManPowerData {
     data: ManPowerData[] | PromiseLike<ManPowerData[]>;
@@ -483,7 +484,7 @@ export const ManPowerSupplyView = () => {
 
     const [newRemark, setNewRemark] = useState("");
 
-    const [, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
 
     // const [isLoading, setIsLoading] = useState(true);
@@ -629,6 +630,9 @@ export const ManPowerSupplyView = () => {
         fetchSingleAgent();
     };
 
+     if (loading ) {
+        return <AgentSupplierViewShimmer />;
+    }
 
     return (
         // <div className="min-h-screen bg-gray-100">
