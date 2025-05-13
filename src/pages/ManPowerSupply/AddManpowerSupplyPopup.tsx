@@ -671,82 +671,68 @@ const onSubmit: SubmitHandler<ManPowerFormData> = async (data:ManPowerFormData) 
                     
                     {/* Documents */}
                     {activeTab === "Documents" && (
-                        <div className="max-w-full mx-auto p-0 pl-1">
-                            <div className="flex flex-row gap-6 items-start">
-                                <div className="flex gap-13 w-auto">
-                                    {/* Trade License Upload */}
-                                    <div className="flex flex-col gap-2 flex-1">
-                                        <label htmlFor="trade_license" className="text-sm font-semibold">
-                                            Upload Trade License
-                                        </label>
-                                        <div className="flex flex-col items-center border-dashed border-2 border-armsjobslightblue p-1 w-72">
-                                            <div className="text-gray-400 text-5xl mb-2">
-                                                <FaCloudUploadAlt className="text-main" />
-                                            </div>
-                                            <div className="w-max-43 flex flex-col items-center">
-                                                <p className="text-armsBlack text-xs mb-2 text-center">
-                                                    Drag and drop your file here
-                                                </p>
-                                                <div className="flex items-center w-full mb-2">
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                    <span className="px-2 text-armsBlack text-xs">or</span>
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                </div>
-                                            </div>
-                                            <input
-                                                type="file"
-                                                id="trade_license"
-                                                accept=".pdf,.jpg,.png"
-                                                {...register("trade_license")}
-                                                className="block w-full border border-gray-300 rounded px-2 py-1.5"
-                                            />
-                                            {errors.trade_license && (
-                                                <p className="text-red-500 text-xs mt-1">
-                                                    {errors.trade_license.message as string}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
+                    <div className="max-w-full mx-auto p-0 pl-1">
+                        <div className="flex flex-row gap-6 items-start">
+                            <div className="flex gap-13 w-auto">
+                                {/* First Upload Block */}
+                                <div className="flex flex-col gap-2 flex-1">
+                                    <label htmlFor="Uploadcv" className="text-sm font-semibold">
+                                        Upload Trade License
+                                    </label>
+                                    <div className="flex flex-col items-center border-dashed border-2 border-armsjobslightblue p-1 w-72">
+                                        <div className="text-gray-400 text-5xl mb-2">
+                                            <FaCloudUploadAlt className="text-main" />
                                         </div>
+
+                                        <div className="w-max-43 flex flex-col items-center">
+                                            <p className="text-armsBlack text-xs mb-2 text-center">
+                                                Drag and drop your file here
+                                            </p>
+                                            <div className="flex items-center w-full mb-2">
+                                                <hr className="flex-grow border-t border-armsBlack" />
+                                                <span className="px-2 text-armsBlack text-xs">or</span>
+                                                <hr className="flex-grow border-t border-armsBlack" />
+                                            </div>
+                                        </div>
+                                        <Button
+                                            buttonType="button"
+                                            buttonTitle="Browse Files"
+                                            className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
+                                        />
+                                        <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
                                     </div>
-                                    
-                                    {/* Company License Upload */}
-                                    <div className="flex flex-col gap-2 flex-1">
-                                        <label htmlFor="company_license" className="text-sm font-semibold">
-                                            Upload Company License
-                                        </label>
-                                        <div className="flex flex-col items-center border-dashed border-2 border-armsjobslightblue p-1 w-72">
-                                            <div className="text-gray-400 text-5xl mb-2">
-                                                <FaCloudUploadAlt className="text-main" />
-                                            </div>
-                                            <div className="w-max-43 flex flex-col items-center">
-                                                <p className="text-armsBlack text-xs mb-2 text-center">
-                                                    Drag and drop your file here
-                                                </p>
-                                                <div className="flex items-center w-full mb-2">
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                    <span className="px-2 text-armsBlack text-xs">or</span>
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                </div>
-                                            </div>
-                                            <input
-                                                type="file"
-                                                id="company_license"
-                                                accept=".pdf,.jpg,.png"
-                                                {...register("company_license")}
-                                                className="block w-full border border-gray-300 rounded px-2 py-1.5"
-                                            />
-                                            {errors.company_license && (
-                                                <p className="text-red-500 text-xs mt-1">
-                                                    {errors.company_license.message as string}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
+                                </div>
+                                {/* Second Upload Block */}
+                                <div className="flex flex-col gap-2 flex-1">
+                                    <label htmlFor="Uploadcv" className="text-sm font-semibold">
+                                        Upload Company License
+                                    </label>
+                                    <div className="flex flex-col items-center border-dashed border-2 border-armsjobslightblue p-1 w-72">
+                                        <div className="text-gray-400 text-5xl mb-2">
+                                            <FaCloudUploadAlt className="text-main" />
                                         </div>
+                                        <div className="w-max-43 flex flex-col items-center">
+                                            <p className="text-armsBlack text-xs mb-2 text-center">
+                                                Drag and drop your file here
+                                            </p>
+                                            <div className="flex items-center w-full mb-2">
+                                                <hr className="flex-grow border-t border-armsBlack" />
+                                                <span className="px-2 text-armsBlack text-xs">or</span>
+                                                <hr className="flex-grow border-t border-armsBlack" />
+                                            </div>
+                                        </div>
+                                        <Button
+                                            buttonType="button"
+                                            buttonTitle="Browse Files"
+                                            className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
+                                        />
+                                        <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
+                )}
 
                     {/* Experience */}
                     {activeTab === "Experience" && (
