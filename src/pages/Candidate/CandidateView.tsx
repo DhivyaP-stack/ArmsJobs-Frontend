@@ -71,12 +71,30 @@ interface CandidateApiResponse {
 }
 
 // Toggle Switch Component
+// const ToggleSwitch = ({ isActive, onToggle }: { isActive: boolean; onToggle: () => void }) => {
+//     ///const { id } = useParams<{ id: string }>();
+//     return (
+//         <div
+//             className="relative inline-flex items-center cursor-pointer"
+//             onClick={onToggle}
+//         >
+//             <div className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${isActive ? 'bg-green-600' : 'bg-red-500'}`}>
+//                 <div className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${isActive ? 'translate-x-6' : 'translate-x-1'} top-1`} />
+//             </div>
+//             <span className={`ml-2 text-xs ${isActive ? 'text-green-600' : 'text-red-500'}`}>
+//                 {isActive ? 'Active' : 'Inactive'}
+//             </span>
+//         </div>
+//     );
+// };
 const ToggleSwitch = ({ isActive, onToggle }: { isActive: boolean; onToggle: () => void }) => {
-    ///const { id } = useParams<{ id: string }>();
     return (
         <div
             className="relative inline-flex items-center cursor-pointer"
-            onClick={onToggle}
+            onClick={(e) => {
+                e.stopPropagation(); // Prevent event bubbling if needed
+                onToggle();
+            }}
         >
             <div className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${isActive ? 'bg-green-600' : 'bg-red-500'}`}>
                 <div className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${isActive ? 'translate-x-6' : 'translate-x-1'} top-1`} />
@@ -97,6 +115,7 @@ export const CandidateView = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     const [showcandidateEditPopup, setShowcandidatePopup] = useState<boolean>(false);
+    const [isActive, setIsActive] = useState(false);
     const [candidate, setcandidate] = useState<CandidateApiResponse>({
         id: 0,
         candidate_id: 0,
@@ -322,7 +341,7 @@ export const CandidateView = () => {
                                         <div className="flex items-center gap-2">
                                             <h2 className="text-2xl font-bold">{selectedCandidate?.full_name}</h2>
                                             <div className="scale-70">
-                                                <ToggleSwitch isActive={true} onToggle={() => { }} />
+                                                <ToggleSwitch isActive={isActive} onToggle={() => setIsActive(!isActive)} />   
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-4 mt-4">
