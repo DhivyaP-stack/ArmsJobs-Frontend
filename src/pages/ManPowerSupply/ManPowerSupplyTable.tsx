@@ -479,7 +479,7 @@ export const ManPowerSupplyTable = () => {
 
   const openDeleteManPowerPopup = (manPower: ManpowerSupplier, e: React.MouseEvent) => {
     e.stopPropagation();
-    setManPowerToDelete({ id: manPower.id, name: manPower.company_name });
+    setManPowerToDelete({ id: manPower.id, name: manPower.contact_person_name });
     setShowDeleteManPowerPopup(true);
   };
 

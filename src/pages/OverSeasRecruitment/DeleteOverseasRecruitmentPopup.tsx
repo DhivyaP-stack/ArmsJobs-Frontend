@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 interface DeleteOverseasRecruitmentPopupProps {
   closePopup: () => void;
-  recruitmentData: { id: number; company_name: string };
+  recruitmentData: { id: number; name: string };
   refreshData: () => void;
 }
 
@@ -48,7 +48,7 @@ export const DeleteOverseasRecruitmentPopup: React.FC<DeleteOverseasRecruitmentP
           </div>
           <div className="text-center">
             <p className="text-lg text-armsBlack">
-              Are you sure you want to delete {recruitmentData.company_name}?
+              Are you sure you want to delete {recruitmentData.name}?
             </p>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <div className="pt-5">

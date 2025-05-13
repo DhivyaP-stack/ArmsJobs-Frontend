@@ -46,7 +46,7 @@ export const OverSeasRecruitmentTable = () => {
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [recruitmentToDelete, setRecruitmentToDelete] = useState<{ id: number, company_name: string } | null>(null);
+  const [recruitmentToDelete, setRecruitmentToDelete] = useState<{ id: number, name: string } | null>(null);
   const [selectedOverseas, setSelectedOverseas] = useState<OverseasRecruitmentAgency | null>(null);
 
   //Pagination
@@ -102,7 +102,7 @@ export const OverSeasRecruitmentTable = () => {
 
   const openDeletePopup = (agency: OverseasRecruitmentAgency, e: React.MouseEvent) => {
     e.stopPropagation();
-    setRecruitmentToDelete({ id: agency.id, company_name: agency.company_name });
+    setRecruitmentToDelete({ id: agency.id, name: agency.contact_person_name });
     setShowDeletePopup(true);
   };
 
