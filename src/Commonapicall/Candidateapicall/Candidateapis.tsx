@@ -258,10 +258,10 @@ export const ViewCandidateName = async (
 };
 
 //Search, All, Pagination
-export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string) => {
+export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string, PageSize: string) => {
   try {
     const response = await apiAxios.get<ApiResponse>(
-      `/api/candidates/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}`
+      `/api/candidates/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch overseas recruitment list");
@@ -298,5 +298,29 @@ export const createRemark = async (candidate_id: number, remark: string) => {
   } catch (error: unknown) {
     console.error('Error creating remark:', error);
     throw error;
+  }
+};
+
+export const Candidatestatus = async (
+  Id: string,
+  Status: string, 
+ ) => {
+  try {
+    const formData = new FormData();
+    formData.append('id', Id);
+    formData.append('boolean_value',Status);
+    const response = await apiAxios.post('/api/candidates/update-status/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to submit candidate status data');
+    }
+    console.log('Candidate status updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting candidate status:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
   }
 };

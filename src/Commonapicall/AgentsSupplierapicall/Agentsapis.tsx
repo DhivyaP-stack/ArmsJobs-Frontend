@@ -130,10 +130,10 @@ export const fetchAgents = async (query: string): Promise<Agent[]> => {
 };
 
 //pagination, search, All
-export const fetchAgentsPageList = async (page: number, search: string | undefined, filterBy: string) => {
+export const fetchAgentsPageList = async (page: number, search: string | undefined, filterBy: string, PageSize:string) => {
   try {
     const response = await apiAxios.get(
-      `/api/agents/?page=${page}&search=${search}&filter_by=${filterBy}`
+      `/api/agents/?page=${page}&search=${search}&filter_by=${filterBy}&page_size=${PageSize}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch agents list");
@@ -163,5 +163,30 @@ export const addAgentRemark = async (agent_supplier_id: number, remark: string) 
       );
     }
     throw new Error("Failed to add remark. Please try again.");
+  }
+};
+
+//AgentsSupplier Status
+export const Agentsstatus = async (
+  Id: string,
+  Status: string, 
+ ) => {
+  try {
+    const formData = new FormData();
+    formData.append('id', Id);
+    formData.append('boolean_value',Status);
+    const response = await apiAxios.post('/api/agents/update-status/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to submit Agents/Supplier status data');
+    }
+    console.log('Agents/Supplier status updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting Agents/Supplier status:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
   }
 };

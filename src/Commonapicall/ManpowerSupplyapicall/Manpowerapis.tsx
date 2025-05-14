@@ -267,10 +267,10 @@ export const fetchManPowerListById = async (id: number): Promise<ManpowerSupplie
 
 // manPower data list including page ,search, and filter
 
-export const fetchManPowerSupplyList = async (page: number,search: string | undefined,filterBy: string) => {
+export const fetchManPowerSupplyList = async (page: number,search: string | undefined,filterBy: string, PageSize:string) => {
   try {
     const response = await apiAxios.get(
-      `/api/manpower-suppliers/?page=${page}&search=${search}&filter_by=${filterBy}`
+      `/api/manpower-suppliers/?page=${page}&search=${search}&filter_by=${filterBy}&page_size=${PageSize}`
     );
  
     if (!response.data || response.status !== 200) {
@@ -283,9 +283,7 @@ export const fetchManPowerSupplyList = async (page: number,search: string | unde
   }
 };
 
-
 // Delete manPower Data
-
 export const deleteManPowerData = async (Id: number): Promise<boolean> => {
   try {
     const response = await apiAxios.delete(`/api/manpower-suppliers/${Id}/`);
@@ -304,9 +302,7 @@ export const deleteManPowerData = async (Id: number): Promise<boolean> => {
   }
 };
 
-
 //MannPower namelist
-
 export const fetchManPowerSearch = async (query: string): Promise<ManPowerData[]> => {
   try {
     const res = await apiAxios.get<ManPowerData>("/api/manpower-suppliers/names-list/", {
@@ -342,19 +338,15 @@ export const addManPowerRemark = async (manpower_supplier_id: number, remark: st
   }
 };
 
-
-
-
+//UpdateSupplier
 export const updateSupplier = async (supplierId:number, formData: { [s: string]: unknown; } | ArrayLike<unknown> | ManpowerSupplier, tradeLicenseFile: string | Blob | null, companyLicenseFile: string | Blob | null) => {
   const formDataToSend = new FormData();
-
   // Append all form data except excluded fields
   Object.entries(formData).forEach(([key, value]) => {
       if (key !== 'trade_license' && key !== 'company_license' && key !== 'manpower_remarks') {
           formDataToSend.append(key, value.toString());
       }
   });
-
   // Append files if available
   if (tradeLicenseFile) {
       formDataToSend.append('trade_license', tradeLicenseFile);
@@ -362,55 +354,30 @@ export const updateSupplier = async (supplierId:number, formData: { [s: string]:
   if (companyLicenseFile) {
       formDataToSend.append('company_license', companyLicenseFile);
   }
-
   // Send PUT request
   const response = await apiAxios.put(`/api/manpower-suppliers/${supplierId}/`, formDataToSend, {
       headers: {
           'Content-Type': 'multipart/form-data'
       }
   });
-
   return response;
 };
 
 /// get manpower data
-
 export const fetchSupplierData = async (supplierId: number): Promise<ManpowerSupplier> => {
   const response = await apiAxios.get(`/api/manpower-suppliers/${supplierId}/`);
   return response.data as ManpowerSupplier;
 };
 
-
-
 // add manPower api call
-
-
-
 export const createSupplier = async (data: any, onAgentAdded?: () => void) => {
     const formData = new FormData();
-
     formData.append("company_name", data.company_name);
     formData.append("contact_person_name", data.contact_person_name);
     formData.append("mobile_no", data.mobile_no);
     formData.append("whatsapp_no", data.whatsapp_no);
     formData.append("email", data.email);
-
-    // Optional fields (uncomment or modify as needed)
-    // formData.append("office_location", data.office_location ?? "");
-    // formData.append("categories_available", data.categories_available ?? "");
-    // formData.append("quantity_per_category", data.quantity_per_category ?? "");
-    // formData.append("previous_experience", String(data.previous_experience));
-    // formData.append("worked_with_arms_before", String(data.worked_with_arms_before));
-     //formData.append("comments", data.comments );
-
-    // File fields
-    // if (data.trade_license?.[0]) {
-    //     formData.append("trade_license", data.trade_license[0]);
-    // }
-
-    const response = await axios.post(
-        "https://armsjob.vercel.app/api/manpower-suppliers/",
-        formData,
+    const response = await apiAxios.post("/api/manpower-suppliers/",formData,
         {
             headers: { "Content-Type": "multipart/form-data" },
         }
@@ -421,4 +388,29 @@ export const createSupplier = async (data: any, onAgentAdded?: () => void) => {
     }
 
     return response.data;
+};
+
+//Mnapower Status
+export const Manpowerstatus = async (
+  Id: string,
+  Status: string, 
+ ) => {
+  try {
+    const formData = new FormData();
+    formData.append('id', Id);
+    formData.append('boolean_value',Status);
+    const response = await apiAxios.post('/api/manpower-suppliers/update-status/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to submit Manpower Supply status data');
+    }
+    console.log('Manpower Supply status updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting Manpower Supply status:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
+  }
 };

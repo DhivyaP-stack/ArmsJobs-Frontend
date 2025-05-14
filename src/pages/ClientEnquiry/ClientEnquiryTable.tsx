@@ -63,7 +63,7 @@ export const ClientEnquiryTable = () => {
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy);
+      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy, itemsPerPage.toString());
       if (!response?.results?.data) {
         setClientEnquiry([]);
         setTotalCount(0);
@@ -78,7 +78,7 @@ export const ClientEnquiryTable = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, filterBy]);
+  }, [currentPage, search, filterBy, itemsPerPage]);
 
   useEffect(() => {
     fetchPagination();
@@ -94,7 +94,7 @@ export const ClientEnquiryTable = () => {
   const refreshClientList = async () => {
     try {
       setLoading(true);
-      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy);
+      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy, itemsPerPage.toString());
       setClientEnquiry(response?.results?.data);
     } catch (err) {
       NotifyError(err instanceof Error ? err.message : "Failed to fetch clientEnquiry");
@@ -270,8 +270,8 @@ export const ClientEnquiryTable = () => {
                         <td className="px-2 py-2">
                           {client.accommodation_provided ? 'yes' : 'no'}
                         </td>
-                        <td className="px-2 py-2">{client.categories_required || '-'}</td>
-                        <td className="px-2 py-2">{client.quantity_required || '-'}</td>
+                        <td className="px-2 py-2">{client.categories_required || 'N/A'}</td>
+                        <td className="px-2 py-2">{client.quantity_required || 'N/A'}</td>
                         <td className="px-2 py-2">
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${client.status

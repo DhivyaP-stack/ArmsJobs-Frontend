@@ -15,7 +15,7 @@ interface OverseasRecruitment {
   uae_deployment_experience: boolean;
   relevant_docs: string | null;
   comments: string | null;
-  status: string;
+  status: boolean;
   is_deleted: boolean;
   created_at: string;
 }
@@ -45,10 +45,10 @@ interface ApiResponse {
 }
 
 //Search table, All, Pagination
-export const fetchOverseasRecruitmentList = async (page: number, search: string | undefined, filterBy: string) => {
+export const fetchOverseasRecruitmentList = async (page: number, search: string | undefined, filterBy: string, PageSize:string) => {
   try {
     const response = await apiAxios.get<ApiResponse>(
-      `/api/recruitments/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}`
+      `/api/recruitments/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}`
     );
 
     if (!response.data || response.status !== 200) {
@@ -60,7 +60,6 @@ export const fetchOverseasRecruitmentList = async (page: number, search: string 
     throw error;
   }
 };
-
 
 //Delete Overseas
 export const deleteOverseasRecruitment = async (id: number): Promise<boolean> => {
@@ -181,4 +180,28 @@ export const addOverseasRemark = async (overseas_recruitment_id: number, remark:
   }
 };
 
+//OverseasStatus
+export const OverseasStatus = async (
+  Id: string,
+  Status: string, 
+ ) => {
+  try {
+    const formData = new FormData();
+    formData.append('id', Id);
+    formData.append('boolean_value',Status);
+    const response = await apiAxios.post('/api/recruitments/update-status/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to submit Overseas Recruitment status data');
+    }
+    console.log('Overseas Recruitment status updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting Overseas Recruitment status:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
+  }
+};
 

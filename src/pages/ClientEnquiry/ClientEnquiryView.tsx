@@ -8,6 +8,8 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { EditClientEnquiryPopup } from "./EditClientEnquiryPopup";
 import { ViewClientNameById, fetchClientEnquiryNames } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
+import { StatusClientEnquiryPopup } from "./ClientEnquiryStatusPopup";
+import { PiToggleLeftFill, PiToggleRightFill } from "react-icons/pi";
 // import { CandidateViewShimmer } from "../../components/ShimmerLoading";
 
 interface ApiResponse {
@@ -18,7 +20,6 @@ interface ApiResponse {
     next: string | null;
     previous: string | null;
 }
-
 
 interface SingleClientEnquiryResponse {
     data: ClientEnquiryResponse;
@@ -58,6 +59,8 @@ export const ClientEnquiryView = () => {
     // const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [showEditClientEnquiryPopup, setShowEditClientEnquiryPopup] = useState<boolean>(false);
+    const [showStatusClientEnquiryPopup, setShowStatusClientEnquiryPopup] = useState<boolean>(false);
+    const [clientenquiryStatus, setclientenquiryStatus] = useState<{ id: number, name: string, currentStatus: boolean } | null>(null);
     const [clientenquiry, setclientenquiry] = useState<ClientEnquiryResponse>({
         id: 0,
         client_enquiry_id: '',
@@ -80,7 +83,6 @@ export const ClientEnquiryView = () => {
         is_deleted: false,
         created_at: ''
     });
-    // const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -98,7 +100,6 @@ export const ClientEnquiryView = () => {
             setIsLoading(false);
         }
     };
-
 
     // Fetch details for a specific candidate
     const fetchClientDetails = async (clientEnquiryId: number) => {
@@ -157,42 +158,29 @@ export const ClientEnquiryView = () => {
         setIsLoading(false);
     };
 
-    // const handleAddRemark = () => {
-    //     if (newRemark.trim()) {
-    //         const remark: CandidateRemark = {
-    //             id: Date.now().toString(),
-    //             userId: "current-user-id",
-    //             userName: "Amjad",
-    //             timestamp: new Date().toLocaleString(),
-    //             content: newRemark
-    //         };
-    //         setRemarks([...remarks, remark]);
-    //         setNewRemark("");
-    //     }
-    // };
-
-    // if (isLoading) {
-    //   return (
-    //     <div className="min-h-screen bg-gray-100">
-    //       <Header />
-    //       <CandidateViewShimmer />
-    //     </div>
-    //   );
-    // }
-
     const openEditClientEnquiryPopup = () => {
         setShowEditClientEnquiryPopup(true)
     }
 
-    // const closeEditClientEnquiryPopup = () => {
-    //     setShowEditClientEnquiryPopup(false)
-    // }
-     const closeEditClientEnquiryPopup = () => {
+    const closeEditClientEnquiryPopup = () => {
         setShowEditClientEnquiryPopup(false);
         setIsLoading(true); // Show loading state
         fetchClientDetails(Number(id)).finally(() => {
             setIsLoading(false);
         });
+    }
+
+    const openOverseasStatusPopup = (selectedClientEnquiry: ClientEnquiryResponse) => {
+        setclientenquiryStatus({
+            id: selectedClientEnquiry.id,
+            name: selectedClientEnquiry.contact_person_name,
+            currentStatus: selectedClientEnquiry.status // assuming status is a boolean
+        });
+        setShowStatusClientEnquiryPopup(true);
+    }
+
+    const closeoverseasStatusPopup = () => {
+        setShowStatusClientEnquiryPopup(false)
     }
 
     if (isLoading && initialLoad) {
@@ -276,23 +264,23 @@ export const ClientEnquiryView = () => {
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Company Details</h2>
                                     </div>
-                                    <div className="flex justify-start  ">
-                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
-                                            <div>
-                                                <p className="text-xs text-gray-600">Company Name</p>
-                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.company_name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.email}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Contact Person Name</p>
-                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.contact_person_name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.mobile_number}</p>
+                                    <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
+                                        <div className="flex items-center space-x-4 ml-4"
+                                            onClick={() => selectedClientEnquiry && openOverseasStatusPopup(selectedClientEnquiry)}
+                                        //onClick={openOverseasStatusPopup}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                {selectedClientEnquiry?.status === true ? (
+                                                    <>
+                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
+                                                        <span className="text-green-600 text-sm">Active</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
+                                                        <span className="text-red-600 text-sm">Inactive</span>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                         <Button
@@ -301,6 +289,26 @@ export const ClientEnquiryView = () => {
                                             buttonTitle="Edit"
                                             className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                         />
+                                    </div>
+                                    <div className="flex justify-start  ">
+                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Company Name</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.company_name || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.email|| 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Contact Person Name</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.contact_person_name || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.mobile_number|| 'N/A'}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -312,27 +320,27 @@ export const ClientEnquiryView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Nature of Work</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.nature_of_work}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.nature_of_work || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Location</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_location}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_location || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Duration</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_duration}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_duration || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Categories Required</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.categories_required}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.categories_required || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Quantity Required (per category)</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.quantity_required}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.quantity_required || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Start Date</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_start_date}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.project_start_date || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -367,11 +375,11 @@ export const ClientEnquiryView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Query Type</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.query_type}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.query_type || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Remarks / Notes</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.remarks}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.remarks || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -502,6 +510,14 @@ export const ClientEnquiryView = () => {
                     refreshData={fetchClientEnquiryNames}
                     editClientEnquiry={clientenquiry}
                 />)}
+
+            {showStatusClientEnquiryPopup && clientenquiryStatus && (
+                <StatusClientEnquiryPopup
+                    closePopup={closeoverseasStatusPopup}
+                    ClientEnquiryData={clientenquiryStatus}
+                    refreshData={() => fetchClientDetails(clientenquiryStatus.id)}
+                />
+            )}
         </div>
         // </div>
     );

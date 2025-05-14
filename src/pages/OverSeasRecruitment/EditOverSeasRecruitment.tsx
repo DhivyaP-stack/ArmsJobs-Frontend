@@ -27,7 +27,7 @@ interface OverseasRecruitmentAgency {
     uae_deployment_experience: boolean;
     relevant_docs: string | null;
     comments: string | null;
-    status: string;
+    status: boolean;
     created_at: string;
 }
 

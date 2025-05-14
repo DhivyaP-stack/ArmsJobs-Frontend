@@ -10,6 +10,8 @@ import { fetchRecruitmentNames, fetchOverseasRecruitmentData, fetchOverseasRecru
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
 import { z } from "zod";
 import { toast } from "react-toastify";
+import { StatusOverseasPopup } from "./OverseasStatusPopup";
+import { PiToggleLeftFill, PiToggleRightFill } from "react-icons/pi";
 
 interface OverseasRecruitment {
     id: number;
@@ -26,7 +28,7 @@ interface OverseasRecruitment {
     uae_deployment_experience: boolean;
     comments: string;
     relevant_docs: string | null;
-    status: string;
+    status: boolean;
     created_at: string;
     recruitment_remarks: {
         id: number;
@@ -60,7 +62,9 @@ export const OverSeasRecruitmentView = () => {
     const [overSeasDetail, setOverSeasDetail] = useState<OverseasRecruitment[]>([]);
     const [newRemark, setNewRemark] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false)
+    const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false);
+    const [showOverseasStatusPopup, setShowOverSeasStatusPopup] = useState<boolean>(false);
+    const [overseasStatus, setoverseasStatus] = useState<{ id: number, name: string, currentStatus: boolean } | null>(null);
     const [oversea, setOversea] = useState<OverseasRecruitment | null>(null);
     const [overseaoption, setOverseaoption] = useState<OverseasRecruitment[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -179,6 +183,19 @@ export const OverSeasRecruitmentView = () => {
         });
     }
 
+    const openOverseasStatusPopup = (oversea: OverseasRecruitment) => {
+        setoverseasStatus({
+            id: oversea.id,
+            name: oversea.contact_person_name,
+            currentStatus: oversea.status // assuming status is a boolean
+        });
+        setShowOverSeasStatusPopup(true);
+    }
+
+    const closeoverseasStatusPopup = () => {
+        setShowOverSeasStatusPopup(false)
+    }
+
     // Direct navigation and data loading handler for contact click
     const handleContactClick = async (recruitmentId: number, e: React.MouseEvent) => {
         e.preventDefault();
@@ -268,34 +285,24 @@ export const OverSeasRecruitmentView = () => {
                                 <div className="mb-6 ">
                                     <div className="flex items-center justify-between mb-1 border-b pb-1">
                                         <h2 className="text-xl font-bold">Company Details</h2>
-
                                     </div>
-                                    <div className="flex justify-start  ">
-                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full">
-                                            <div>
-                                                <p className="text-xs text-gray-600">Company Name</p>
-                                                <p className="text-sm font-bold mt-1">{oversea?.company_name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Country</p>
-                                                <p className="text-sm font-bold mt-1">{oversea?.country}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Contact Person Name</p>
-                                                <p className="text-sm font-bold mt-1">{oversea?.contact_person_name}</p>
-                                            </div>
-
-                                            <div>
-                                                <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="text-sm font-bold mt-1">{oversea?.mobile_no}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                                <p className="text-sm font-bold mt-1">{oversea?.whatsapp_no}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="text-sm font-bold mt-1">{oversea?.email_address}</p>
+                                    <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
+                                        <div className="flex items-center space-x-4 ml-4"
+                                            onClick={() => oversea && openOverseasStatusPopup(oversea)}
+                                        //onClick={openOverseasStatusPopup}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                {oversea?.status === true ? (
+                                                    <>
+                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
+                                                        <span className="text-green-600 text-sm">Active</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
+                                                        <span className="text-red-600 text-sm">Inactive</span>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                         <Button
@@ -304,6 +311,35 @@ export const OverSeasRecruitmentView = () => {
                                             buttonTitle="Edit"
                                             className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                         />
+                                    </div>
+                                    <div className="flex justify-start  ">
+                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Company Name</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.company_name || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Country</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.country || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Contact Person Name</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.contact_person_name || 'N/A'}</p>
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs text-gray-600">Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.mobile_no || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">WhatsApp Number</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.whatsapp_no || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{oversea?.email_address || 'N/A'}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -315,16 +351,16 @@ export const OverSeasRecruitmentView = () => {
                                     <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Categories You Can Provide</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.categories_you_can_provide}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.categories_you_can_provide || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Nationality of Workers</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.nationality_of_workers}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.nationality_of_workers || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Mobilization Time
                                             </p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.mobilization_time}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.mobilization_time || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">UAE Deployment Experience</p>
@@ -426,6 +462,14 @@ export const OverSeasRecruitmentView = () => {
                     editOverseas={oversea}
                 />
             }
+
+            {showOverseasStatusPopup && overseasStatus && (
+                <StatusOverseasPopup
+                    closePopup={closeoverseasStatusPopup}
+                    OverseasData={overseasStatus}
+                    refreshData={() => fetchOverseasRecruitmentID(overseasStatus.id)}
+                />
+            )}
         </div>
         //</div>
     );

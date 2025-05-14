@@ -419,13 +419,8 @@ export interface SingleManpowerSupplierResponse {
   data: ManpowerSupplier[];
 }
 export const ManPowerSupplyTable = () => {
-  // const [manPower, setManPower] = useState<ManPowerSupply[]>(MOCK_MANPOWER_DATA);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
-
-
-  // const currentManPower = manPower.slice(indexOfFirstManPower, indexOfLastManPower);
   const [showAddManpowerPopup, setShowAddManpowerPopup] = useState(false);
   const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
   const [search, setSearch] = useState<string>("")
@@ -439,8 +434,7 @@ export const ManPowerSupplyTable = () => {
   const [loading, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
 
-
-    // Simulate loading state
+  // Simulate loading state
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -476,7 +470,6 @@ export const ManPowerSupplyTable = () => {
     setShowEditManpowerPopup(false)
   }
 
-
   const openDeleteManPowerPopup = (manPower: ManpowerSupplier, e: React.MouseEvent) => {
     e.stopPropagation();
     setManPowerToDelete({ id: manPower.id, name: manPower.contact_person_name });
@@ -488,24 +481,23 @@ export const ManPowerSupplyTable = () => {
     setManPowerToDelete(null);
   }
 
-
   const fetchPagination = async () => {
-
     try {
-      const response = await fetchManPowerSupplyList(currentPage, search.trim(), filterBy) as ManpowerSupplierResponse;
+      setLoading(true);
+      const response = await fetchManPowerSupplyList(currentPage, search.trim(), filterBy, itemsPerPage.toString()) as ManpowerSupplierResponse;
       console.log("hhhhhhhhhhhhhh", response)
       setManPowerSuppliers(response?.results?.data || []);
-      // setManPowerId(response?.results?.data?.map((m)=>m.id))
       setCount(response?.count || 1);
     } catch (error) {
       console.error("Error fetching pagination data:", error);
+    }finally {
+      setLoading(false);
     }
-
   };
 
   useEffect(() => {
     fetchPagination();
-  }, [currentPage, search, filterBy]);
+  }, [currentPage, search, filterBy, itemsPerPage]);
 
 
   const handleAgentAdded = () => {

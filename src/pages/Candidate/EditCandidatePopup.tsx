@@ -12,7 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EditCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { toast } from "react-toastify";
 
-
 interface EditCandidatePopupProps {
     // isOpen: boolean;
     closePopup: () => void;
@@ -41,7 +40,7 @@ interface EditCandidatePopupProps {
         relevant_docs1?: string | null;
         relevant_docs2?: string | null;
         relevant_docs3?: string | null;
-        status: string;
+        status: boolean;
         created_at: string;
         is_deleted: boolean;
         languages_spoken: string;

@@ -44,7 +44,6 @@ export const Pagination: React.FC<PaginationProps> = (
     return (
         <div>
             <div className="flex items-center justify-end space-x-10 py-5">
-
                 {/* Items text & select field */}
                 <div className="flex items-center space-x-5">
                     <div>
@@ -54,7 +53,7 @@ export const Pagination: React.FC<PaginationProps> = (
                         <SelectField
                             label={""}
                             options={[
-                                // { value: "1", label: "1" },
+                                { value: "5", label: "5" },
                                 { value: "10", label: "10" },
                                 { value: "50", label: "50" },
                                 { value: "100", label: "100" },

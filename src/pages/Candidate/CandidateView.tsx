@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 // import { Candidate, CandidateRemark } from "../../types/CandidateList";
 //import {  CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
@@ -13,6 +13,8 @@ import { createRemark, fetchCandidateNames, ViewCandidateName } from "../../Comm
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
 import { EditCandidatePopup } from "./EditCandidatePopup";
 import { toast } from "react-toastify";
+import { StatusCandidatePopup } from "./CandidateStatusPopup";
+import { PiToggleLeftFill, PiToggleRightFill } from "react-icons/pi";
 
 // Define API response interfaces
 interface ApiResponse {
@@ -52,7 +54,7 @@ interface CandidateApiResponse {
     relevant_docs1: string | null;
     relevant_docs2: string | null;
     relevant_docs3: string | null;
-    status: string;
+    status: boolean;
     remarks: {
         id: number;
         remark: string;
@@ -70,25 +72,6 @@ interface CandidateApiResponse {
     referral_contact: string;
 }
 
-const ToggleSwitch = ({ isActive, onToggle }: { isActive: boolean; onToggle: () => void }) => {
-    return (
-        <div
-            className="relative inline-flex items-center cursor-pointer"
-            onClick={(e) => {
-                e.stopPropagation(); // Prevent event bubbling if needed
-                onToggle();
-            }}
-        >
-            <div className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${isActive ? 'bg-green-600' : 'bg-red-500'}`}>
-                <div className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${isActive ? 'translate-x-6' : 'translate-x-1'} top-1`} />
-            </div>
-            <span className={`ml-2 text-xs ${isActive ? 'text-green-600' : 'text-red-500'}`}>
-                {isActive ? 'Active' : 'Inactive'}
-            </span>
-        </div>
-    );
-};
-
 export const CandidateView = () => {
     const { id } = useParams<{ id: string }>();
     const [candidates, setCandidates] = useState<CandidateApiResponse[]>([]);
@@ -98,7 +81,8 @@ export const CandidateView = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     const [showcandidateEditPopup, setShowcandidatePopup] = useState<boolean>(false);
-    const [isActive, setIsActive] = useState(false);
+    const [showcandidateStatusPopup, setShowcandidateStatusPopup] = useState<boolean>(false);
+    const [candidateStatus, setcandidatestatus] = useState<{ id: number, name: string, currentStatus: boolean } | null>(null);
     const [candidate, setcandidate] = useState<CandidateApiResponse>({
         id: 0,
         candidate_id: 0,
@@ -123,7 +107,7 @@ export const CandidateView = () => {
         relevant_docs1: null,
         relevant_docs2: null,
         relevant_docs3: null,
-        status: '',
+        status: false,
         remarks: [], // Add this empty array
         created_at: '',
         is_deleted: false,
@@ -220,6 +204,25 @@ export const CandidateView = () => {
         fetchCandidateDetails(Number(id)).finally(() => {
             setIsLoading(false);
         });
+    }
+
+    // const openStatusCandidatePopup = (candidate: CandidateApiResponse, e: React.MouseEvent) => {
+    //     e.stopPropagation();
+    //     setcandidatestatus({ id: candidate.id, name: candidate.full_name, currentStatus: candidate.status === 'Active' });
+    //     setShowcandidateStatusPopup(true)
+    // }
+
+    const openStatusCandidatePopup = (selectedCandidate: CandidateApiResponse) => {
+        setcandidatestatus({
+            id: selectedCandidate.id,
+            name: selectedCandidate.full_name,
+            currentStatus: selectedCandidate.status // assuming status is a boolean
+        });
+        setShowcandidateStatusPopup(true);
+    }
+
+    const closeStatusCandidatePopup = () => {
+        setShowcandidateStatusPopup(false)
     }
 
     const handleAddRemark = async () => {
@@ -322,31 +325,69 @@ export const CandidateView = () => {
                                     </div>
                                     <div className="pb-3.5">
                                         <div className="flex items-center gap-2">
-                                            <h2 className="text-2xl font-bold">{selectedCandidate?.full_name}</h2>
+                                            <h2 className="text-2xl font-bold">{selectedCandidate?.full_name || 'N/A'}</h2>
                                             <div className="scale-70">
-                                                <ToggleSwitch isActive={isActive} onToggle={() => setIsActive(!isActive)} />   
+                                                {/* <ToggleSwitch
+                                                    isActive={selectedCandidate.status === 'Active'}
+                                                    // onToggle={() => setStatus(prev => prev === 'Active' ? 'Inactive' : 'Active')}
+                                                   onToggle={(e) => openStatusCandidatePopup(selectedCandidate, e)}
+                                                /> */}
+                                                {/* <ToggleSwitch
+                                                    isActive={selectedCandidate.status === 'Active'}
+                                                    // onToggle={() => setStatus(prev => prev === 'Active' ? 'Inactive' : 'Active')}
+                                                    onToggle={(e) => openStatusCandidatePopup(selectedCandidate, e)}
+                                                /> */}
+                                                {/* {selectedCandidate?.status === true ? (
+                                                    <>
+                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
+                                                        <span className="text-green-600 text-sm">Active</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
+                                                        <span className="text-red-600 text-sm">Inactive</span>
+                                                    </>
+                                                )} */}
+                                                <div className="flex items-center space-x-4 ml-4"
+                                                    onClick={() => selectedCandidate && openStatusCandidatePopup(selectedCandidate)}
+                                                //onClick={openOverseasStatusPopup}
+                                                >
+                                                    <div className="flex items-center space-x-2">
+                                                        {selectedCandidate?.status === true ? (
+                                                            <>
+                                                                <PiToggleRightFill className="text-green-500 text-5xl" />
+                                                                <span className="text-green-600 text-lg">Active</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <PiToggleLeftFill className="text-red-500 text-5xl" />
+                                                                <span className="text-red-600 text-lg">Inactive</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-4 mt-4">
                                             <div>
                                                 <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="font-bold">{selectedCandidate?.mobile_number}</p>
+                                                <p className="font-bold">{selectedCandidate?.mobile_number || 'N/A'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Whatsapp Number</p>
-                                                <p className="font-bold">{selectedCandidate?.whatsapp_number}</p>
+                                                <p className="font-bold">{selectedCandidate?.whatsapp_number || 'N/A'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="font-bold">{selectedCandidate?.email}</p>
+                                                <p className="font-bold">{selectedCandidate?.email|| 'N/A'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Nationality</p>
-                                                <p className="font-bold">{selectedCandidate?.nationality}</p>
+                                                <p className="font-bold">{selectedCandidate?.nationality || 'N/A'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Current Location</p>
-                                                <p className="font-bold">{selectedCandidate?.current_location}</p>
+                                                <p className="font-bold">{selectedCandidate?.current_location || 'N/A'}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -370,11 +411,11 @@ export const CandidateView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Visa Type</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.visa_type}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.visa_type || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Availability to join</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.availability_to_join}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.availability_to_join || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -387,40 +428,40 @@ export const CandidateView = () => {
 
                                     <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-2">
                                         <div>
-                                            <p className="text-xs text-gray-600">Position Applying For</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.position_applying_for}</p>
+                                        <p className="text-xs text-gray-600">Position Applying For</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.position_applying_for || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Category</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.category}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.category || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Any Other Category</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.other_category}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.other_category || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Years of UAE Experience</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.uae_experience_years}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.uae_experience_years || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Skills & Tasks You Can Perform</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.skills_tasks}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.skills_tasks || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Preferred Work Location</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferred_work_location}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferred_work_location || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Expected Salary (AED)</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.expected_salary}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.expected_salary || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Language Spoken</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.languages_spoken}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.languages_spoken || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Preferred Work Type</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferred_work_type}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.preferred_work_type || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Currently Employed?</p>
@@ -485,16 +526,16 @@ export const CandidateView = () => {
                                     <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Additional Notes or Information</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.additional_notes}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.additional_notes || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Referral Contact Details</p>
                                             <p className="text-xs text-gray-600">Name</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referral_name}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referral_name || 'N/A'}</p>
                                         </div>
                                         <div className="pt-4">
                                             <p className="text-xs text-gray-600">Contact</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referral_contact}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.referral_contact || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -583,6 +624,14 @@ export const CandidateView = () => {
                     closePopup={closeEditCandidatePopup}
                     refreshData={fetchCandidateNames}
                     editCandidate={candidate}
+                />
+            )}
+
+            {showcandidateStatusPopup && candidateStatus && (
+                <StatusCandidatePopup
+                    closePopup={closeStatusCandidatePopup}
+                    refreshData={() => fetchCandidateDetails(candidateStatus.id)}
+                    CandidateStatus={candidateStatus}
                 />
             )}
         </div>

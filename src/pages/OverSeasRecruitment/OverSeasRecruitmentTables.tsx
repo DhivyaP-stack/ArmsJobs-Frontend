@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "../../common/Button";
-//import profileimg from "../../assets/images/profileimg.jpg"
 import { FaUser } from "react-icons/fa6";
-//import { FaSearch } from "react-icons/fa";
 import { MdDelete, MdModeEdit, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { Pagination } from "../../common/Pagination";
 import { IoMdSearch } from "react-icons/io";
@@ -30,7 +28,7 @@ interface OverseasRecruitmentAgency {
   uae_deployment_experience: boolean;
   relevant_docs: string | null;
   comments: string | null;
-  status: string;
+  status: boolean;
   created_at: string;
 }
 
@@ -53,7 +51,7 @@ export const OverSeasRecruitmentTable = () => {
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetchOverseasRecruitmentList(currentPage, search.trim(), filterBy);
+      const response = await fetchOverseasRecruitmentList(currentPage, search.trim(), filterBy, itemsPerPage.toString() );
       if (!response?.results?.data) {
         setRecruitmentAgencies([]);
         setTotalCount(0);
@@ -68,7 +66,7 @@ export const OverSeasRecruitmentTable = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, filterBy]);
+  }, [currentPage, search, filterBy, itemsPerPage]);
 
   useEffect(() => {
     fetchPagination();
@@ -278,8 +276,19 @@ export const OverSeasRecruitmentTable = () => {
           onItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
-      {showOverSeasPopup && <OverSeasAddPopup closePopup={closeOverseasPopup} refreshData={fetchPagination} />}
-      {showEditOverSeasPopup && selectedOverseas && <EditOverSeasPopup closePopup={closeEditOverseasPopup} refreshData={fetchPagination} editOverseas={selectedOverseas} />}
+      
+      {showOverSeasPopup && 
+      <OverSeasAddPopup 
+      closePopup={closeOverseasPopup} 
+      refreshData={fetchPagination} />}
+
+      {showEditOverSeasPopup && selectedOverseas && 
+      <EditOverSeasPopup 
+      closePopup={closeEditOverseasPopup} 
+      refreshData={fetchPagination} 
+      editOverseas={selectedOverseas}
+      />}
+
       {showDeletePopup && recruitmentToDelete && (
         <DeleteOverseasRecruitmentPopup
           closePopup={closeDeletePopup}

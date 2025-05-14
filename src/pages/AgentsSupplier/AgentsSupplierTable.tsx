@@ -15,8 +15,6 @@ import { fetchAgentsList, fetchAgentsPageList } from "../../Commonapicall/Agents
 import { DeleteAgentsPopup } from "./DeleteAgentsPopup";
 
 
-
-
 export interface AgentSupplier {
   current_location: any;
   uae_experience_years: any;
@@ -38,7 +36,7 @@ export interface AgentSupplier {
   additional_notes: string | null;
   remarks: string | null;
   is_deleted: boolean;
-  status: string;
+  status: boolean;
   created_at: string;
   agent_remarks: {
     id: number;
@@ -94,7 +92,6 @@ export const AgentSupplierTable = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    //dispatch(setCurrentPage(page));
   };
 
   const handleItemsPerPageChange = (items: number) => {
@@ -120,14 +117,6 @@ export const AgentSupplierTable = () => {
     setShowDeleteAgentsPopup(false)
   }
 
-  // const openDeleteAgentsPopup = (Agents:any) => {
-  //   // setShowDeleteAgentsPopup(true);
-
-  //   setSelectedAgents(Agents);
-  //   setShowDeleteAgentsPopup(true);
-  //       console.log("Deleting the agents", Agents);
-  // }
-
   const openDeleteAgentsPopup = (agent: AgentSupplier, e: React.MouseEvent) => {
     e.stopPropagation();
     setAgentToDelete({ id: agent.id, name: agent.name });
@@ -139,42 +128,26 @@ export const AgentSupplierTable = () => {
     setAgentToDelete(null);
   }
 
-  // const closeDeleteAgentsPopup = () => {
-  //   setShowDeleteAgentsPopup(false);
-  //   setAgentToDelete(null);
-  // };
-
   const fetchPagination = async () => {
     try {
-      const response = await fetchAgentsPageList(currentPage, search.trim(), filterBy) as ApiResponse;
+      setIsLoading(true);
+      const response = await fetchAgentsPageList(currentPage, search.trim(), filterBy, itemsPerPage.toString()) as ApiResponse;
       setAgents(response?.results?.data || []);
       setCount(response?.count || 1);
     } catch (error) {
       console.error("Error fetching pagination data:", error);
+    }finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPagination();
-  }, [currentPage, search, filterBy]);
-
-  // const handleAgentAdded = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     await fetchPagination(); // Wait for the data to be fetched
-  //   } finally {
-  //     setIsLoading(false); // Always turn off loading when done
-  //   }
-  // };
+  }, [currentPage, search, filterBy, itemsPerPage]);
 
   const handleAgentAdded = () => {
     fetchPagination(); // Now this works correctly
   };
-
-  // const handleDeleteClick = (agent: AgentSupplier, e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   setAgentToDelete({ id: agent.id, name: agent.name });
-  // };
 
   // Add a refresh function to update the list after deletion
   const refreshAgentList = async () => {

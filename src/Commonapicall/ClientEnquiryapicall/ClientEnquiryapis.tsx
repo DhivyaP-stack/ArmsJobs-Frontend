@@ -51,10 +51,10 @@ interface ClientEnquiryList {
 }
 
 //List,Search, All, Pagination
-export const filterClientEnquiryList = async (page: number, search: string | undefined, filterBy: string) => {
+export const filterClientEnquiryList = async (page: number, search: string | undefined, filterBy: string, PageSize:string) => {
   try {
     const response = await apiAxios.get<ClientEnquiryApiResponse>(
-      `/api/client-enquiries/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}`
+      `/api/client-enquiries/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch Client Enquiry list");
@@ -224,6 +224,31 @@ export const ViewClientNameById = async (
     return response.data;
   } catch (error: any) {
     console.error('Error submitting ClientEnquiry:', error.response?.message || error.message);
+    throw new Error(error.response?.message || 'Submission failed. Please try again.');
+  }
+};
+
+//ClientEnquiry Status
+export const ClientEnquiryStatus = async (
+  Id: string,
+  Status: string, 
+ ) => {
+  try {
+    const formData = new FormData();
+    formData.append('id', Id);
+    formData.append('boolean_value',Status);
+    const response = await apiAxios.post('/api/client-enquiries/update-status/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to submit ClientEnquiry status data');
+    }
+    console.log('ClientEnquiry status updated successfully:', response.data);3
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting ClientEnquiry status:', error.response?.message || error.message);
     throw new Error(error.response?.message || 'Submission failed. Please try again.');
   }
 };

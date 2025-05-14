@@ -456,6 +456,8 @@ import { ManpowerSupplier, ManpowerSupplierResponse } from "./ManPowerSupplyTabl
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
+import { PiToggleLeftFill, PiToggleRightFill } from "react-icons/pi";
+import { StatusManpowerPopup } from "./ManpowerStatusPopup";
 
 export interface ManPowerData {
     data: ManPowerData[] | PromiseLike<ManPowerData[]>;
@@ -479,21 +481,16 @@ const remarkSchema = z.object({
 
 export const ManPowerSupplyView = () => {
     const { id } = useParams<{ id: string }>();
-
-
-
     const [newRemark, setNewRemark] = useState("");
-
     const [loading, setLoading] = useState(false);
     const [showEditManpowerPopup, setShowEditManpowerPopup] = useState(false);
-
-    // const [isLoading, setIsLoading] = useState(true);
-
     const [ManPowerSearch, setManPowerSearch] = useState<ManPowerData[]>([])
     const [searchQuer, setSearchQuer] = useState("");
     const [manPower, setManPower] = useState<ManpowerSupplier | null>(null)
     const [manPowers, setManPowers] = useState<ManpowerSupplier[]>([])
     const [remarkError, setRemarkError] = useState<string | null>(null);
+    const [showManpowerStatusPopup, setShowManpowerStatusPopup] = useState(false);
+    const [ManpowerStatus, setManpowerStatus] = useState<{ id: number; name: string; currentStatus: boolean; } | null>(null);
     const navigate = useNavigate();
 
     const openEditManpowerPopup = () => {
@@ -503,7 +500,21 @@ export const ManPowerSupplyView = () => {
     const closeEditManpowerPopup = () => {
         setShowEditManpowerPopup(false)
     }
-    // Mock data for demonstration
+
+    const openManpowerStatusPopup = (manpower: ManpowerSupplier) => {
+        // if (manpower) {
+            setManpowerStatus({
+                id: manpower.id,
+                name: manpower.contact_person_name,
+                currentStatus: manpower.status // assuming status is a boolean
+            });
+            setShowManpowerStatusPopup(true);
+        
+    };
+
+    const closeManpowerStatusPopup = () => {
+        setShowManpowerStatusPopup(false)
+    }
 
     const handleAddRemark = async () => {
         try {
@@ -523,7 +534,6 @@ export const ManPowerSupplyView = () => {
 
             // Call the API to add the remark
             const response = await addManPowerRemark(manPower.id, newRemark);
-
             if (response) {
                 // Create a new remark object that matches the ManpowerRemark type
                 const newRemarkObj = {
@@ -533,8 +543,6 @@ export const ManPowerSupplyView = () => {
                     updated_at: new Date().toISOString(), // Add the required updated_at field
                     // Add any other required fields from your ManpowerRemark interface
                 };
-
-                // Update the local state with the new remark
                 setManPower(prev => {
                     if (!prev) return null;
                     return {
@@ -542,8 +550,6 @@ export const ManPowerSupplyView = () => {
                         manpower_remarks: [...prev.manpower_remarks, newRemarkObj]
                     };
                 });
-
-                // Clear the remark input
                 setNewRemark("");
                 toast.success("Remark added successfully");
             }
@@ -554,9 +560,6 @@ export const ManPowerSupplyView = () => {
         }
     };
 
-
-
-
     const handleSearch = async (query: string) => {
         try {
             const result = await fetchManPowerSearch(query);
@@ -564,9 +567,7 @@ export const ManPowerSupplyView = () => {
         } catch (err) {
             console.error("Search error", err);
         }
-
     };
-
 
     useEffect(() => {
         if (searchQuer.trim().length > 0) {
@@ -575,7 +576,6 @@ export const ManPowerSupplyView = () => {
             setManPowerSearch([]); // Clear results if search is empty
         }
     }, [searchQuer]);
-
 
     const filteredCandidates = searchQuer.trim() ? ManPowerSearch : manPowers;
     useEffect(() => {
@@ -605,15 +605,12 @@ export const ManPowerSupplyView = () => {
         }
     }, [id]);
 
-
     // Define fetchSingleAgent outside useEffect so it can be reused
-    const fetchSingleAgent = async () => {
+    const fetchManpowerById = async () => {
         try {
             if (id) {
                 const response = await fetchManPowerListById(Number(id));
-
                 setManPower(response);
-                // setAgentId(response.id);   
             }
         } catch (err) {
             console.error("Error fetching agent by ID:", err);
@@ -622,15 +619,15 @@ export const ManPowerSupplyView = () => {
 
     // Initial fetch
     useEffect(() => {
-        fetchSingleAgent();
+        fetchManpowerById();
     }, [id]);
 
     // Handler for when agent is updated
     const handleAgentAdded = () => {
-        fetchSingleAgent();
+        fetchManpowerById();
     };
 
-     if (loading ) {
+    if (loading) {
         return <AgentSupplierViewShimmer />;
     }
 
@@ -711,37 +708,55 @@ export const ManPowerSupplyView = () => {
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Company Details</h2>
                                     </div>
-
-                                    <div className="flex justify-start  ">
-                                        <div className="grid  grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
-                                            <div>
-                                                <p className="text-xs text-gray-600">Company Name</p>
-                                                <p className="text-sm font-bold mt-1">{manPower?.company_name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="text-sm font-bold mt-1">{manPower?.email}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Contact Person Name</p>
-                                                <p className="text-sm font-bold mt-1">{manPower?.contact_person_name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="text-sm font-bold mt-1">{manPower?.mobile_no}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Office Location</p>
-                                                <p className="text-sm font-bold mt-1">{manPower?.office_location}</p>
+                                    <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
+                                        <div className="flex items-center space-x-4 ml-4"
+                                            onClick={() => manPower && openManpowerStatusPopup(manPower)}
+                                        //onClick={openManpowerStatusPopup}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                {manPower?.status === true ? (
+                                                    <>
+                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
+                                                        <span className="text-green-600 text-sm">Active</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
+                                                        <span className="text-red-600 text-sm">Inactive</span>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
-
                                         <Button
                                             onClick={openEditManpowerPopup}
                                             buttonType="button"
                                             buttonTitle="Edit"
                                             className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                         />
+                                    </div>
+                                    <div className="flex justify-start  ">
+                                        <div className="grid  grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Company Name</p>
+                                                <p className="text-sm font-bold mt-1">{manPower?.company_name || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{manPower?.email || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Contact Person Name</p>
+                                                <p className="text-sm font-bold mt-1">{manPower?.contact_person_name || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{manPower?.mobile_no || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Office Location</p>
+                                                <p className="text-sm font-bold mt-1">{manPower?.office_location || 'N/A'}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -757,7 +772,7 @@ export const ManPowerSupplyView = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Project Location</p>
-                                            <p className="text-sm font-bold mt-1">{manPower?.office_location}</p>
+                                            <p className="text-sm font-bold mt-1">{manPower?.office_location || 'N/A'}</p>
                                         </div>
 
                                     </div>
@@ -804,11 +819,11 @@ export const ManPowerSupplyView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Previous experience in manpower supplying</p>
-                                            <p className="text-sm font-bold mt-1">{manPower?.previous_experience}</p>
+                                            <p className="text-sm font-bold mt-1">{manPower?.previous_experience || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">If worked earlier with Arms</p>
-                                            <p className="text-sm font-bold mt-1">{manPower?.previous_experience}</p>
+                                            <p className="text-sm font-bold mt-1">{manPower?.previous_experience || 'N/A'}</p>
                                         </div>
 
                                     </div>
@@ -823,7 +838,7 @@ export const ManPowerSupplyView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Comments</p>
-                                            <p className="text-sm font-bold mt-1">{manPower?.comments}</p>
+                                            <p className="text-sm font-bold mt-1">{manPower?.comments || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -894,9 +909,17 @@ export const ManPowerSupplyView = () => {
             </div>
             {showEditManpowerPopup && <EditManpowerPopup closePopup={closeEditManpowerPopup} supplierId={Number(id)} onUpdate={function (): void {
                 throw new Error("Function not implemented.");
-            } } onAgentAdded={handleAgentAdded} refreshData={function (): void {
+            }} onAgentAdded={handleAgentAdded} refreshData={function (): void {
                 throw new Error("Function not implemented.");
-            } } />}
+            }} />}
+
+            {showManpowerStatusPopup && ManpowerStatus && (
+                <StatusManpowerPopup
+                    closePopup={closeManpowerStatusPopup}
+                    refreshData={fetchManpowerById}
+                    ManpowerData={ManpowerStatus}
+                />
+            )}
         </div>
         // </div>
     );

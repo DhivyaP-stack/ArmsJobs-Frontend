@@ -15,16 +15,6 @@ import { NotifyError } from "../../common/Toast/ToastMessage";
 import { CandidateTableShimmer } from "../../components/ShimmerLoading/ShimmerTable/CandidateTableShimmer";
 import { DeleteCandidatePopup } from "./DeleteCandidatePopup";
 
-// interface CandidatesApiResponse {
-//   status: string;
-//   message: string;
-//   data: CandidateList[];
-//   count: number;
-//   next: string | null;
-//   previous: string | null;
-//   results: CandidatesApiResponse; // <- this is the real structure of the response
-// }
-
 // Define a Candidate type
 interface CandidateList {
   id: number;
@@ -79,7 +69,7 @@ export const CandidateTable = () => {
   const [candidateToDelete, setcandidateToDelete] = useState<{ id: number, name: string } | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [search, setSearch] = useState("");
-  console.log('search',search)
+  console.log('search', search)
   const [filterBy, setFilterBy] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
@@ -87,7 +77,7 @@ export const CandidateTable = () => {
   const refreshCandidateList = async () => {
     try {
       setLoading(true);
-      const response = await filterCandidateList(currentPage, search.trim(), filterBy);
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy,itemsPerPage.toString() );
       setCandidatesData(response?.results?.data);
     } catch (err) {
       NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
@@ -100,7 +90,7 @@ export const CandidateTable = () => {
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await filterCandidateList(currentPage, search.trim(), filterBy);
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy, itemsPerPage.toString() )// Pass the page size as string);
       if (!response?.results?.data) {
         setCandidatesData([]);
         setTotalCount(0);
@@ -115,7 +105,7 @@ export const CandidateTable = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, filterBy]);
+  }, [currentPage, search, filterBy, itemsPerPage]);
 
 
   useEffect(() => {
@@ -283,10 +273,10 @@ export const CandidateTable = () => {
                       <td className="px-2 py-1">{candidate.availability_to_join || "N/A"}</td>
                       <td className="px-2 py-1">{candidate.position_applying_for || "N/A"}</td>
                       <td className="px-2 py-1">
-                        {candidate.category  || "N/A"}
+                        {candidate.category || "N/A"}
                       </td>
-                       <td className="px-2 py-1">
-                        {candidate.other_category  || "N/A"}
+                      <td className="px-2 py-1">
+                        {candidate.other_category || "N/A"}
                       </td>
                       <td className="px-2 py-1">{candidate.uae_experience_years || "N/A"}</td>
                       <td className="px-2 py-1">{candidate.skills_tasks || "N/A"}</td>
@@ -298,13 +288,12 @@ export const CandidateTable = () => {
                         </a>
                       </td>
                       <td className="px-2 py-3">
-                       
-                          <div
-                            className="text-armsjobslightblue text-lg flex items-center gap-1"
-                          >
-                            <IoDocumentText /> 2
-                          </div>
-                       
+
+                        <div
+                          className="text-armsjobslightblue text-lg flex items-center gap-1"
+                        >
+                          <IoDocumentText /> 2
+                        </div>
                       </td>
                       <td className="px-2 py-3">
                         <span
@@ -366,14 +355,26 @@ export const CandidateTable = () => {
           onItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
-      {showAddCandidatePopup && <AddCandidatePopup closePopup={closeAddCategoryPopup} refreshData={refreshCandidateList} />}
+
+      {showAddCandidatePopup &&
+        <AddCandidatePopup
+          closePopup={closeAddCategoryPopup}
+          refreshData={refreshCandidateList}
+        />}
+
       {showEditCandidatePopup && selectedCandidate && (
         <EditCandidatePopup
           closePopup={closeEditCategoryPopup}
           editCandidate={selectedCandidate}
           refreshData={refreshCandidateList}
         />)}
-      {showDeleteCandidatePopup && candidateToDelete && (<DeleteCandidatePopup closePopup={closeDeleteAgentsPopup} CandidateData={candidateToDelete} refreshData={refreshCandidateList} />)}
+
+      {showDeleteCandidatePopup && candidateToDelete &&
+        (<DeleteCandidatePopup
+          closePopup={closeDeleteAgentsPopup}
+          CandidateData={candidateToDelete}
+          refreshData={refreshCandidateList}
+        />)}
     </div>
   );
 };

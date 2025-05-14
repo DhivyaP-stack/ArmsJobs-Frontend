@@ -11,6 +11,8 @@ import { addAgentRemark, fetchAgents, fetchAgentsList, fetchAgentsListById } fro
 import { AgentSupplier, ApiResponse } from "./AgentsSupplierTable";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { PiToggleLeftFill, PiToggleRightFill } from "react-icons/pi";
+import { StatusAgentsPopup } from "./AgentsStatusPopup";
 
 export interface Agent {
     id: number;
@@ -36,11 +38,13 @@ export const AgentSupplyView = () => {
     const [agentSupplier, setAgentSupplier] = useState<AgentSupplier[]>([]);
     const [searchQuer, setSearchQuer] = useState("");
     const [showEditAgentsSupplierPopup, setShowEditAgentsSupplierPopup] = useState(false);
+    const [showAgentsStatusPopup, setShowAgentsStatusPopup] = useState(false);
     const [agent, setAgent] = useState<AgentSupplier | null>(null);
     const [agents, setAgents] = useState<Agent[]>([]);
     const [loading, setLoading] = useState(false);
     const [agentId, setAgentId] = useState<number | null>(null);
     const [remarkError, setRemarkError] = useState<string | null>(null);
+    const [AgentsStatus, setAgentsstatus] = useState<{ id: number, name: string, currentStatus: boolean } | null>(null);
 
     const navigate = useNavigate();
 
@@ -49,6 +53,23 @@ export const AgentSupplyView = () => {
     }
     const closeEditAgentsSupplierPopup = () => {
         setShowEditAgentsSupplierPopup(false)
+    }
+
+    // const openAgentsStatusPopup = () => {
+    //     setShowAgentsStatusPopup(true);
+    // }
+
+    const openAgentsStatusPopup = (agent: AgentSupplier) => {
+        setAgentsstatus({
+            id: agent.id,
+            name: agent.name,
+            currentStatus: agent.status // assuming status is a boolean
+        });
+        setShowAgentsStatusPopup(true);
+    }
+
+    const closeAgentsStatusPopup = () => {
+        setShowAgentsStatusPopup(false)
     }
 
     const handleSearch = async (query: string) => {
@@ -248,28 +269,25 @@ export const AgentSupplyView = () => {
                         <div className="flex-[3] p-2">
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
-
                                 <div className="mb-6  ">
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Company Details</h2>
                                     </div>
-                                    <div className="flex justify-start ">
-                                        <div className="grid grid-cols-3 gap-4 pt-2 -full">
-                                            <div>
-                                                <p className="text-xs text-gray-600">Name of Agent</p>
-                                                <p className="text-sm font-bold mt-1">{agent?.name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600"> Mobile Number</p>
-                                                <p className="text-sm font-bold mt-1">{agent?.mobile_no}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">WhatsApp Number</p>
-                                                <p className="text-sm font-bold mt-1">{agent?.whatsapp_no}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="text-sm font-bold mt-1">{agent?.email}</p>
+                                    <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
+                                        <div className="flex items-center space-x-2 cursor-pointer"
+                                            onClick={() => agent && openAgentsStatusPopup(agent)}>
+                                            <div className="flex items-center space-x-2">
+                                                {agent?.status === true ? (
+                                                    <>
+                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
+                                                        <span className="text-green-600 text-sm">Active</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
+                                                        <span className="text-red-600 text-sm">Inactive</span>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                         <Button
@@ -278,6 +296,26 @@ export const AgentSupplyView = () => {
                                             buttonTitle="Edit"
                                             className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-bold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
                                         />
+                                    </div>
+                                    <div>
+                                        <div className="grid grid-cols-3 gap-4 pt-2 w-full">
+                                            <div>
+                                                <p className="text-xs text-gray-600">Name of Agent</p>
+                                                <p className="text-sm font-bold mt-1">{agent?.name || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600"> Mobile Number</p>
+                                                <p className="text-sm font-bold mt-1">{agent?.mobile_no || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">WhatsApp Number</p>
+                                                <p className="text-sm font-bold mt-1">{agent?.whatsapp_no || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Email ID</p>
+                                                <p className="text-sm font-bold mt-1">{agent?.email || 'N/A'}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -289,15 +327,15 @@ export const AgentSupplyView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Can the agent do recruitment?</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.can_recruit}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.can_recruit || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Have you been associated earlier with ARMSJOBS?</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.associated_earlier}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.associated_earlier || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Can the agent do manpower supplying?</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.can_supply_manpower}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.can_supply_manpower || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -309,15 +347,15 @@ export const AgentSupplyView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Categories You Can Supply</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.supply_categories}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.supply_categories || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Quantity Estimates</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.quantity_estimates}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.quantity_estimates || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Areas Covered</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.areas_covered}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.areas_covered || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -329,7 +367,7 @@ export const AgentSupplyView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Additional Notes (Category Rates & Recruitment Rates)</p>
-                                            <p className="text-sm font-bold mt-1">{agent?.additional_notes}</p>
+                                            <p className="text-sm font-bold mt-1">{agent?.additional_notes || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -385,7 +423,7 @@ export const AgentSupplyView = () => {
                                                     <p className="text-sm text-gray-600">{comment.remark}</p>
                                                 </div>
                                             ))
-                                             ) : (
+                                        ) : (
                                             <p className="text-sm text-gray-500 text-center py-4">
                                                 No remarks found
                                             </p>
@@ -402,9 +440,17 @@ export const AgentSupplyView = () => {
                 <EditAgentsSupplierPopup
                     closePopup={closeEditAgentsSupplierPopup}
                     agentId={agentId}
-                    onAgentAdded={handleAgentAdded} 
+                    onAgentAdded={handleAgentAdded}
                     refreshData={fetchAgentsList}
-                    />}
+                />}
+
+            {showAgentsStatusPopup && AgentsStatus && (
+                <StatusAgentsPopup
+                    closePopup={closeAgentsStatusPopup}
+                    refreshData={fetchSingleAgent}
+                    AgentData={AgentsStatus}
+                />
+            )}
         </div>
         // </div>
     );
