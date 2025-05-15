@@ -200,7 +200,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                         <div className="grid max-xl:!grid-cols-3 grid-cols-4 gap-4 ">
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Company Name<span className="text-red-500">*</span>
+                                                    Company Name
                                                 </label>
                                                 <InputField
                                                     type="text"
@@ -214,7 +214,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                             {/* Country */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Country<span className="text-red-500">*</span>
+                                                    Country
                                                 </label>
                                                 <InputField
                                                     type="text"
