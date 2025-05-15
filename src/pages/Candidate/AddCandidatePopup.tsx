@@ -22,16 +22,16 @@ const personalInfoSchema = zod.object({
     full_name: zod.string().min(3, "Full name is required"),
     mobile_number: zod
         .string()
-        .min(1, "Mobile number is required")
+        .min(3, "Mobile number is required")
         .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
     whatsapp_number: zod
         .string()
-        .min(1, "WhatsApp number is required")
+        .min(3, "WhatsApp number is required")
         .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
     email: zod
         .string()
-        .min(1, "Email is required")
-        .email("Must be a valid email"),
+        .min(3, "Email ID is required")
+        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
     nationality: zod.string().optional(),
     current_location: zod.string().optional(),
 });
@@ -54,7 +54,14 @@ const jobInfoSchema = zod.object({
     languages_spoken: zod.string().optional(),
     preferred_work_type: zod.string().optional(),
     currently_employed: zod.string().optional(),
-    uae_experience_years: zod.string().optional(),
+    //uae_experience_years: zod.string().optional(),
+    uae_experience_years: zod
+        .string()
+        .optional()
+        .refine(
+            (val) => !val || (/^\d{1,2}$/.test(val) && Number(val) <= 99),
+            { message: "Please enter up to 2 digits only" }
+        ),
 });
 
 // Documents Schema
@@ -67,7 +74,13 @@ const documentsSchema = zod.object({
 const otherInfoSchema = zod.object({
     additional_notes: zod.string().optional(),
     referral_name: zod.string().optional(),
-    referral_contact: zod.string().optional(),
+    referral_contact: zod
+        .string()
+        .optional()
+        .refine(
+            (val) => !val || /^\d{10}$/.test(val),
+            { message: "Contact number must be 10 digits" }
+        ),
 });
 
 // Combined Schema
@@ -393,9 +406,18 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 type="number"
                                                 {...register("uae_experience_years")}
                                                 name="uae_experience_years"
+                                                //inputMode="numeric"
+                                                // pattern="\d*"
+                                                maxLength={2}
+                                                // onInput={(e) => {
+                                                //     e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').slice(0, 10);
+                                                // }}
                                                 className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                 label={""}
                                             />
+                                            {errors.uae_experience_years && (
+                                                <p className="text-sm text-red-500">{errors.uae_experience_years.message}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="text-sm font-semibold mb-1">Expected Salary (AED)</label>
@@ -477,18 +499,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                     />
                                                     No
                                                 </label>
-                                                {/* <label className="relative flex items-center gap-2 pl-7 text-gray-600 cursor-pointer">
-                                                        <input
-                                                            type="radio"
-                                                            name="currentlyemployed"
-                                                            value="no"
-                                                            className="peer absolute left-[-9999px]"
-                                                        />
-                                                        <span className="absolute left-0 top-0 w-[18px] h-[18px] border border-armsBlack rounded-full bg-white"></span>
-                                                        <span className="after:content-[''] after:w-[12px] after:h-[12px] after:bg-armsjobslightblue after:absolute after:top-[4px] after:left-[4px] after:rounded-full after:transition-all after:scale-0 after:opacity-0 peer-checked:after:scale-100 peer-checked:after:opacity-100"></span>
-                                                        No
-                                                    </label> */}
-
                                             </div>
                                         </div>
                                         {/* </div> */}
@@ -615,10 +625,14 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                         </label>
                                                         <InputField
                                                             type="text"
+                                                            maxLength={10}
                                                             {...register("referral_contact")}
                                                             className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                             label={""}
                                                         />
+                                                        {errors.referral_contact && (
+                                                            <p className="text-sm text-red-500">{errors.referral_contact.message}</p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

@@ -57,16 +57,16 @@ const personalInfoSchema = zod.object({
     full_name: zod.string().min(3, "Full name is required"),
     mobile_number: zod
         .string()
-        .min(1, "Mobile number is required")
-        .regex(/^[0-9]+$/, "Must be a valid phone number"),
+        .min(3, "Mobile number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
     whatsapp_number: zod
         .string()
-        .min(1, "WhatsApp number is required")
-        .regex(/^[0-9]+$/, "Must be a valid phone number"),
+        .min(3, "WhatsApp number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
     email: zod
         .string()
         .min(1, "Email is required")
-        .email("Must be a valid email"),
+        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
     nationality: zod.string().optional(),
     current_location: zod.string().optional(),
 });
@@ -89,7 +89,14 @@ const jobInfoSchema = zod.object({
     languages_spoken: zod.string().optional(),
     preferred_work_type: zod.string().optional(),
     currently_employed: zod.string().optional(),
-    uae_experience_years: zod.string().optional(),
+    // uae_experience_years: zod.string().optional(),
+    uae_experience_years: zod
+        .string()
+        .optional()
+        .refine(
+            (val) => !val || (/^\d{1,2}$/.test(val) && Number(val) <= 99),
+            { message: "Please enter up to 2 digits only" }
+        ),
 });
 
 // Documents Schema
@@ -102,7 +109,13 @@ const documentsSchema = zod.object({
 const otherInfoSchema = zod.object({
     additional_notes: zod.string().optional(),
     referral_name: zod.string().optional(),
-    referral_contact: zod.string().optional(),
+    referral_contact: zod
+        .string()
+        .optional()
+        .refine(
+            (val) => !val || /^\d{10}$/.test(val),
+            { message: "Please enter a 10-digit number" }
+        ),
 });
 
 // Combined Schema
@@ -458,10 +471,14 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                             <InputField
                                                 type="number"
                                                 {...register("uae_experience_years")}
+                                                maxLength={2}
                                                 name="uae_experience_years"
                                                 className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                 label={""}
                                             />
+                                            {errors.uae_experience_years && (
+                                                <p className="text-sm text-red-500">{errors.uae_experience_years.message}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="text-sm font-semibold mb-1">Expected Salary (AED)</label>
@@ -669,10 +686,14 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                         </label>
                                                         <InputField
                                                             type="text"
+                                                            maxLength={10}
                                                             {...register("referral_contact")}
                                                             className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                             label={""}
                                                         />
+                                                        {errors.referral_contact && (
+                                                            <p className="text-sm text-red-500">{errors.referral_contact.message}</p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
