@@ -21,7 +21,6 @@ function Login() {
         <div className="w-full md:w-1/2 sm:h-auto h-64 md:h-auto">
           <img src={loginImg} alt="Login" className="h-full w-full object-cover" />
         </div>
-
         {/* Right Form Side */}
         <div className="w-full md:w-1/2 p-6 md:p-10">
           <div className="mb-6">
@@ -32,7 +31,6 @@ function Login() {
             />
             <h2 className="text-xl font-bold text-gray-800 mb-2">Login Here!</h2>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-gray-900 mb-1">Email ID</label>
