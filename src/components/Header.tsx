@@ -1,42 +1,18 @@
-// components/Header/Header.tsx
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import ArmsLogo from "../assets/images/armslogo.jpg"
 import Profile from "../assets/icons/Profile.png"
 import Settings from '../assets/icons/Settings.jpg'
 import NotificationBell from "../assets/icons/NotificationBell.jpg"
-//import { useState } from 'react';
+// import { useState } from 'react';
 
 export const Header = () => {
-  // const [profileHover, setProfileHover] = useState(false);
-  // const [moreHover, setMoreHover] = useState(false);
-
   const navigate = useNavigate();
-
-  // const handleMouseEnter = () => {
-  //   setProfileHover(true);
-  // };
-
-  // const handleMouseLeave = () => {
-  //   setProfileHover(false);
-  // }
-
-  // const handleMoreMouseEnter = () => {
-  //   setMoreHover(true);
-  // };
-
-  // const handleMoreMouseLeave = () => {
-  //   setMoreHover(false);
-  // };
+  // const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    // dispatch(logout()); // Logout and clear token
     navigate("/");
     sessionStorage.clear();
-
-    // // Purge persisted state (this will remove Redux Persist data, i.e., localStorage data)
-    // await persistor.purge();  // This clears the persisted Redux state from localStorage
   }
-
 
   return (
     <header>
@@ -47,7 +23,19 @@ export const Header = () => {
               <img src={ArmsLogo} alt="Logo" className="h-15 pb-4" />
             </Link>
           </div>
-          <div className=" max-2xl:order-3 max-2xl:mx-auto">
+
+          {/* Hamburger (visible only on small screens) */}
+          {/* <div className="block xl:hidden max-2xl:order-2">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-gray-700 focus:outline-none">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2"
+                viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round"
+                  d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+              </svg>
+            </button>
+          </div> */}
+
+          <div className="max-sm:!hidden max-2xl:order-3 max-2xl:mx-auto">
             <nav className="">
               <ul className="flex items-center space-x-8 max-xl:space-x-6">
                 <NavLink
@@ -67,7 +55,7 @@ export const Header = () => {
                 {/* <li>
                 <NavLink to="/UAEOwnFreeLauncerVisa" className="active-nav text-black font-bold">UAE Own/Freelancer Visa</NavLink>
               </li> */}
-                  <NavLink
+                <NavLink
                   to="/AgentsSupplier"
                   className="active-nav max-2xl:before:!-bottom-5"
                   aria-current="page"
@@ -145,7 +133,6 @@ export const Header = () => {
                   className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100">Sign Out</div>
               </div>
             </div>
-
           </div>
         </div>
       </div>

@@ -9,7 +9,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddCandidateList} from "../../Commonapicall/Candidateapicall/Candidateapis";
+import { AddCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { toast } from "react-toastify";
 interface AddCandidatePopupProps {
     // isOpen: boolean;
@@ -21,17 +21,17 @@ interface AddCandidatePopupProps {
 const personalInfoSchema = zod.object({
     full_name: zod.string().min(3, "Full name is required"),
     mobile_number: zod
-      .string()
-      .min(1, "Mobile number is required")
-      .regex(/^[0-9]+$/, "Must be a valid phone number"),
+        .string()
+        .min(1, "Mobile number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
     whatsapp_number: zod
-      .string()
-      .min(1, "WhatsApp number is required")
-      .regex(/^[0-9]+$/, "Must be a valid phone number"),
+        .string()
+        .min(1, "WhatsApp number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
     email: zod
-      .string()
-      .min(1, "Email is required")
-      .email("Must be a valid email"),
+        .string()
+        .min(1, "Email is required")
+        .email("Must be a valid email"),
     nationality: zod.string().optional(),
     current_location: zod.string().optional(),
 });
@@ -108,7 +108,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
         setError(null);
         try {
             // Call the API function with all the form data
-            const response =await AddCandidateList(
+            const response = await AddCandidateList(
                 data.full_name || '',
                 data.mobile_number || '',
                 data.whatsapp_number || '',
@@ -170,7 +170,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                             className={`px-4 py-2 text-sm font-bold  cursor-pointer ${activeTab === tab
                                 ? "bg-main text-white"
                                 : "text-black"
-                                }` }>
+                                }`}>
                             {tab}
                         </button>
                     ))}
@@ -427,7 +427,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                             <label className="text-sm font-semibold mb-1">Skills & Tasks You can Perform</label>
                                             <textarea
                                                 {...register("skills_tasks")}
-                                                 name="skills_tasks"
+                                                name="skills_tasks"
                                                 className="w-full h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                             />
                                         </div>

@@ -159,7 +159,7 @@ export const CandidateTable = () => {
             <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
             <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <Button
               buttonType="button"
               buttonTitle="Candidate"
@@ -176,7 +176,7 @@ export const CandidateTable = () => {
             />
 
             {/* Search Input */}
-            <div className="relative w-[300px]">
+            <div className="relative w-[300px] max-sm:!w-auto">
               <InputField
                 type="text"
                 placeholder="Search"
@@ -192,7 +192,7 @@ export const CandidateTable = () => {
             <select
               value={filterBy}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
-              className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+              className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
               <option value="all">All</option>
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>

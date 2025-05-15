@@ -499,12 +499,10 @@ export const ManPowerSupplyTable = () => {
     fetchPagination();
   }, [currentPage, search, filterBy, itemsPerPage]);
 
-
   const handleAgentAdded = () => {
     fetchPagination(); // Now this works correctly
 
   };
-
 
   const refreshAgentList = async () => {
     try {
@@ -529,7 +527,7 @@ export const ManPowerSupplyTable = () => {
             <span className="mx-2 pt-2 text-sm">{"/"}</span>
             <span className="text-gray-500 pt-2 text-sm font-medium">Manpower Supply</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <Button
               onClick={openAddManpowerPopup}
               buttonType="button"
@@ -546,7 +544,7 @@ export const ManPowerSupplyTable = () => {
             />
 
             {/* Search Input */}
-            <div className="relative w-[300px]">
+            <div className="relative w-[300px] max-sm:!w-auto">
               <input
                 type="text"
                 placeholder="Search"
@@ -558,7 +556,7 @@ export const ManPowerSupplyTable = () => {
             </div>
 
             {/* Select Dropdown */}
-            <select className="w-[170px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer"
+            <select className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer"
               value={filterBy}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterBy(e.target.value)}
             >
