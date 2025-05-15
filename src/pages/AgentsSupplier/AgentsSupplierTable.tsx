@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-
 import { Button } from "../../common/Button";
 import { FaUser } from "react-icons/fa6";
-// import { FaEdit, FaSearch } from "react-icons/fa";
 import { MdDelete, MdModeEdit, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { Pagination } from "../../common/Pagination";
 import { IoMdSearch } from "react-icons/io";
@@ -13,7 +11,6 @@ import { AgentSupplierTableShimmer } from "../../components/ShimmerLoading/Shimm
 import React from "react";
 import { fetchAgentsList, fetchAgentsPageList } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
 import { DeleteAgentsPopup } from "./DeleteAgentsPopup";
-
 
 export interface AgentSupplier {
   current_location: any;

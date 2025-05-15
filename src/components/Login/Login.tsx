@@ -15,10 +15,10 @@ function Login() {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-main px-4">
-      <div className="flex flex-row md:flex-row bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl w-full">
+    <div className="min-h-screen flex items-center justify-center bg-main px-4 py-5">
+      <div className="flex flex-row md:flex-row max-sm:!flex-col bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl w-full ">
         {/* Left Image Side */}
-        <div className="w-full md:w-1/2 h-64 md:h-auto">
+        <div className="w-full md:w-1/2 sm:h-auto h-64 md:h-auto">
           <img src={loginImg} alt="Login" className="h-full w-full object-cover" />
         </div>
 
@@ -28,7 +28,7 @@ function Login() {
             <img
               src={armslogo} // Replace with actual logo
               alt="armslogo"
-              className="h-24 w-auto mx-auto md:mx-0 mb-2 object-contain object-left"
+              className="h-24 max-sm:h-20 xs:h-16 max-md:h-20 w-auto mx-auto md:mx-0 mb-2  object-contain object-left"
             />
             <h2 className="text-xl font-bold text-gray-800 mb-2">Login Here!</h2>
           </div>
