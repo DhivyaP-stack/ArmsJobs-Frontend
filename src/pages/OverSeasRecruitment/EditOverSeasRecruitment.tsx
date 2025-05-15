@@ -40,8 +40,8 @@ interface OverSeasAddPopupProps {
 
 // Company Details Schema
 const companyDetailsSchema = zod.object({
-    company_name: zod.string().min(1, "Company name is required"),
-    country: zod.string().min(1, "Country is required"),
+    company_name: zod.string().optional(),
+    country: zod.string().optional(),
     contact_person_name: zod.string().min(1, "Contact person name is required"),
     mobile_no: zod
         .string()
@@ -127,8 +127,8 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
         try {
             // Prepare request data
             const requestData = {
-                company_name: data.company_name,
-                country: data.country,
+                company_name: data.company_name || '',
+                country: data.country || '',
                 contact_person_name: data.contact_person_name,
                 mobile_no: data.mobile_no,
                 whatsapp_no: data.whatsapp_no,

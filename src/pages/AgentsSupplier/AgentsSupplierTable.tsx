@@ -264,9 +264,9 @@ export const AgentSupplierTable = () => {
                       <td className="px-2 py-5">{agent.mobile_no || "N/A"}</td>
                       <td className="px-2 py-5">{agent.whatsapp_no || "N/A"}</td>
                       <td className="px-2 py-5">{agent.email || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.can_recruit ? "Yes" : "No"}</td>
-                      <td className="px-2 py-5">{agent.associated_earlier || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.can_supply_manpower || "N/A"}</td>
+                      <td className="px-2 py-5">{agent.can_recruit ? "yes" : "no"}</td>
+                      <td className="px-2 py-5">{agent.associated_earlier ? "yes" : "no"}</td>
+                      <td className="px-2 py-5">{agent.can_supply_manpower ? "yes" : "no"}</td>
                       <td className="px-2 py-5">{agent.supply_categories || "N/A"}</td>
                       <td className="px-2 py-5">{agent.quantity_estimates || "N/A"}</td>
                       <td className="px-2 py-5">{agent.areas_covered || "N/A"}</td>

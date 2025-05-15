@@ -1,21 +1,4 @@
 import { apiAxios } from '../apiUrl';
-
-// // Get CandidateList
-// export const fetchClientEnquiryList = async () => {
-//     try {
-//         const response = await apiAxios.get('/api/client-enquiries/');
-
-//         if (!response.data || response.status !== 200) {
-//             throw new Error("Failed to fetch client-enquires");
-//         }
-//         console.log("ClientEnquiry API response", response.data);
-//         return response.data;
-//     } catch (error: any) {
-//         console.error("Error fetching client enquires:", error.response?.data?.message || error.message);
-//         throw new Error(error.response?.data?.message || "Unable to fetch client enquires. Please try again later.");
-//     }
-// };
-
 interface ClientEnquiryApiResponse {
   count: number;
   next: string | null;
@@ -26,7 +9,6 @@ interface ClientEnquiryApiResponse {
     data: ClientEnquiryList[];
   };
 }
-
 interface ClientEnquiryList {
   id: number;
   client_enquiry_id: string;
@@ -106,11 +88,9 @@ export const AddClientEnquiryList = async (
                 'Content-Type': 'multipart/form-data'
             }
         });
-
         if (response.status !== 201) {
             throw new Error('Failed to submit client Enquiry data');
         }
-
         console.log('ClientEnquiry submitted successfully:', response.data);
         return response.data;
     } catch (error: any) {
@@ -118,7 +98,6 @@ export const AddClientEnquiryList = async (
         throw new Error(error.response?.data?.message || 'Submission failed. Please try again.');
     }
 };
-
 
 //EditClientEnquiry
 export const EditClientEnquiry = async (
@@ -191,7 +170,6 @@ export const deleteClientEnquiry = async (Id: string) => {
         );
     }
 };
-
 
 // ViewPAge --> ClientEnquiry Names List
 export const fetchClientEnquiryNames = async (search?:string) => {
