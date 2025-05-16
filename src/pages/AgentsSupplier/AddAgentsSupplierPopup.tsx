@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { Button } from "../../common/Button"
 import { InputField } from "../../common/InputField";
@@ -16,13 +16,18 @@ interface AddAgentsSupplierPopupProps {
 export const agentSchema = z.object({
     // agent details
     name: z.string().min(1, "Name is required"),
-    mobile_no: z.string()
-        .min(10, "Mobile number must be at least 10 digits")
-        .max(15, "Mobile number too long"),
-    whatsapp_no: z.string()
-        .min(10, "Mobile number must be at least 10 digits")
-        .max(15, "Mobile number too long"),
-    email: z.string().email("Invalid email address"),
+    mobile_no: z
+        .string()
+        .min(3, "Mobile number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
+    whatsapp_no: z
+        .string()
+        .min(3, "Whatsapp number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
+    email: z
+        .string()
+        .min(3, "Email ID is required")
+        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
 
     //eligibility and history
     can_recruit: z.string().optional(),
@@ -45,11 +50,10 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
     onAgentAdded,
 }) => {
     const [activeTab, setActiveTab] = useState("Agent Details");
-    // const [isSubmitting, setIsSubmitting] = useState(false);
     const [, setIsSubmitting] = useState(false);
     const tabs = ["Agent Details", "Eligibility & History", "Manpower Info", "Additional Info"];
 
-    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<AgentFormData>({
+    const { register, handleSubmit, formState: { errors }, watch, setValue, trigger } = useForm<AgentFormData>({
         resolver: zodResolver(agentSchema),
         defaultValues: {
             can_recruit: "no",
@@ -57,6 +61,28 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
             can_supply_manpower: "no",
         }
     });
+
+    const tabFieldMapping: Record<string, string[]> = {
+        "Agent Details": [
+            'name',
+            'mobile_no',
+            'whatsapp_no',
+            'email'
+        ],
+        "Eligibility & History": [
+            'can_recruit',
+            'associated_earlier',
+            'can_supply_manpower'
+        ],
+        "Manpower Info": [
+            'quantity_estimates',
+            'areas_covered',
+            'areas_covered',
+        ],
+        "Additional Info": [
+            'additional_notes'
+        ],
+    };
 
     const onSubmit = async (data: AgentFormData) => {
         setIsSubmitting(true);
@@ -82,7 +108,54 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
             setIsSubmitting(false);
         }
     };
-    //   if (!isOpen) return null;
+
+    const [scrollToField, setScrollToField] = useState<string | null>(null);
+    console.log("scrollToField", scrollToField)
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const result = await trigger();
+
+        if (!result) {
+            const firstErrorField = Object.keys(errors)[0];
+
+            if (firstErrorField) {
+                for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
+                    if (fields.includes(firstErrorField)) {
+                        setActiveTab(tabName);
+                        setScrollToField(firstErrorField);
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+
+        handleSubmit(onSubmit)(e);
+    };
+
+    useEffect(() => {
+        if (scrollToField) {
+            // First scroll the tab into view
+            const tabContent = document.querySelector('.tab-content');
+            if (tabContent) {
+                tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Then scroll to the specific field
+            const timeout = setTimeout(() => {
+                const el = document.querySelector(`[name="${scrollToField}"]`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    (el as HTMLElement).focus();
+                }
+                setScrollToField(null);
+            }, 300); // Increased timeout to ensure tab change is complete
+
+            return () => clearTimeout(timeout);
+        }
+    }, [activeTab, scrollToField]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -101,20 +174,26 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                 </div>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
-                                ? "bg-main text-white"
-                                : "text-black"
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                    {tabs.map((tab) => {
+                        const hasError = tabFieldMapping[tab]?.some(field => field in errors);
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                    ? "bg-main text-white"
+                                    : "text-black"
+                                    }`}
+                            >
+                                {tab}
+                                {hasError && (
+                                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleFormSubmit}>
                     {/* Agent Details */}
                     {activeTab === "Agent Details" && (
                         <div className="max-w-full mx-auto p-0 pl-1 ">
@@ -375,7 +454,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                             </div>
                             <div>
                                 <Button
-                                    onClick={handleSubmit(onSubmit)}
+                                    onClick={handleFormSubmit}
                                     buttonType="button"
                                     buttonTitle="Submit"
                                     className="bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"

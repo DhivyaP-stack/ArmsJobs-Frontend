@@ -237,7 +237,7 @@ export const CandidateTable = () => {
                     <th className="bg-main px-2 py-3 ">Upload Relevant Docs</th>
                     <th className="bg-main px-2 py-3 ">Status</th>
                     <th className="bg-main px-2 py-3 ">Created At</th>
-                    <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
+                    <th className="bg-main px-2 py-3 sticky right-0 z-10 max-sm:!static ">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="whitespace-nowrap ">
@@ -306,7 +306,7 @@ export const CandidateTable = () => {
                         </span>
                       </td>
                       <td className="px-2 py-3">{new Date(candidate.created_at).toLocaleString()}</td>
-                      <td className="px-2 py-3 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
+                      <td className="px-2 py-3 sticky right-0 z-10 max-sm:!static bg-armsWhite border-b-2 border-armsgrey">
                         <div className="flex items-center space-x-2">
                           {/* Edit Button */}
                           <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200"

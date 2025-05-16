@@ -248,7 +248,7 @@ export const AgentSupplierTable = () => {
 
                     <th className="bg-main px-2 py-3 ">Status</th>
                     <th className="bg-main px-2 py-3 ">Created Date&Time</th>
-                    <th className="bg-main px-2 py-3 sticky right-0 z-10">Actions</th>
+                    <th className="bg-main px-2 py-3 sticky right-0 z-10 max-sm:!static">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="whitespace-nowrap ">
@@ -279,7 +279,7 @@ export const AgentSupplierTable = () => {
                         </span>
                       </td>
                       <td className="px-2 py-5">{new Date(agent.created_at).toLocaleString()}</td>
-                      <td className="px-2 py-5 sticky right-0 z-10 bg-armsWhite border-b-2 border-armsgrey">
+                      <td className="px-2 py-5 sticky right-0 z-10 max-sm:!static bg-armsWhite border-b-2 border-armsgrey">
 
                         <div className="flex items-center space-x-2">
                           {/* Edit Button */}

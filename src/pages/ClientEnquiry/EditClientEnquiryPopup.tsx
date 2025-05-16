@@ -40,14 +40,13 @@ const companydetailsSchema = zod.object({
     company_name: zod.string().optional(),
     email: zod
         .string()
-        .min(1, "Email is required")
-        .email("Must be a valid email"),
+        .min(3, "Email is required")
+        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
     contact_person_name: zod.string().min(3, "Contact Person name is required"),
     mobile_number: zod
         .string()
-        .min(1, "Mobile number is required")
-        .regex(/^[0-9]+$/, "Must be a valid phone number"),
-
+        .min(3, "Mobile number is required")
+        .regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
 });
 
 // Visa & Work Eligibility Schema
@@ -99,6 +98,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
         formState: { errors },
         reset,
         setValue,
+        trigger,
     } = useForm<ClientEnquiryFormData>({
         resolver: zodResolver(clientenquirySchema),
         defaultValues: {
@@ -107,6 +107,32 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
             accommodation_provided: "no"
         },
     });
+
+    const tabFieldMapping: Record<string, string[]> = {
+        "Company Details": [
+            'company_name',
+            'email',
+            'contact_person_name',
+            'mobile_number',
+        ],
+        "Personal Information": [
+            'nature_of_work',
+            'project_location',
+            'project_duration',
+            'categories_required',
+            'quantity_required',
+            'project_start_date',
+        ],
+        "Facility Info": [
+            'kitchen_facility',
+            'transportation_provided',
+            'accommodation_provided',
+        ],
+        "Remarks": [
+            'remarks',
+            'query_type',
+        ],
+    };
 
     useEffect(() => {
         if (editClientEnquiry) {
@@ -165,6 +191,53 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
         }
     };
 
+       const [scrollToField, setScrollToField] = useState<string | null>(null);
+        console.log("scrollToField", scrollToField)
+    
+        const handleFormSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+    
+            const result = await trigger();
+    
+            if (!result) {
+                const firstErrorField = Object.keys(errors)[0];
+    
+                if (firstErrorField) {
+                    for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
+                        if (fields.includes(firstErrorField)) {
+                            setActiveTab(tabName);
+                            setScrollToField(firstErrorField);
+                            break;
+                        }
+                    }
+                }
+                return;
+            }
+            handleSubmit(onSubmit)(e);
+        };
+    
+        useEffect(() => {
+            if (scrollToField) {
+                // First scroll the tab into view
+                const tabContent = document.querySelector('.tab-content');
+                if (tabContent) {
+                    tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+    
+                // Then scroll to the specific field
+                const timeout = setTimeout(() => {
+                    const el = document.querySelector(`[name="${scrollToField}"]`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        (el as HTMLElement).focus();
+                    }
+                    setScrollToField(null);
+                }, 300); // Increased timeout to ensure tab change is complete
+    
+                return () => clearTimeout(timeout);
+            }
+        }, [activeTab, scrollToField]);
+
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
             <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative">
@@ -182,21 +255,27 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                 </div>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
-                                ? "bg-main text-white"
-                                : "text-black"
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                    {tabs.map((tab) => {
+                        const hasError = tabFieldMapping[tab]?.some(field => field in errors);
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                    ? "bg-main text-white"
+                                    : "text-black"
+                                    }`}
+                            >
+                                {tab}
+                                {hasError && (
+                                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
                 {/* Company Details */}
-                <form onSubmit={handleSubmit(onSubmit)} className="h-[calc(100%-150px)] overflow-y-auto">
+                <form onSubmit={handleFormSubmit} className="h-[calc(100%-150px)] overflow-y-auto">
                     {activeTab === "Company Details" && (
                         <div className="max-w-full mx-auto p-0 pl-1">
                             <div className="flex flex-row gap-1 items-start">
@@ -509,7 +588,7 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                         </div>
                         <div>
                             <Button
-                                onClick={handleSubmit(onSubmit)}
+                                onClick={handleFormSubmit}
                                 buttonType="button"
                                 buttonTitle="Submit"
                                 className="bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"

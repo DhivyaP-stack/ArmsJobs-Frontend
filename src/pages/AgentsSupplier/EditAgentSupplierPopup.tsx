@@ -35,7 +35,8 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
         handleSubmit,
         formState: { errors },
         reset,
-        setValue
+        setValue,
+        trigger
     } = useForm<AgentFormData>({
         resolver: zodResolver(agentSchema),
         defaultValues: {
@@ -44,6 +45,28 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             can_supply_manpower: "no",
         }
     });
+
+    const tabFieldMapping: Record<string, string[]> = {
+        "Agent Details": [
+            'name',
+            'mobile_no',
+            'whatsapp_no',
+            'email'
+        ],
+        "Eligibility & History": [
+            'can_recruit',
+            'associated_earlier',
+            'can_supply_manpower'
+        ],
+        "Manpower Info": [
+            'quantity_estimates',
+            'areas_covered',
+            'areas_covered',
+        ],
+        "Additional Info": [
+            'additional_notes'
+        ],
+    };
 
     // Optimize the useEffect for data loading:
     useEffect(() => {
@@ -66,7 +89,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             } catch (error) {
                 console.error("Error fetching agent data:", error);
                 toast.error("Failed to load agent data");
-            } 
+            }
         };
         if (agentId) {
             fetchAgentData();
@@ -77,7 +100,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
     const onSubmit = async (data: AgentFormData) => {
         try {
             const parseBoolean = (val: string | undefined): boolean | undefined =>
-            val === "true" ? true : val === "false" ? false : undefined;
+                val === "true" ? true : val === "false" ? false : undefined;
             const updateData: Partial<AgentSupplier> = {
                 name: data.name,
                 mobile_no: data.mobile_no,
@@ -106,6 +129,54 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
         }
     };
 
+    const [scrollToField, setScrollToField] = useState<string | null>(null);
+    console.log("scrollToField", scrollToField)
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const result = await trigger();
+
+        if (!result) {
+            const firstErrorField = Object.keys(errors)[0];
+
+            if (firstErrorField) {
+                for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
+                    if (fields.includes(firstErrorField)) {
+                        setActiveTab(tabName);
+                        setScrollToField(firstErrorField);
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+
+        handleSubmit(onSubmit)(e);
+    };
+
+    useEffect(() => {
+        if (scrollToField) {
+            // First scroll the tab into view
+            const tabContent = document.querySelector('.tab-content');
+            if (tabContent) {
+                tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Then scroll to the specific field
+            const timeout = setTimeout(() => {
+                const el = document.querySelector(`[name="${scrollToField}"]`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    (el as HTMLElement).focus();
+                }
+                setScrollToField(null);
+            }, 300); // Increased timeout to ensure tab change is complete
+
+            return () => clearTimeout(timeout);
+        }
+    }, [activeTab, scrollToField]);
+
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
             <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative">
@@ -123,22 +194,28 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                 </div>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
-                                ? "bg-main text-white"
-                                : "text-black"
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                    {tabs.map((tab) => {
+                        const hasError = tabFieldMapping[tab]?.some(field => field in errors);
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                    ? "bg-main text-white"
+                                    : "text-black"
+                                    }`}
+                            >
+                                {tab}
+                                {hasError && (
+                                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleFormSubmit}>
                     {/* Agent Details */}
                     {activeTab === "Agent Details" && (
                         <div className="max-w-full mx-auto p-0 pl-1 ">

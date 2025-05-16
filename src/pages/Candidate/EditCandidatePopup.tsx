@@ -145,12 +145,50 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
         formState: { errors },
         reset,
         setValue,
+        trigger,
     } = useForm<EditCandidateFormData>({
         resolver: zodResolver(candidateSchema),
         defaultValues: {
             currently_employed: "no", // Set default value for radio buttons
         },
     });
+
+    const tabFieldMapping: Record<string, string[]> = {
+        "Personal Information": [
+            'full_name',
+            'mobile_number',
+            'whatsapp_number',
+            'email',
+            'nationality',
+            'current_location'
+        ],
+        "Visa & Work Eligibility": [
+            'visa_type',
+            'visa_expiry_date',
+            'availability_to_join'
+        ],
+        "Job Infor/Work Preferences": [
+            'position_applying_for',
+            'category',
+            'other_category',
+            'expected_salary',
+            'preferred_work_location',
+            'skills_tasks',
+            'languages_spoken',
+            'preferred_work_type',
+            'currently_employed',
+            'uae_experience_years'
+        ],
+        "Documents Upload": [
+            'cv',
+            'relevantDocuments'
+        ],
+        "Other Information": [
+            'additional_notes',
+            'referral_name',
+            'referral_contact'
+        ]
+    };
 
     useEffect(() => {
         if (editCandidate) {
@@ -178,7 +216,6 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
             setValue("referral_contact", editCandidate.referral_contact || '');
         }
     }, [editCandidate, setValue]);
-
 
     const onSubmit = async (data: EditCandidateFormData) => {
         setLoading(true);
@@ -224,6 +261,54 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
         }
     };
 
+    const [scrollToField, setScrollToField] = useState<string | null>(null);
+    console.log("scrollToField", scrollToField)
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const result = await trigger();
+
+        if (!result) {
+            const firstErrorField = Object.keys(errors)[0];
+
+            if (firstErrorField) {
+                for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
+                    if (fields.includes(firstErrorField)) {
+                        setActiveTab(tabName);
+                        setScrollToField(firstErrorField);
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+
+        handleSubmit(onSubmit)(e);
+    };
+
+    useEffect(() => {
+        if (scrollToField) {
+            // First scroll the tab into view
+            const tabContent = document.querySelector('.tab-content');
+            if (tabContent) {
+                tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Then scroll to the specific field
+            const timeout = setTimeout(() => {
+                const el = document.querySelector(`[name="${scrollToField}"]`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    (el as HTMLElement).focus();
+                }
+                setScrollToField(null);
+            }, 300); // Increased timeout to ensure tab change is complete
+
+            return () => clearTimeout(timeout);
+        }
+    }, [activeTab, scrollToField]);
+
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
             <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative  max-xl:!h-[90%]">
@@ -241,21 +326,27 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                 </div>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-bold cursor-pointer ${activeTab === tab
-                                ? "bg-main text-white"
-                                : "text-black"
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                    {tabs.map((tab) => {
+                        const hasError = tabFieldMapping[tab]?.some(field => field in errors);
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                    ? "bg-main text-white"
+                                    : "text-black"
+                                    }`}
+                            >
+                                {tab}
+                                {hasError && (
+                                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
                 {/* Content */}
-                <form onSubmit={handleSubmit(onSubmit)} className="h-[calc(100%-150px)] overflow-y-auto">
+                <form onSubmit={handleFormSubmit} className="h-[calc(100%-150px)] overflow-y-auto">
                     {activeTab === "Personal Information" && (
                         <div className="max-w-full mx-auto p-0 pl-1">
                             <div className="flex flex-row gap-1 items-start">
@@ -718,7 +809,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                         </div>
                         <div>
                             <Button
-                                onClick={handleSubmit(onSubmit)}
+                                onClick={handleFormSubmit}
                                 buttonType="button"
                                 buttonTitle="Submit"
                                 className="bg-armsjobslightblue text-lg text-armsWhite font-bold border-[1px] rounded-sm px-8 py-2 cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
