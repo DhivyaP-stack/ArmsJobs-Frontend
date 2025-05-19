@@ -73,7 +73,6 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
         handleSubmit,
         formState: { errors },
         reset,
-        trigger,
     } = useForm<ClientEnquiryFormData>({
         resolver: zodResolver(clientenquirySchema),
     });
