@@ -53,7 +53,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
     const [, setIsSubmitting] = useState(false);
     const tabs = ["Agent Details", "Eligibility & History", "Manpower Info", "Additional Info"];
 
-    const { register, handleSubmit, formState: { errors }, watch, setValue, trigger } = useForm<AgentFormData>({
+    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<AgentFormData>({
         resolver: zodResolver(agentSchema),
         defaultValues: {
             can_recruit: "no",
@@ -84,55 +84,56 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
         ],
     };
 
-    const onSubmit = async (data: AgentFormData) => {
-        setIsSubmitting(true);
-        try {
-            const response = await axios.post("https://armsjob.vercel.app/api/agents/", data, {
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
-
-            if (response.status === 200 || response.status === 201) {
-                console.log('Agent added successfully');
-                toast.success('Agent added successfully');
-                closePopup();
-                if (onAgentAdded) onAgentAdded();
-            } else {
-                throw new Error("Failed to add agent");
-            }
-        } catch (error) {
-            console.error("Error adding agent:", error);
-            toast.error("Error adding agent");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     const [scrollToField, setScrollToField] = useState<string | null>(null);
     console.log("scrollToField", scrollToField)
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        // Combine form validation and submission in one step
+        handleSubmit(async (data: AgentFormData) => {
+            setIsSubmitting(true);
+            try {
+                const response = await axios.post("https://armsjob.vercel.app/api/agents/", data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                });
 
-        const result = await trigger();
-
-        if (!result) {
-            const firstErrorField = Object.keys(errors)[0];
-
-            if (firstErrorField) {
+                if (response.status === 200 || response.status === 201) {
+                    console.log('Agent added successfully');
+                    toast.success('Agent added successfully');
+                    closePopup();
+                    if (onAgentAdded) onAgentAdded();
+                } else {
+                    throw new Error("Failed to add agent");
+                }
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to submit form";
+                console.error("Error adding agent:", errorMessage);
+                toast.error("Error adding agent");
+            } finally {
+                setIsSubmitting(false);
+            }
+        }, (errors) => {
+            // Handle validation errors
+            const errorFields = Object.keys(errors);
+            if (errorFields.length > 0) {
+                // Find which tab contains the first error
                 for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-                    if (fields.includes(firstErrorField)) {
+                    const hasErrorInTab = errorFields.some(errorField => fields.includes(errorField));
+                    if (hasErrorInTab) {
+                        // Set active tab to the one containing the first error
                         setActiveTab(tabName);
-                        setScrollToField(firstErrorField);
+                        // Set the first error field from this tab to scroll to
+                        const firstErrorFieldInTab = errorFields.find(field => fields.includes(field));
+                        if (firstErrorFieldInTab) {
+                            setScrollToField(firstErrorFieldInTab);
+                        }
                         break;
                     }
                 }
             }
-            return;
-        }
-
-        handleSubmit(onSubmit)(e);
+        })(e);
     };
 
     useEffect(() => {

@@ -12,7 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { toast } from "react-toastify";
 interface AddCandidatePopupProps {
-    // isOpen: boolean;
     closePopup: () => void;
     refreshData: () => void;
 }
@@ -108,7 +107,6 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
         handleSubmit,
         formState: { errors },
         reset,
-        trigger,
     } = useForm<CandidateFormData>({
         resolver: zodResolver(candidateSchema),
         defaultValues: {
@@ -154,83 +152,167 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
     };
 
 
-    const onSubmit = async (data: CandidateFormData) => {
-        setLoading(true);
-        setError(null);
-        try {
-            // Call the API function with all the form data
-            const response = await AddCandidateList(
-                data.full_name || '',
-                data.mobile_number || '',
-                data.whatsapp_number || '',
-                data.email || '',
-                data.nationality || '', // Provide fallback empty string if optional
-                data.current_location || '',
-                data.visa_type || '',
-                data.availability_to_join || '',
-                data.position_applying_for || '',
-                data.category || '',
-                data.uae_experience_years || '',
-                data.skills_tasks || '',
-                data.preferred_work_location || '',
-                data.expected_salary || '',
-                data.visa_expiry_date || '',
-                data.other_category || '',
-                data.languages_spoken || '',
-                data.preferred_work_type || '',
-                data.currently_employed || 'no', // Default to 'no' if not provided
-                data.additional_notes || '',
-                data.referral_name || '',
-                data.referral_contact || ''
-            );
-            // On success
-            reset();
-            closePopup();
-            refreshData();
-            console.log("Candidate added successfully", response);
-            toast.success("Candidate added successfully");
-        } catch (error: any) {
-            setError(error.message || "Failed to submit form");
-            toast.error("Failed to submit form");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const onSubmit = async (data: CandidateFormData) => {
+    //     setLoading(true);
+    //     setError(null);
+    //     try {
+    //         // Call the API function with all the form data
+    //         const response = await AddCandidateList(
+    //             data.full_name || '',
+    //             data.mobile_number || '',
+    //             data.whatsapp_number || '',
+    //             data.email || '',
+    //             data.nationality || '', // Provide fallback empty string if optional
+    //             data.current_location || '',
+    //             data.visa_type || '',
+    //             data.availability_to_join || '',
+    //             data.position_applying_for || '',
+    //             data.category || '',
+    //             data.uae_experience_years || '',
+    //             data.skills_tasks || '',
+    //             data.preferred_work_location || '',
+    //             data.expected_salary || '',
+    //             data.visa_expiry_date || '',
+    //             data.other_category || '',
+    //             data.languages_spoken || '',
+    //             data.preferred_work_type || '',
+    //             data.currently_employed || 'no', // Default to 'no' if not provided
+    //             data.additional_notes || '',
+    //             data.referral_name || '',
+    //             data.referral_contact || ''
+    //         );
+    //         // On success
+    //         reset();
+    //         closePopup();
+    //         refreshData();
+    //         console.log("Candidate added successfully", response);
+    //         toast.success("Candidate added successfully");
+    //     } catch (error: any) {
+    //         setError(error.message || "Failed to submit form");
+    //         toast.error("Failed to submit form");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    // console.log("scrollToField",scrollToField)
+
+    // const handleFormSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+
+    //     const result = await trigger();
+
+    //     if (!result) {
+    //         const firstErrorField = Object.keys(errors)[0];
+
+    //         if (firstErrorField) {
+    //             for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
+    //                 if (fields.includes(firstErrorField)) {
+    //                     setActiveTab(tabName);
+    //                     setScrollToField(firstErrorField);
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //         return;
+    //     }
+
+    //     handleSubmit(onSubmit)(e);
+    // };
+
+    // useEffect(() => {
+    //     if (scrollToField) {
+    //         // First scroll the tab into view
+    //         const tabContent = document.querySelector('.tab-content');
+    //         if (tabContent) {
+    //             tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    //         }
+
+    //         // Then scroll to the specific field
+    //         const timeout = setTimeout(() => {
+    //             const el = document.querySelector(`[name="${scrollToField}"]`);
+    //             if (el) {
+    //                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    //                 (el as HTMLElement).focus();
+    //             }
+    //             setScrollToField(null);
+    //         }, 300); // Increased timeout to ensure tab change is complete
+
+    //         return () => clearTimeout(timeout);
+    //     }
+    // }, [activeTab, scrollToField]);
 
     const [scrollToField, setScrollToField] = useState<string | null>(null);
-    console.log("scrollToField",scrollToField)
-
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const result = await trigger();
-
-        if (!result) {
-            const firstErrorField = Object.keys(errors)[0];
-
-            if (firstErrorField) {
+        // Combine form validation and submission in one step
+        handleSubmit(async (data) => {
+            try {
+                await AddCandidateList(
+                    data.full_name || '',
+                    data.mobile_number || '',
+                    data.whatsapp_number || '',
+                    data.email || '',
+                    data.nationality || '',
+                    data.current_location || '',
+                    data.visa_type || '',
+                    data.availability_to_join || '',
+                    data.position_applying_for || '',
+                    data.category || '',
+                    data.uae_experience_years || '',
+                    data.skills_tasks || '',
+                    data.preferred_work_location || '',
+                    data.expected_salary || '',
+                    data.visa_expiry_date || '',
+                    data.other_category || '',
+                    data.languages_spoken || '',
+                    data.preferred_work_type || '',
+                    data.currently_employed || 'no',
+                    data.additional_notes || '',
+                    data.referral_name || '',
+                    data.referral_contact || ''
+                );
+                reset();
+                closePopup();
+                refreshData();
+                toast.success("Candidate added successfully");
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to submit form";
+                setError(errorMessage);
+                toast.error("Failed to submit form");
+            } finally {
+                setLoading(false);
+            }
+        }, (errors) => {
+            // Handle validation errors
+            const errorFields = Object.keys(errors);
+            if (errorFields.length > 0) {
+                // Find which tab contains the first error
                 for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-                    if (fields.includes(firstErrorField)) {
+                    const hasErrorInTab = errorFields.some(errorField => fields.includes(errorField));
+                    if (hasErrorInTab) {
+                        // Set active tab to the one containing the first error
                         setActiveTab(tabName);
-                        setScrollToField(firstErrorField);
+                        // Set the first error field from this tab to scroll to
+                        const firstErrorFieldInTab = errorFields.find(field => fields.includes(field));
+                        if (firstErrorFieldInTab) {
+                            setScrollToField(firstErrorFieldInTab);
+                        }
                         break;
                     }
                 }
             }
-            return;
-        }
-
-        handleSubmit(onSubmit)(e);
+        })(e);
     };
 
-    useEffect(() => {
+   useEffect(() => {
         if (scrollToField) {
             // First scroll the tab into view
             const tabContent = document.querySelector('.tab-content');
             if (tabContent) {
                 tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-
             // Then scroll to the specific field
             const timeout = setTimeout(() => {
                 const el = document.querySelector(`[name="${scrollToField}"]`);

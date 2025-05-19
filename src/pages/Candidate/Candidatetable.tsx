@@ -155,9 +155,9 @@ export const CandidateTable = () => {
         {/* Header Section */}
         <div className="flex flex-wrap items-center justify-between pb-2 py-2 gap-y-4">
           <div className="flex flex-wrap items-center">
-            <span className="text-3xl font-bold">Candidate</span>
+            <span className="text-3xl max-sm:!text-2xl font-bold">Candidate</span>
             <span className="mx-2 pt-2 text-xl"><MdOutlineKeyboardArrowRight /></span>
-            <span className="text-gray-500 pt-2 text-sm font-medium underline">Dashboard</span>
+            <span className="text-gray-500 pt-2 text-sm  max-sm:!text-xsm font-medium underline">Dashboard</span>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <Button

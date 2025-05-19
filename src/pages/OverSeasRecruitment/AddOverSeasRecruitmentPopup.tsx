@@ -142,9 +142,7 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const result = await trigger();
-
         if (!result) {
             const firstErrorField = Object.keys(errors)[0];
 
@@ -159,7 +157,6 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
             }
             return;
         }
-
         handleSubmit(onSubmit)(e);
     };
 

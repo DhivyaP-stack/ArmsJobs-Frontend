@@ -36,7 +36,6 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
         formState: { errors },
         reset,
         setValue,
-        trigger
     } = useForm<AgentFormData>({
         resolver: zodResolver(agentSchema),
         defaultValues: {
@@ -96,65 +95,68 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
         }
     }, [agentId, reset, setValue]); // Add setValue to dependencies
 
-
-    const onSubmit = async (data: AgentFormData) => {
-        try {
-            const parseBoolean = (val: string | undefined): boolean | undefined =>
-                val === "true" ? true : val === "false" ? false : undefined;
-            const updateData: Partial<AgentSupplier> = {
-                name: data.name,
-                mobile_no: data.mobile_no,
-                whatsapp_no: data.whatsapp_no,
-                email: data.email,
-                can_recruit: parseBoolean(data.can_recruit),
-                associated_earlier: parseBoolean(data.associated_earlier),
-                can_supply_manpower: parseBoolean(data.can_supply_manpower),
-                supply_categories: data.supply_categories,
-                quantity_estimates: data.quantity_estimates,
-                areas_covered: data.areas_covered,
-                additional_notes: data.additional_notes,
-            };
-            if (onAgentAdded) {
-                onAgentAdded();
-            }
-            await updateAgent(agentId, updateData);
-            reset(); // Clear the form
-            closePopup();
-            refreshData();
-            toast.success('Agent Updated successfully');
-            if (onAgentAdded) onAgentAdded();
-        } catch (error) {
-            console.error("Error updating agent:", error);
-            toast.error("Failed to update agent");
-        }
-    };
-
     const [scrollToField, setScrollToField] = useState<string | null>(null);
     console.log("scrollToField", scrollToField)
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const result = await trigger();
+        // Combine form validation and submission in one step
+        handleSubmit(async (data: AgentFormData) => {
+            // setIsSubmitting(true);
+            try {
+                const parseBoolean = (val: string | undefined): boolean | undefined =>
+                    val === "true" ? true : val === "false" ? false : undefined;
 
-        if (!result) {
-            const firstErrorField = Object.keys(errors)[0];
+                const updateData: Partial<AgentSupplier> = {
+                    name: data.name,
+                    mobile_no: data.mobile_no,
+                    whatsapp_no: data.whatsapp_no,
+                    email: data.email,
+                    can_recruit: parseBoolean(data.can_recruit),
+                    associated_earlier: parseBoolean(data.associated_earlier),
+                    can_supply_manpower: parseBoolean(data.can_supply_manpower),
+                    supply_categories: data.supply_categories,
+                    quantity_estimates: data.quantity_estimates,
+                    areas_covered: data.areas_covered,
+                    additional_notes: data.additional_notes,
+                };
 
-            if (firstErrorField) {
+                await updateAgent(agentId, updateData);
+                reset();
+                closePopup();
+                refreshData();
+                toast.success('Agent Updated successfully');
+                if (onAgentAdded) onAgentAdded();
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to update agent";
+                console.error("Error updating agent:", errorMessage);
+                toast.error("Failed to update agent");
+            } 
+            // finally {
+            //     setIsSubmitting(false);
+            // }
+        }, (errors) => {
+            // Handle validation errors
+            const errorFields = Object.keys(errors);
+            if (errorFields.length > 0) {
+                // Find which tab contains the first error
                 for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-                    if (fields.includes(firstErrorField)) {
+                    const hasErrorInTab = errorFields.some(errorField => fields.includes(errorField));
+                    if (hasErrorInTab) {
+                        // Set active tab to the one containing the first error
                         setActiveTab(tabName);
-                        setScrollToField(firstErrorField);
+                        // Set the first error field from this tab to scroll to
+                        const firstErrorFieldInTab = errorFields.find(field => fields.includes(field));
+                        if (firstErrorFieldInTab) {
+                            setScrollToField(firstErrorFieldInTab);
+                        }
                         break;
                     }
                 }
             }
-            return;
-        }
-
-        handleSubmit(onSubmit)(e);
+        })(e);
     };
-
     useEffect(() => {
         if (scrollToField) {
             // First scroll the tab into view
