@@ -95,7 +95,6 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
         formState: { errors },
         reset,
         setValue,
-        trigger,
     } = useForm<OverseasRecruitmentFormData>({
         resolver: zodResolver(overseasRecruitmentSchema),
         defaultValues: {
@@ -103,7 +102,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
         },
     });
 
-      const tabFieldMapping: Record<string, string[]> = {
+    const tabFieldMapping: Record<string, string[]> = {
         "Company Details": [
             'company_name',
             'country',
@@ -139,69 +138,68 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
         }
     }, [editOverseas, setValue]);
 
-    const onSubmit = async (data: OverseasRecruitmentFormData) => {
-        setError(null);
-
-        // Convert uae_deployment_experience string to boolean
-        const uaeExperience = data.uae_deployment_experience === "yes";
-
-        try {
-            // Prepare request data
-            const requestData = {
-                company_name: data.company_name || '',
-                country: data.country || '',
-                contact_person_name: data.contact_person_name,
-                mobile_no: data.mobile_no,
-                whatsapp_no: data.whatsapp_no,
-                email_address: data.email_address,
-                categories_you_can_provide: data.categories_you_can_provide || '',
-                nationality_of_workers: data.nationality_of_workers || '',
-                mobilization_time: data.mobilization_time || '',
-                uae_deployment_experience: uaeExperience,
-                comments: data.comments || ''
-            };
-
-            // Call API to update overseas recruitment
-            const response = await updateOverseasRecruitment(editOverseas.id, requestData);
-
-            // On success:
-            console.log("Overseas recruitment updated successfully", response);
-            reset();
-            closePopup();
-            refreshData();
-            toast.success("Overseas recruitment updated successfully");
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Failed to update form";
-            setError(errorMessage);
-            console.error("Error updating recruitment:", errorMessage);
-            toast.error("Error updating recruitment");
-        }
-    };
-
     const [scrollToField, setScrollToField] = useState<string | null>(null);
     console.log("scrollToField", scrollToField)
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const result = await trigger();
+        // Combine form validation and submission in one step
+        handleSubmit(async (data: OverseasRecruitmentFormData) => {
+            setError(null);
+            try {
+                // Convert uae_deployment_experience string to boolean
+                const uaeExperience = data.uae_deployment_experience === "yes";
 
-        if (!result) {
-            const firstErrorField = Object.keys(errors)[0];
+                // Prepare request data
+                const requestData = {
+                    company_name: data.company_name || '',
+                    country: data.country || '',
+                    contact_person_name: data.contact_person_name,
+                    mobile_no: data.mobile_no,
+                    whatsapp_no: data.whatsapp_no,
+                    email_address: data.email_address,
+                    categories_you_can_provide: data.categories_you_can_provide || '',
+                    nationality_of_workers: data.nationality_of_workers || '',
+                    mobilization_time: data.mobilization_time || '',
+                    uae_deployment_experience: uaeExperience,
+                    comments: data.comments || ''  // Changed from additional_details to comments
+                };
 
-            if (firstErrorField) {
+                // Call API to update overseas recruitment
+                const response = await updateOverseasRecruitment(editOverseas.id, requestData);
+                console.log("response",response)
+
+                // On success:
+                reset();
+                closePopup();
+                refreshData();
+                toast.success("Overseas recruitment updated successfully");
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to update form";
+                setError(errorMessage);
+                toast.error("Failed to update form");
+            }
+        }, (errors) => {
+            // Handle validation errors
+            const errorFields = Object.keys(errors);
+            if (errorFields.length > 0) {
+                // Find which tab contains the first error
                 for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-                    if (fields.includes(firstErrorField)) {
+                    const hasErrorInTab = errorFields.some(errorField => fields.includes(errorField));
+                    if (hasErrorInTab) {
+                        // Set active tab to the one containing the first error
                         setActiveTab(tabName);
-                        setScrollToField(firstErrorField);
+                        // Set the first error field from this tab to scroll to
+                        const firstErrorFieldInTab = errorFields.find(field => fields.includes(field));
+                        if (firstErrorFieldInTab) {
+                            setScrollToField(firstErrorFieldInTab);
+                        }
                         break;
                     }
                 }
             }
-            return;
-        }
-
-        handleSubmit(onSubmit)(e);
+        })(e);
     };
 
     useEffect(() => {
@@ -244,7 +242,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                 </div>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
-                     {tabs.map((tab) => {
+                    {tabs.map((tab) => {
                         const hasError = tabFieldMapping[tab]?.some(field => field in errors);
                         return (
                             <button

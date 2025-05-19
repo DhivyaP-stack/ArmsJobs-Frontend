@@ -73,7 +73,6 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
         handleSubmit,
         formState: { errors },
         reset,
-        trigger,
     } = useForm<OverseasRecruitmentFormData>({
         resolver: zodResolver(overseasRecruitmentSchema),
         defaultValues: {
@@ -101,63 +100,66 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
         ],
     };
 
-    const onSubmit = async (data: OverseasRecruitmentFormData) => {
-        setError(null);
-
-        // Convert uae_deployment_experience string to boolean
-        const uaeExperience = data.uae_deployment_experience === "yes";
-
-        try {
-            // Prepare request data
-            const requestData = {
-                company_name: data.company_name || '',
-                country: data.country || '',
-                contact_person_name: data.contact_person_name,
-                mobile_no: data.mobile_no,
-                whatsapp_no: data.whatsapp_no,
-                email_address: data.email_address,
-                categories_you_can_provide: data.categories_you_can_provide || '',
-                nationality_of_workers: data.nationality_of_workers || '',
-                mobilization_time: data.mobilization_time || '',
-                uae_deployment_experience: uaeExperience,
-                comments: data.additional_details || ''
-            };
-            const result = await addOverseasRecruitment(requestData);
-            // On success:
-            console.log("Overseas recruitment added successfully", result);
-            reset();
-            closePopup();
-            if (refreshData) refreshData();
-            toast.success("Overseas recruitment added successfully");
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Failed to submit form";
-            setError(errorMessage);
-            console.error("Error adding recruitment:", errorMessage);
-            toast.error("Error adding recruitment");
-        }
-    };
-
     const [scrollToField, setScrollToField] = useState<string | null>(null);
-    console.log("scrollToField", scrollToField)
+    console.log("scrollToField", scrollToField);
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const result = await trigger();
-        if (!result) {
-            const firstErrorField = Object.keys(errors)[0];
 
-            if (firstErrorField) {
+        // Combine form validation and submission in one step
+        handleSubmit(async (data: OverseasRecruitmentFormData) => {
+            setError(null);
+            try {
+                // Convert uae_deployment_experience string to boolean
+                const uaeExperience = data.uae_deployment_experience === "yes";
+
+                // Prepare request data
+                const requestData = {
+                    company_name: data.company_name || '',
+                    country: data.country || '',
+                    contact_person_name: data.contact_person_name,
+                    mobile_no: data.mobile_no,
+                    whatsapp_no: data.whatsapp_no,
+                    email_address: data.email_address,
+                    categories_you_can_provide: data.categories_you_can_provide || '',
+                    nationality_of_workers: data.nationality_of_workers || '',
+                    mobilization_time: data.mobilization_time || '',
+                    uae_deployment_experience: uaeExperience,
+                    comments: data.additional_details || ''
+                };
+
+                const result = await addOverseasRecruitment(requestData);
+                console.log("add Overseas result",result)
+                // On success:
+                reset();
+                closePopup();
+                if (refreshData) refreshData();
+                toast.success("Overseas recruitment added successfully");
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to submit form";
+                setError(errorMessage);
+                toast.error("Failed to submit form");
+            } 
+        }, (errors) => {
+            // Handle validation errors
+            const errorFields = Object.keys(errors);
+            if (errorFields.length > 0) {
+                // Find which tab contains the first error
                 for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-                    if (fields.includes(firstErrorField)) {
+                    const hasErrorInTab = errorFields.some(errorField => fields.includes(errorField));
+                    if (hasErrorInTab) {
+                        // Set active tab to the one containing the first error
                         setActiveTab(tabName);
-                        setScrollToField(firstErrorField);
+                        // Set the first error field from this tab to scroll to
+                        const firstErrorFieldInTab = errorFields.find(field => fields.includes(field));
+                        if (firstErrorFieldInTab) {
+                            setScrollToField(firstErrorFieldInTab);
+                        }
                         break;
                     }
                 }
             }
-            return;
-        }
-        handleSubmit(onSubmit)(e);
+        })(e);
     };
 
     useEffect(() => {
