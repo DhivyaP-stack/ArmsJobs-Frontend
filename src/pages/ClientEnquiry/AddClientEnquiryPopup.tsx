@@ -104,65 +104,69 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
         ],
     };
 
-    const onSubmit = async (data: ClientEnquiryFormData) => {
-        setLoading(true);
-        setError(null);
-        try {
-            // Call the API function with all the form data
-            const response = await AddClientEnquiryList(
-                data.company_name || '',
-                data.email || '',
-                data.contact_person_name || '',
-                data.mobile_number || '',
-                data.nature_of_work || '', // Provide fallback empty string if optional
-                data.project_location || '',
-                data.project_duration || '',
-                data.categories_required || '',
-                data.quantity_required || '',
-                data.project_start_date || '',
-                data.kitchen_facility || '',
-                data.transportation_provided || '',
-                data.accommodation_provided || '',
-                data.remarks || '',
-                data.query_type || '',
-            );
-            // On success:
-            console.log("ClientEnquiry added successfully", response);
-            reset();
-            closePopup();
-            refreshData();
-            toast.success("ClientEnquiry added successfully");
-        } catch (error: any) {
-            setError(error.message || "Failed to submit form");
-            toast.error("Failed to submit form");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const [scrollToField, setScrollToField] = useState<string | null>(null);
     console.log("scrollToField", scrollToField)
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const result = await trigger();
+        // Combine form validation and submission in one step
+        handleSubmit(async (data: ClientEnquiryFormData) => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Call the API function with all the form data
+                const response = await AddClientEnquiryList(
+                    data.company_name || '',
+                    data.email || '',
+                    data.contact_person_name || '',
+                    data.mobile_number || '',
+                    data.nature_of_work || '',
+                    data.project_location || '',
+                    data.project_duration || '',
+                    data.categories_required || '',
+                    data.quantity_required || '',
+                    data.project_start_date || '',
+                    data.kitchen_facility || '',
+                    data.transportation_provided || '',
+                    data.accommodation_provided || '',
+                    data.remarks || '',
+                    data.query_type || ''
+                );
 
-        if (!result) {
-            const firstErrorField = Object.keys(errors)[0];
-
-            if (firstErrorField) {
+                // On success
+                reset();
+                closePopup();
+                refreshData();
+                console.log("Client Enquiry added successfully", response);
+                toast.success("Client Enquiry added successfully");
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to submit form";
+                setError(errorMessage);
+                toast.error("Failed to submit form");
+            } finally {
+                setLoading(false);
+            }
+        }, (errors) => {
+            // Handle validation errors
+            const errorFields = Object.keys(errors);
+            if (errorFields.length > 0) {
+                // Find which tab contains the first error
                 for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-                    if (fields.includes(firstErrorField)) {
+                    const hasErrorInTab = errorFields.some(errorField => fields.includes(errorField));
+                    if (hasErrorInTab) {
+                        // Set active tab to the one containing the first error
                         setActiveTab(tabName);
-                        setScrollToField(firstErrorField);
+                        // Set the first error field from this tab to scroll to
+                        const firstErrorFieldInTab = errorFields.find(field => fields.includes(field));
+                        if (firstErrorFieldInTab) {
+                            setScrollToField(firstErrorFieldInTab);
+                        }
                         break;
                     }
                 }
             }
-            return;
-        }
-        handleSubmit(onSubmit)(e);
+        })(e);
     };
 
     useEffect(() => {
