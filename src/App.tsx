@@ -40,8 +40,8 @@ function App() {
             <Route path="/Candidate/:id" element={<CandidateView />} />
             <Route path="/ClientEnquiry/:id" element={<ClientEnquiryView />} />
             <Route path="/OverSeasRecruitment/:id" element={<OverSeasRecruitmentView />} />
-            <Route path="/ManPowerSupplyView/:id" element={<ManPowerSupplyView />} />
-            <Route path="/AgentSupplyView/:id" element={<AgentSupplyView />} />
+            <Route path="/ManpowerSupply/:id" element={<ManPowerSupplyView />} />
+            <Route path="/AgentsSupplier/:id" element={<AgentSupplyView />} />
           </Route>
         </Routes>
       </Router>

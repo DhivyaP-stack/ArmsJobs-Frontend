@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-// import { Candidate, CandidateRemark } from "../../types/CandidateList";
-//import {  CandidateRemark } from "../../types/CandidateList";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import DefaultProfile from "../../assets/images/DefaultProfile.jpg"
 import Profileimg from "../../assets/images/profileimg.jpg"
 import { IoDocumentText } from "react-icons/io5";
 import { Button } from "../../common/Button";
 import { FaArrowLeft } from "react-icons/fa6";
-// import { EditCandidatePopup } from "./EditCandidatePopup";
 import { createRemark, fetchCandidateNames, ViewCandidateName } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { AgentSupplierViewShimmer } from "../../components/ShimmerLoading/ShimmerViewpage/CommonViewShimmer";
 import { EditCandidatePopup } from "./EditCandidatePopup";
@@ -206,12 +203,6 @@ export const CandidateView = () => {
         });
     }
 
-    // const openStatusCandidatePopup = (candidate: CandidateApiResponse, e: React.MouseEvent) => {
-    //     e.stopPropagation();
-    //     setcandidatestatus({ id: candidate.id, name: candidate.full_name, currentStatus: candidate.status === 'Active' });
-    //     setShowcandidateStatusPopup(true)
-    // }
-
     const openStatusCandidatePopup = (selectedCandidate: CandidateApiResponse) => {
         setcandidatestatus({
             id: selectedCandidate.id,
@@ -249,7 +240,7 @@ export const CandidateView = () => {
     }
 
     return (
-        <div className="p-4">
+        <div className="bg-gray-100 min-h-screen p-6">
             <div className="bg-white px-5 py-1 rounded-lg shadow-sm">
                 {/* Header */}
                 <div className="flex justify-between items-center p-1">
@@ -266,7 +257,7 @@ export const CandidateView = () => {
                             buttonTitle="Back"
                             onClick={() => navigate(-1)}
                             icon={<FaArrowLeft />}
-                            className="px-4 py-2 bg-armsjobslightblue text-sm font-semibold text-armsWhite border-[1px] rounded-md cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
+                            className="px-4 py-2 bg-armsWhite text-sm font-bold text-armsjobslightblue border-[1px] rounded-md cursor-pointer hover:bg-armsjobslightblue hover:text-armsWhite hover:border-armsWhite"
                         />
                     </div>
                 </div>
@@ -327,41 +318,19 @@ export const CandidateView = () => {
                                         <div className="flex items-center gap-2">
                                             <h2 className="text-2xl font-bold">{selectedCandidate?.full_name || 'N/A'}</h2>
                                             <div className="scale-70">
-                                                {/* <ToggleSwitch
-                                                    isActive={selectedCandidate.status === 'Active'}
-                                                    // onToggle={() => setStatus(prev => prev === 'Active' ? 'Inactive' : 'Active')}
-                                                   onToggle={(e) => openStatusCandidatePopup(selectedCandidate, e)}
-                                                /> */}
-                                                {/* <ToggleSwitch
-                                                    isActive={selectedCandidate.status === 'Active'}
-                                                    // onToggle={() => setStatus(prev => prev === 'Active' ? 'Inactive' : 'Active')}
-                                                    onToggle={(e) => openStatusCandidatePopup(selectedCandidate, e)}
-                                                /> */}
-                                                {/* {selectedCandidate?.status === true ? (
-                                                    <>
-                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
-                                                        <span className="text-green-600 text-sm">Active</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
-                                                        <span className="text-red-600 text-sm">Inactive</span>
-                                                    </>
-                                                )} */}
                                                 <div className="flex items-center space-x-4 ml-4"
                                                     onClick={() => selectedCandidate && openStatusCandidatePopup(selectedCandidate)}
-                                                //onClick={openOverseasStatusPopup}
                                                 >
                                                     <div className="flex items-center space-x-2">
                                                         {selectedCandidate?.status === true ? (
                                                             <>
-                                                                <PiToggleRightFill className="text-green-500 text-5xl" />
-                                                                <span className="text-green-600 text-lg">Active</span>
+                                                                <PiToggleRightFill className="text-green-500 text-5xl cursor-pointer" />
+                                                                <span className="text-green-600 text-lg cursor-pointer">Active</span>
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <PiToggleLeftFill className="text-red-500 text-5xl" />
-                                                                <span className="text-red-600 text-lg">Inactive</span>
+                                                                <PiToggleLeftFill className="text-red-500 text-5xl cursor-pointer" />
+                                                                <span className="text-red-600 text-lg cursor-pointer">Inactive</span>
                                                             </>
                                                         )}
                                                     </div>
@@ -379,7 +348,7 @@ export const CandidateView = () => {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="font-bold">{selectedCandidate?.email|| 'N/A'}</p>
+                                                <p className="font-bold">{selectedCandidate?.email || 'N/A'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Nationality</p>
@@ -394,10 +363,14 @@ export const CandidateView = () => {
                                 </div>
                                 <Button
                                     onClick={openEditCandidatePopup}
-                                    //  onClick={() => selectedCandidate && handleEditClick(selectedCandidate)}
+                                    disabled={!selectedCandidate?.status}
                                     buttonType="button"
                                     buttonTitle="Edit"
-                                    className="mb-30 px-4 py-1 bg-armsjobslightblue text-armsWhite font-semibol border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue text-sm"
+                                    //className="mb-30 px-4 py-1 bg-armsjobslightblue text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue text-sm"
+                                    className={`mb-30 px-4 py-1 font-semibold border-[1px] rounded-sm text-sm ${selectedCandidate?.status
+                                            ? 'bg-armsjobslightblue text-armsWhite cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
+                                            : 'bg-gray-300 text-armshrgrey cursor-not-allowed border-gray-300'
+                                        }`}
                                 />
                             </div>
 
@@ -407,11 +380,14 @@ export const CandidateView = () => {
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Visa & Work Eligibility</h2>
                                     </div>
-
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Visa Type</p>
                                             <p className="text-sm font-bold mt-1">{selectedCandidate?.visa_type || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-600">Visa Expiry Date</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.visa_expiry_date || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Availability to join</p>
@@ -425,10 +401,9 @@ export const CandidateView = () => {
                                     <div className="flex items-center justify-between mb-1 border-b">
                                         <h2 className="text-xl font-bold">Job Information</h2>
                                     </div>
-
                                     <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-2">
                                         <div>
-                                        <p className="text-xs text-gray-600">Position Applying For</p>
+                                            <p className="text-xs text-gray-600">Position Applying For</p>
                                             <p className="text-sm font-bold mt-1">{selectedCandidate?.position_applying_for || 'N/A'}</p>
                                         </div>
                                         <div>

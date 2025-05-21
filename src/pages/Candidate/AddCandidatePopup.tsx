@@ -151,101 +151,10 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
         ]
     };
 
-
-    // const onSubmit = async (data: CandidateFormData) => {
-    //     setLoading(true);
-    //     setError(null);
-    //     try {
-    //         // Call the API function with all the form data
-    //         const response = await AddCandidateList(
-    //             data.full_name || '',
-    //             data.mobile_number || '',
-    //             data.whatsapp_number || '',
-    //             data.email || '',
-    //             data.nationality || '', // Provide fallback empty string if optional
-    //             data.current_location || '',
-    //             data.visa_type || '',
-    //             data.availability_to_join || '',
-    //             data.position_applying_for || '',
-    //             data.category || '',
-    //             data.uae_experience_years || '',
-    //             data.skills_tasks || '',
-    //             data.preferred_work_location || '',
-    //             data.expected_salary || '',
-    //             data.visa_expiry_date || '',
-    //             data.other_category || '',
-    //             data.languages_spoken || '',
-    //             data.preferred_work_type || '',
-    //             data.currently_employed || 'no', // Default to 'no' if not provided
-    //             data.additional_notes || '',
-    //             data.referral_name || '',
-    //             data.referral_contact || ''
-    //         );
-    //         // On success
-    //         reset();
-    //         closePopup();
-    //         refreshData();
-    //         console.log("Candidate added successfully", response);
-    //         toast.success("Candidate added successfully");
-    //     } catch (error: any) {
-    //         setError(error.message || "Failed to submit form");
-    //         toast.error("Failed to submit form");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // console.log("scrollToField",scrollToField)
-
-    // const handleFormSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-
-    //     const result = await trigger();
-
-    //     if (!result) {
-    //         const firstErrorField = Object.keys(errors)[0];
-
-    //         if (firstErrorField) {
-    //             for (const [tabName, fields] of Object.entries(tabFieldMapping)) {
-    //                 if (fields.includes(firstErrorField)) {
-    //                     setActiveTab(tabName);
-    //                     setScrollToField(firstErrorField);
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //         return;
-    //     }
-
-    //     handleSubmit(onSubmit)(e);
-    // };
-
-    // useEffect(() => {
-    //     if (scrollToField) {
-    //         // First scroll the tab into view
-    //         const tabContent = document.querySelector('.tab-content');
-    //         if (tabContent) {
-    //             tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    //         }
-
-    //         // Then scroll to the specific field
-    //         const timeout = setTimeout(() => {
-    //             const el = document.querySelector(`[name="${scrollToField}"]`);
-    //             if (el) {
-    //                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    //                 (el as HTMLElement).focus();
-    //             }
-    //             setScrollToField(null);
-    //         }, 300); // Increased timeout to ensure tab change is complete
-
-    //         return () => clearTimeout(timeout);
-    //     }
-    // }, [activeTab, scrollToField]);
-
     const [scrollToField, setScrollToField] = useState<string | null>(null);
+
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         // Combine form validation and submission in one step
         handleSubmit(async (data) => {
             try {
@@ -306,7 +215,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
         })(e);
     };
 
-   useEffect(() => {
+    useEffect(() => {
         if (scrollToField) {
             // First scroll the tab into view
             const tabContent = document.querySelector('.tab-content');
@@ -329,7 +238,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
-            <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative  max-xl:!h-[90%]  ">
+            <div className="bg-white rounded-lg shadow-lg w-30/31 h-[75%] p-6 relative  max-xl:!h-[90%]">
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
@@ -338,19 +247,19 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                 </div>
                 <div
                     onClick={closePopup}
-                    className="absolute top-2 right-2 text-gray-500 cursor-pointer"
+                    className="absolute top-5 right-5 text-gray-500 cursor-pointer"
                 >
-                    <IoCloseOutline size={24} />
+                    <IoCloseOutline size={30}/>
                 </div>
                 {/* Tabs */}
-                <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
+                <div className="flex gap-1 border-b-1 border-armsBlack mb-6">
                     {tabs.map((tab) => {
                         const hasError = tabFieldMapping[tab]?.some(field => field in errors);
                         return (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                className={`px-4 py-3 text-sm font-bold cursor-pointer relative ${activeTab === tab
                                     ? "bg-main text-white"
                                     : "text-black"
                                     }`}
@@ -488,7 +397,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                         { value: "UARE Employment", label: "UAE Employment" },
                                         { value: "Visit", label: "Visit" },
                                         { value: "Cancelled", label: "Cancelled" },
-                                        { value: "Freelaunce", label: "Freelaunce" },
+                                        { value: "Freelance", label: "Freelance" },
                                         { value: "Dependent", label: "Dependent" },
                                     ]}
                                     className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
@@ -518,8 +427,9 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                     options={[
                                         { value: "", label: "Select Availability to Join" },
                                         { value: "Immediate", label: "Immediate" },
-                                        { value: "1 week", label: "1 week" },
-                                        { value: "2 weeks", label: "2 weeks" },
+                                        { value: "1 week", label: "1 Week" },
+                                        { value: "2 weeks", label: "2 Weeks" },
+                                        { value: "1 month", label: "1 Month" },
                                     ]}
                                     className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                 />
@@ -714,7 +624,8 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 buttonTitle="Browse Files"
                                                 className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
                                             />
-                                            <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
+                                            <p className="text-xs text-gray-400">Max file size 500KB.</p>
+                                            <p className="text-xs text-gray-400 mb-8">PDF, DOC only</p>
                                         </div>
                                     </div>
 
@@ -742,7 +653,8 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 buttonTitle="Browse Files"
                                                 className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
                                             />
-                                            <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
+                                            <p className="text-xs text-gray-400">Max file size 500KB.</p>
+                                            <p className="text-xs text-gray-400 mb-4 text-center">upload Documents like Insurance, NOC, passport,<br /> visa, license, experience cert.</p>
                                         </div>
                                     </div>
                                 </div>

@@ -254,7 +254,7 @@ export const AgentSupplierTable = () => {
                 <tbody className="whitespace-nowrap ">
                   {agents.map((agent) => (
                     <tr key={agent.id}
-                      onClick={() => navigate(`/AgentSupplyView/${agent.id}`)}
+                      onClick={() => navigate(`/AgentsSupplier/${agent.id}`)}
                       className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
                       <td className="px-2 py-5">{agent.agent_supplier_id || "N/A"}</td>
                       <td className="px-2 py-5">{agent.name || "N/A"}</td>

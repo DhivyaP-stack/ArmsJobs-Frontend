@@ -193,7 +193,7 @@ export const ClientEnquiryView = () => {
 
     return (
         // <div className="min-h-screen bg-gray-100">
-        <div className="p-4">
+        <div className="bg-gray-100 min-h-screen p-6">
             <div className="bg-white px-5 py-1 rounded-lg shadow-sm ">
                 {/* Header */}
                 <div className="flex justify-between items-center p-1">
@@ -212,7 +212,7 @@ export const ClientEnquiryView = () => {
                             icon={
                                 <FaArrowLeft />
                             }
-                            className="px-4 py-2 bg-armsjobslightblue text-sm font-semibold text-armsWhite border-[1px] rounded-md cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
+                            className="px-4 py-2 bg-armsWhite text-sm font-bold text-armsjobslightblue border-[1px] rounded-md cursor-pointer hover:bg-armsjobslightblue hover:text-armsWhite hover:border-armsWhite"
                         />
                     </div>
                 </div>
@@ -261,36 +261,40 @@ export const ClientEnquiryView = () => {
                             <div className="p-0">
                                 {/* Company Details*/}
                                 <div className="mb-6 ">
-                                    <div className="flex items-center justify-between mb-1 border-b">
-                                        <h2 className="text-xl font-bold">Company Details</h2>
-                                    </div>
-                                    <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
-                                        <div className="flex items-center space-x-4 ml-4"
-                                            onClick={() => selectedClientEnquiry && openOverseasStatusPopup(selectedClientEnquiry)}
-                                        //onClick={openOverseasStatusPopup}
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                {selectedClientEnquiry?.status === true ? (
-                                                    <>
-                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
-                                                        <span className="text-green-600 text-sm">Active</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
-                                                        <span className="text-red-600 text-sm">Inactive</span>
-                                                    </>
-                                                )}
+                                    <div className="flex items-center justify-between border-b pb-2 mb-4">
+                                        <h2 className="text-xl font-bold flex-1">Company Details</h2>
+                                        <div className="flex items-center gap-4"> {/* Added container for right-aligned items */}
+                                            <div className="flex items-center gap-2 cursor-pointer"
+                                                onClick={() => selectedClientEnquiry && openOverseasStatusPopup(selectedClientEnquiry)}
+                                            >
+                                               
+                                                    {selectedClientEnquiry?.status === true ? (
+                                                        <>
+                                                            <PiToggleRightFill className="text-green-500 text-3xl cursor-pointer" />
+                                                            <span className="text-green-600 text-sm cursor-pointer">Active</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <PiToggleLeftFill className="text-red-500 text-3xl cursor-pointer" />
+                                                            <span className="text-red-600 text-sm cursor-pointer">Inactive</span>
+                                                        </>
+                                                    )}
+
                                             </div>
+                                            <Button
+                                                onClick={openEditClientEnquiryPopup}
+                                                disabled={!selectedClientEnquiry?.status}
+                                                buttonType="button"
+                                                buttonTitle="Edit"
+                                                //className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
+                                                className={`mb-30 px-4 py-1 font-semibold border-[1px] rounded-sm text-sm ${selectedClientEnquiry?.status
+                                                    ? 'bg-armsjobslightblue text-armsWhite cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
+                                                    : 'bg-gray-300 text-armshrgrey cursor-not-allowed border-gray-300'
+                                                    }`}
+                                            />
                                         </div>
-                                        <Button
-                                            onClick={openEditClientEnquiryPopup}
-                                            buttonType="button"
-                                            buttonTitle="Edit"
-                                            className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
-                                        />
                                     </div>
-                                    <div className="flex justify-start  ">
+                                    <div>
                                         <div className="grid grid-cols-3 gap-4 pt-2 w-full max-xl:!grid-cols-2">
                                             <div>
                                                 <p className="text-xs text-gray-600">Company Name</p>
@@ -298,7 +302,7 @@ export const ClientEnquiryView = () => {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Email ID</p>
-                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.email|| 'N/A'}</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.email || 'N/A'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Contact Person Name</p>
@@ -306,7 +310,7 @@ export const ClientEnquiryView = () => {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-gray-600">Mobile Number</p>
-                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.mobile_number|| 'N/A'}</p>
+                                                <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.mobile_number || 'N/A'}</p>
                                             </div>
                                         </div>
                                     </div>

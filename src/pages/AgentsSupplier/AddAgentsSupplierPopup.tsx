@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { toast } from "react-toastify";
+// import Select from "react-select";
 
 interface AddAgentsSupplierPopupProps {
     closePopup: () => void;
@@ -28,22 +29,31 @@ export const agentSchema = z.object({
         .string()
         .min(3, "Email ID is required")
         .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
-
     //eligibility and history
     can_recruit: z.string().optional(),
     associated_earlier: z.string().optional(),
     can_supply_manpower: z.string().optional(),
-
     //Man power info
     supply_categories: z.string().optional(),
     quantity_estimates: z.string().optional(),
     areas_covered: z.string().optional(),
-
     // additional info
     additional_notes: z.string().optional()
 });
 
 type AgentFormData = z.infer<typeof agentSchema>;
+
+// type OptionType = { value: string; label: string };
+
+// const emiratesOptions: OptionType[]  = [
+//     { value: "Dubai", label: "Dubai" },
+//     { value: "Abu Dhabi", label: "Abu Dhabi" },
+//     { value: "Sharjah", label: "Sharjah" },
+//     { value: "Ajman", label: "Ajman" },
+//     { value: "Fujairah", label: "Fujairah" },
+//     { value: "Ras Al Khaimah", label: "Ras Al Khaimah" },
+//     { value: "Umm Al Quwain", label: "Umm Al Quwain" },
+// ];
 
 export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
     closePopup,
@@ -61,6 +71,15 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
             can_supply_manpower: "no",
         }
     });
+
+//     const [selectedAreas, setSelectedAreas] = useState([]);
+
+//     const handleChange = (selectedOptions: any) => {
+//     setSelectedAreas(selectedOptions);
+//     // Convert selected options to comma-separated string of values
+//     const areasString = selectedOptions.map((option: OptionType) => option.value).join(', ');
+//     setValue('areas_covered', areasString);
+// };
 
     const tabFieldMapping: Record<string, string[]> = {
         "Agent Details": [
@@ -143,7 +162,6 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
             if (tabContent) {
                 tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-
             // Then scroll to the specific field
             const timeout = setTimeout(() => {
                 const el = document.querySelector(`[name="${scrollToField}"]`);
@@ -153,14 +171,13 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                 }
                 setScrollToField(null);
             }, 300); // Increased timeout to ensure tab change is complete
-
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
-            <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative">
+            <div className="bg-white rounded-lg shadow-lg w-30/31 h-[75%] p-6 relative">
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
@@ -169,19 +186,19 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                 </div>
                 <div
                     onClick={closePopup}
-                    className="absolute top-2 right-2 text-gray-500 cursor-pointer"
+                    className="absolute top-5 right-5 text-gray-500 cursor-pointer"
                 >
-                    <IoCloseOutline size={24} />
+                    <IoCloseOutline size={30} />
                 </div>
                 {/* Tabs */}
-                <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
+                <div className="flex gap-1 border-b-1 border-armsBlack mb-6">
                     {tabs.map((tab) => {
                         const hasError = tabFieldMapping[tab]?.some(field => field in errors);
                         return (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                className={`px-4 py-3 text-sm font-bold cursor-pointer relative ${activeTab === tab
                                     ? "bg-main text-white"
                                     : "text-black"
                                     }`}
@@ -400,7 +417,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                     Quantity Estimates
                                                 </label>
                                                 <InputField
-                                                    type="text"
+                                                    type="number"
                                                     {...register("quantity_estimates")}
                                                     name="quantity_estimates"
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
@@ -411,7 +428,16 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Areas Covered (Emirates)
                                                 </label>
-                                                <textarea
+                                                {/* <Select<OptionType>
+                                                    options={emiratesOptions}
+                                                    isMulti
+                                                    value={selectedAreas}
+                                                    {...register("areas_covered")}
+                                                    name="areas_covered"
+                                                    onChange={handleChange}
+                                                    className="react-select-container"
+                                                /> */}
+                                                 <textarea
                                                     {...register("areas_covered")}
                                                     name="areas_covered"
                                                     className="w-full  h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"

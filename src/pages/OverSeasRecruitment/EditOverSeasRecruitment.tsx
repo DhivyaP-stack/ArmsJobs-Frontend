@@ -30,7 +30,6 @@ interface OverseasRecruitmentAgency {
     status: boolean;
     created_at: string;
 }
-
 interface OverSeasAddPopupProps {
     // isOpen: boolean;
     closePopup: () => void;
@@ -79,14 +78,13 @@ const overseasRecruitmentSchema = companyDetailsSchema
 type OverseasRecruitmentFormData = zod.infer<typeof overseasRecruitmentSchema>;
 
 export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
-    // isOpen,
     closePopup,
     refreshData,
     editOverseas
 }) => {
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Company Details");
-    const tabs = ['Company Details', "Recruitment Info", "Documents & Notes"];
+    const tabs = ['Company Details', "Recruitment Info", "Documents", "Notes"];
     const [error, setError] = useState<string | null>(null);
 
     const {
@@ -117,8 +115,8 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
             'mobilization_time',
             'uae_deployment_experience',
         ],
-        "Documents & Notes": [
-            'additional_details',
+        "Notes": [
+            'comments',
         ],
     };
 
@@ -150,7 +148,6 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
             try {
                 // Convert uae_deployment_experience string to boolean
                 const uaeExperience = data.uae_deployment_experience === "yes";
-
                 // Prepare request data
                 const requestData = {
                     company_name: data.company_name || '',
@@ -165,11 +162,9 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                     uae_deployment_experience: uaeExperience,
                     comments: data.comments || ''  // Changed from additional_details to comments
                 };
-
                 // Call API to update overseas recruitment
                 const response = await updateOverseasRecruitment(editOverseas.id, requestData);
                 console.log("response",response)
-
                 // On success:
                 reset();
                 closePopup();
@@ -209,7 +204,6 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
             if (tabContent) {
                 tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-
             // Then scroll to the specific field
             const timeout = setTimeout(() => {
                 const el = document.querySelector(`[name="${scrollToField}"]`);
@@ -226,7 +220,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
-            <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] max-xl:!h-[85%] max-lg:!h-[90%] p-6 relative">
+            <div className="bg-white rounded-lg shadow-lg w-30/31 h-[75%] max-xl:!h-[85%] max-lg:!h-[90%] p-6 relative">
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
@@ -236,19 +230,19 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                 </div>
                 <div
                     onClick={closePopup}
-                    className="absolute top-2 right-2 text-gray-500 cursor-pointer"
+                    className="absolute top-5 right-5 text-gray-500 cursor-pointer"
                 >
-                    <IoCloseOutline size={24} />
+                    <IoCloseOutline size={30} />
                 </div>
                 {/* Tabs */}
-                <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
+                <div className="flex gap-1 border-b-1 border-armsBlack mb-6">
                     {tabs.map((tab) => {
                         const hasError = tabFieldMapping[tab]?.some(field => field in errors);
                         return (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                className={`px-4 py-3 text-sm font-bold cursor-pointer relative ${activeTab === tab
                                     ? "bg-main text-white"
                                     : "text-black"
                                     }`}
@@ -440,7 +434,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                         </div>
                     )}
 
-                    {activeTab === "Documents & Notes" && (
+                    {activeTab === "Documents" && (
                         <div className="grid grid-cols-2 gap-2 px-4 w-1/2 max-xl:!w-3/4 max-lg:!w-full">
                             <div>
                                 <label htmlFor="Uploadcv" className="text-sm font-semibold">
@@ -468,18 +462,19 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                     <p className="text-xs text-gray-400 mb-5">Max file size 500KB.</p>
                                 </div>
                             </div>
-
-
-                            <div>
-                                <label htmlFor="comments" className="text-sm font-semibold mb-1">
+                        </div>
+                    )}
+                    {/* Additional */}
+                    {activeTab === "Notes" && (
+                        <div className="flex  gap-4 px-4 w-1/4 ">
+                            <div className="w-full">
+                                <label className="text-sm font-semibold mb-1 block pb-0.5">
                                     Additional Details
                                 </label>
                                 <textarea
                                     {...register("comments")}
                                     name="comments"
-                                    rows={4}
-                                    className="w-full h-48 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus:outline-none resize-y"
-                                    placeholder="Enter details here..."
+                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                 />
                             </div>
                         </div>

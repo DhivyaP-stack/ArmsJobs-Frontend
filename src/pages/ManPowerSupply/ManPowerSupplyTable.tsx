@@ -248,7 +248,7 @@ export const ManPowerSupplyTable = () => {
                   <tbody className="whitespace-nowrap">
                     {manPowersuppliers.map((manpower, index) => (
                       <tr key={index}
-                        onClick={() => navigate(`/ManPowerSupplyView/${manpower.id}`)}
+                        onClick={() => navigate(`/ManpowerSupply/${manpower.id}`)}
                         className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
                         <td className="px-2 py-3">{manpower.supplier_id || "N/A"}</td>
                         <td className="px-2 py-3">{manpower.company_name || 'N/A'}</td>

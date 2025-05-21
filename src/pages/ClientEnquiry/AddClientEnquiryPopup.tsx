@@ -192,7 +192,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
-            <div className="bg-white rounded-lg shadow-lg w-24/25 h-[75%] p-6 relative">
+            <div className="bg-white rounded-lg shadow-lg w-30/31 h-[75%] p-6 relative">
                 {/* Heading */}
                 <div className="relative mb-5">
                     <h2 className="text-xl font-bold mb-4 border-b-2 border-armsgrey pb-3">
@@ -201,19 +201,19 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                 </div>
                 <div
                     onClick={closePopup}
-                    className="absolute top-2 right-2 text-gray-500 cursor-pointer"
+                    className="absolute top-5 right-5 text-gray-500 cursor-pointer"
                 >
-                    <IoCloseOutline size={24} />
+                    <IoCloseOutline size={30} />
                 </div>
                 {/* Tabs */}
-                <div className="flex gap-1 border-b-3 border-armsgrey mb-6">
+                <div className="flex gap-1 border-b-1 border-armsBlack mb-6">
                     {tabs.map((tab) => {
                         const hasError = tabFieldMapping[tab]?.some(field => field in errors);
                         return (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 text-sm font-bold cursor-pointer relative ${activeTab === tab
+                                className={`px-4 py-3 text-sm font-bold cursor-pointer relative ${activeTab === tab
                                     ? "bg-main text-white"
                                     : "text-black"
                                     }`}

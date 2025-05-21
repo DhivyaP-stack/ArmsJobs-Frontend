@@ -30,7 +30,7 @@ export const Header = () => {
               <ul className="flex items-center space-x-8 max-xl:space-x-6">
                 <NavLink
                   to="/Dashboard"
-                  className="active-nav max-2xl:before:!-bottom-8"
+                  className="active-nav max-2xl:before:!-bottom-5"
                   aria-current="page"
                 >
                   <li className="text-md max-xl:text-sm">Dashboard</li>
@@ -52,7 +52,7 @@ export const Header = () => {
                 >
                   <li className="text-md max-xl:text-sm">Agents/Supplier</li>
                 </NavLink>
-
+                
                 <NavLink
                   to="/ManpowerSupply"
                   className="active-nav max-2xl:before:!-bottom-5"
@@ -111,7 +111,7 @@ export const Header = () => {
               </div>
 
               {/* Dropdown on Hover */}
-              <div className="absolute right-0 mt-38 w-40 bg-white shadow-lg rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute right-0 mt-38 w-40  bg-white shadow-lg rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100">My Profile</div>
                 <div className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100">Password Reset</div>
                 <div

@@ -215,7 +215,7 @@ export const OverSeasRecruitmentView = () => {
 
     return (
         // <div className="min-h-screen bg-gray-100">
-        <div className="p-4">
+        <div className="bg-gray-100 min-h-screen p-6">
             <div className="bg-white px-5 py-1 rounded-lg shadow-sm ">
                 {/* Header */}
                 <div className="flex justify-between items-center p-1">
@@ -234,7 +234,7 @@ export const OverSeasRecruitmentView = () => {
                             icon={
                                 <FaArrowLeft />
                             }
-                            className="px-4 py-2 bg-armsjobslightblue text-sm font-semibold text-armsWhite border-[1px] rounded-md cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
+                            className="px-4 py-2 bg-armsWhite text-sm font-bold text-armsjobslightblue border-[1px] rounded-md cursor-pointer hover:bg-armsjobslightblue hover:text-armsWhite hover:border-armsWhite"
                         />
                     </div>
                 </div>
@@ -283,34 +283,38 @@ export const OverSeasRecruitmentView = () => {
                             <div className="p-0">
                                 {/* Visa & Work Eligibility */}
                                 <div className="mb-6 ">
-                                    <div className="flex items-center justify-between mb-1 border-b pb-1">
+                                    <div className="flex items-center justify-between mb-1 border-b pb-2">
                                         <h2 className="text-xl font-bold">Company Details</h2>
-                                    </div>
-                                    <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
-                                        <div className="flex items-center space-x-4 ml-4"
-                                            onClick={() => oversea && openOverseasStatusPopup(oversea)}
-                                        //onClick={openOverseasStatusPopup}
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                {oversea?.status === true ? (
-                                                    <>
-                                                        <PiToggleRightFill className="text-green-500 text-3xl" />
-                                                        <span className="text-green-600 text-sm">Active</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <PiToggleLeftFill className="text-red-500 text-3xl" />
-                                                        <span className="text-red-600 text-sm">Inactive</span>
-                                                    </>
-                                                )}
+                                        <div className="flex items-center justify-end space-x-4"> {/* Added container for right-aligned items */}
+                                            <div className="flex items-center space-x-4 ml-4"
+                                                onClick={() => oversea && openOverseasStatusPopup(oversea)}
+                                            >
+                                                <div className="flex items-center space-x-2">
+                                                    {oversea?.status === true ? (
+                                                        <>
+                                                            <PiToggleRightFill className="text-green-500 text-3xl cursor-pointer" />
+                                                            <span className="text-green-600 text-sm cursor-pointer">Active</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <PiToggleLeftFill className="text-red-500 text-3xl cursor-pointer" />
+                                                            <span className="text-red-600 text-sm cursor-pointer">Inactive</span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
+                                            <Button
+                                                onClick={openEditOverseasPopup}
+                                                disabled={!oversea?.status}
+                                                buttonType="button"
+                                                buttonTitle="Edit"
+                                                //className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
+                                                className={`mb-30 px-4 py-1 font-semibold border-[1px] rounded-sm text-sm ${oversea?.status
+                                                    ? 'bg-armsjobslightblue text-armsWhite cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
+                                                    : 'bg-gray-300 text-armshrgrey cursor-not-allowed border-gray-300'
+                                                    }`}
+                                            />
                                         </div>
-                                        <Button
-                                            onClick={openEditOverseasPopup}
-                                            buttonType="button"
-                                            buttonTitle="Edit"
-                                            className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
-                                        />
                                     </div>
                                     <div className="flex justify-start  ">
                                         <div className="grid grid-cols-3 gap-4 pt-2 w-full">
