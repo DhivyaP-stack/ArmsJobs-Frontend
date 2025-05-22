@@ -309,9 +309,9 @@ export const OverSeasRecruitmentView = () => {
                                                 buttonType="button"
                                                 buttonTitle="Edit"
                                                 //className="px-4 py-1 bg-armsjobslightblue text-sm text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue"
-                                                className={`mb-30 px-4 py-1 font-semibold border-[1px] rounded-sm text-sm ${oversea?.status
-                                                    ? 'bg-armsjobslightblue text-armsWhite cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
-                                                    : 'bg-gray-300 text-armshrgrey cursor-not-allowed border-gray-300'
+                                                className={`px-4 py-1 text-sm font-bold border-[1px] rounded-sm cursor-pointer ${oversea?.status
+                                                    ? 'bg-armsjobslightblue text-armsWhite hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
+                                                    : 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed'
                                                     }`}
                                             />
                                         </div>
