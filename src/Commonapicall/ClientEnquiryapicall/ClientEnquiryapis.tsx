@@ -33,10 +33,10 @@ interface ClientEnquiryList {
 }
 
 //List,Search, All, Pagination
-export const filterClientEnquiryList = async (page: number, search: string | undefined, filterBy: string, PageSize:string) => {
+export const filterClientEnquiryList = async (page: number, search: string | undefined, filterBy: string, PageSize:string, status:string) => {
   try {
     const response = await apiAxios.get<ClientEnquiryApiResponse>(
-      `/api/client-enquiries/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}`
+      `/api/client-enquiries/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}&status=${status || ''}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch Client Enquiry list");

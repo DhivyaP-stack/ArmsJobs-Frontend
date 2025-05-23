@@ -12,12 +12,14 @@ interface StatusCandidatePopupProps {
         currentStatus: boolean;
     };
     refreshData: () => void;
+    InactiveStatus:()=> void;
 }
 
 export const StatusCandidatePopup: React.FC<StatusCandidatePopupProps> = ({
     closePopup,
     CandidateStatus,
     refreshData,
+    InactiveStatus
 }) => {
     const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +34,7 @@ export const StatusCandidatePopup: React.FC<StatusCandidatePopupProps> = ({
             console.log("candidate status response", response);
             closePopup();
             refreshData();
+            InactiveStatus();
             toast.success("candidate status updated successfully");
         } catch (error: any) {
             console.error('Error updating candidate status:', error);

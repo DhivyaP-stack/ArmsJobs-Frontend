@@ -45,10 +45,10 @@ interface ApiResponse {
 }
 
 //Search table, All, Pagination
-export const fetchOverseasRecruitmentList = async (page: number, search: string | undefined, filterBy: string, PageSize:string) => {
+export const fetchOverseasRecruitmentList = async (page: number, search: string | undefined, filterBy: string, PageSize:string, status:string) => {
   try {
     const response = await apiAxios.get<ApiResponse>(
-      `/api/recruitments/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}`
+      `/api/recruitments/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}&status=${status || ''}`
     );
 
     if (!response.data || response.status !== 200) {

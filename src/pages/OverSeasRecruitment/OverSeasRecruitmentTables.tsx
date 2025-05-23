@@ -40,7 +40,8 @@ export const OverSeasRecruitmentTable = () => {
   const [showEditOverSeasPopup, setShowEditOverSeasPopup] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const [filterBy, setFilterBy] = useState("");
+  const [filterBy, setFilterBy] = useState("all");
+  const [status, setstatus] = useState("active");
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -51,7 +52,7 @@ export const OverSeasRecruitmentTable = () => {
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetchOverseasRecruitmentList(currentPage, search.trim(), filterBy, itemsPerPage.toString() );
+      const response = await fetchOverseasRecruitmentList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status );
       if (!response?.results?.data) {
         setRecruitmentAgencies([]);
         setTotalCount(0);
@@ -66,7 +67,7 @@ export const OverSeasRecruitmentTable = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, filterBy, itemsPerPage]);
+  }, [currentPage, search, filterBy, itemsPerPage, status]);
 
   useEffect(() => {
     fetchPagination();
@@ -162,6 +163,13 @@ export const OverSeasRecruitmentTable = () => {
               <option value="last 30 days">Last 30 days</option>
               <option value="this month">This Month</option>
               <option value="last year">Last Year</option>
+            </select>
+            <select
+              value={status}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setstatus(e.target.value)}
+              className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
         </div>

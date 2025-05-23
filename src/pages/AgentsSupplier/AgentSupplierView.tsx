@@ -354,7 +354,7 @@ export const AgentSupplyView = () => {
                                             <p className="text-sm font-bold mt-1">{agent?.supply_categories || 'N/A'}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-600">Quantity Estimates</p>
+                                            <p className="text-xs text-gray-600">Number of People You Can Supply</p>
                                             <p className="text-sm font-bold mt-1">{agent?.quantity_estimates || 'N/A'}</p>
                                         </div>
                                         <div>

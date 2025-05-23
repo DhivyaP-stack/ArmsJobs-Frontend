@@ -71,13 +71,14 @@ export const CandidateTable = () => {
   const [search, setSearch] = useState("");
   console.log('search', search)
   const [filterBy, setFilterBy] = useState("");
+  const [status, setstatus] = useState("active");
   const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   const refreshCandidateList = async () => {
     try {
       setLoading(true);
-      const response = await filterCandidateList(currentPage, search.trim(), filterBy,itemsPerPage.toString() );
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status );
       setCandidatesData(response?.results?.data);
     } catch (err) {
       NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
@@ -90,7 +91,7 @@ export const CandidateTable = () => {
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await filterCandidateList(currentPage, search.trim(), filterBy, itemsPerPage.toString() )// Pass the page size as string);
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status)// Pass the page size as string);
       if (!response?.results?.data) {
         setCandidatesData([]);
         setTotalCount(0);
@@ -105,7 +106,7 @@ export const CandidateTable = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, filterBy, itemsPerPage]);
+  }, [currentPage, search, filterBy, itemsPerPage, status]);
 
 
   useEffect(() => {
@@ -201,6 +202,13 @@ export const CandidateTable = () => {
               <option value="thismonth">This Month</option>
               <option value="lastyear">Last Year</option>
             </select>
+            <select
+              value={status}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setstatus(e.target.value)}
+              className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
 
@@ -237,7 +245,7 @@ export const CandidateTable = () => {
                     <th className="bg-main px-2 py-3 ">Upload Relevant Docs</th>
                     <th className="bg-main px-2 py-3 ">Status</th>
                     <th className="bg-main px-2 py-3 ">Created At</th>
-                    <th className="bg-main px-2 py-3 sticky right-0  max-sm:!static ">Actions</th>
+                    <th className="bg-main px-2 py-3 sticky right-0 max-sm:!static ">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="whitespace-nowrap ">

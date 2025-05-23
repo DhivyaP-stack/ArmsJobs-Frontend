@@ -78,6 +78,7 @@ export const AgentSupplierTable = () => {
   const [count, setCount] = useState<number>(1);
   const [search, setSearch] = useState<string>("")
   const [filterBy, setFilterBy] = useState("all")
+  const [status, setstatus] = useState("active")
 
   // Simulate loading state
   React.useEffect(() => {
@@ -128,7 +129,7 @@ export const AgentSupplierTable = () => {
   const fetchPagination = async () => {
     try {
       setIsLoading(true);
-      const response = await fetchAgentsPageList(currentPage, search.trim(), filterBy, itemsPerPage.toString()) as ApiResponse;
+      const response = await fetchAgentsPageList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status) as ApiResponse;
       setAgents(response?.results?.data || []);
       setCount(response?.count || 1);
     } catch (error) {
@@ -140,7 +141,7 @@ export const AgentSupplierTable = () => {
 
   useEffect(() => {
     fetchPagination();
-  }, [currentPage, search, filterBy, itemsPerPage]);
+  }, [currentPage, search, filterBy, itemsPerPage, status]);
 
   const handleAgentAdded = () => {
     fetchPagination(); // Now this works correctly
@@ -211,6 +212,13 @@ export const AgentSupplierTable = () => {
               <option value="last30days">Last 30 days</option>
               <option value="thismonth">This Month</option>
               <option value="lastyear">Last Year</option>
+            </select>
+            <select
+              value={status}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setstatus(e.target.value)}
+              className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
         </div>

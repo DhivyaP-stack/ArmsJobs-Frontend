@@ -356,6 +356,9 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
                                                 />
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    Note: If multiple Nationalitiy of workers, separate them with commas.
+                                                </p>
                                             </div>
                                             {/* Mobilization Time */}
                                             <div>

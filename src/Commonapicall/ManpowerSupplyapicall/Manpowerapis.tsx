@@ -256,10 +256,10 @@ export const fetchManPowerListById = async (id: number): Promise<ManpowerSupplie
 
 
 // manPower data list including page ,search, and filter
-export const fetchManPowerSupplyList = async (page: number,search: string | undefined,filterBy: string, PageSize:string) => {
+export const fetchManPowerSupplyList = async (page: number,search: string | undefined,filterBy: string, PageSize:string, status:string) => {
   try {
     const response = await apiAxios.get(
-      `/api/manpower-suppliers/?page=${page}&search=${search}&filter_by=${filterBy}&page_size=${PageSize}`
+      `/api/manpower-suppliers/?page=${page}&search=${search}&filter_by=${filterBy}&page_size=${PageSize}&status=${status}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch agents list");

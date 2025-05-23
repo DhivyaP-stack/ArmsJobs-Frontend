@@ -80,6 +80,7 @@ export const CandidateView = () => {
     const [showcandidateEditPopup, setShowcandidatePopup] = useState<boolean>(false);
     const [showcandidateStatusPopup, setShowcandidateStatusPopup] = useState<boolean>(false);
     const [candidateStatus, setcandidatestatus] = useState<{ id: number, name: string, currentStatus: boolean } | null>(null);
+    // const [previousStatus, setPreviousStatus] = useState<boolean | null>(null);
     const [candidate, setcandidate] = useState<CandidateApiResponse>({
         id: 0,
         candidate_id: 0,
@@ -135,7 +136,6 @@ export const CandidateView = () => {
     // Fetch details for a specific candidate
     const fetchCandidateDetails = async (candidateId: number) => {
         if (!candidateId) return;
-
         try {
             const response = await ViewCandidateName(candidateId) as SingleCandidateResponse;
             if (response && response.data) {
@@ -181,6 +181,21 @@ export const CandidateView = () => {
             fetchCandidates();
         }
     }, [searchQuery]);
+
+    const fetchStatus = () => {
+        console.log("fetchStatus")
+        navigate('/Candidate');
+    }
+
+    // Add this effect to handle status change navigation
+    // useEffect(() => {
+    //     if (selectedCandidate?.status === false) {
+    //         const timer = setTimeout(() => {
+    //             navigate('/Candidate');
+    //         }, 1000);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [selectedCandidate?.status, navigate]);
 
     // Direct navigation and data loading handler for candidate click
     const handleCandidateClick = async (candidateId: number, e: React.MouseEvent) => {
@@ -358,6 +373,10 @@ export const CandidateView = () => {
                                                 <p className="text-xs text-gray-600">Current Location</p>
                                                 <p className="font-bold">{selectedCandidate?.current_location || 'N/A'}</p>
                                             </div>
+                                            <div>
+                                                <p className="text-xs text-gray-600">Emirates ID</p>
+                                                <p className="font-bold">{'N/A'}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -368,8 +387,8 @@ export const CandidateView = () => {
                                     buttonTitle="Edit"
                                     //className="mb-30 px-4 py-1 bg-armsjobslightblue text-armsWhite font-semibold border-[1px] rounded-sm cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue text-sm"
                                     className={`mb-30 px-4 py-1 font-semibold border-[1px] rounded-sm text-sm ${selectedCandidate?.status
-                                            ? 'bg-armsjobslightblue text-armsWhite cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
-                                            : 'bg-gray-300 text-armshrgrey cursor-not-allowed border-gray-300'
+                                        ? 'bg-armsjobslightblue text-armsWhite cursor-pointer hover:bg-armsWhite hover:text-armsjobslightblue hover:border-armsjobslightblue'
+                                        : 'bg-gray-300 text-armshrgrey cursor-not-allowed border-gray-300'
                                         }`}
                                 />
                             </div>
@@ -607,6 +626,7 @@ export const CandidateView = () => {
                     closePopup={closeStatusCandidatePopup}
                     refreshData={() => fetchCandidateDetails(candidateStatus.id)}
                     CandidateStatus={candidateStatus}
+                    InactiveStatus={() => fetchStatus()}
                 />
             )}
         </div>

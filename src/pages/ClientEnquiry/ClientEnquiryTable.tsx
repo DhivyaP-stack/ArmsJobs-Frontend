@@ -54,6 +54,7 @@ export const ClientEnquiryTable = () => {
   const [search, setSearch] = useState("");
   console.log('search', search)
   const [filterBy, setFilterBy] = useState("");
+  const [status, setstatus] = useState("active");
   const [totalCount, setTotalCount] = useState(0);
   const [selectedClientEnquiry, setSelectedClientEnquiry] = useState<any>(null);
 
@@ -63,7 +64,7 @@ export const ClientEnquiryTable = () => {
   const fetchPagination = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy, itemsPerPage.toString());
+      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status);
       if (!response?.results?.data) {
         setClientEnquiry([]);
         setTotalCount(0);
@@ -78,7 +79,7 @@ export const ClientEnquiryTable = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, filterBy, itemsPerPage]);
+  }, [currentPage, search, filterBy, itemsPerPage, status]);
 
   useEffect(() => {
     fetchPagination();
@@ -94,7 +95,7 @@ export const ClientEnquiryTable = () => {
   const refreshClientList = async () => {
     try {
       setLoading(true);
-      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy, itemsPerPage.toString());
+      const response = await filterClientEnquiryList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status);
       setClientEnquiry(response?.results?.data);
     } catch (err) {
       NotifyError(err instanceof Error ? err.message : "Failed to fetch clientEnquiry");
@@ -193,6 +194,13 @@ export const ClientEnquiryTable = () => {
               <option value="thismonth">This Month</option>
               <option value="lastyear">Last Year</option>
             </select>
+            <select
+              value={status}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setstatus(e.target.value)}
+              className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
         {/* Table rendering */}
@@ -275,8 +283,8 @@ export const ClientEnquiryTable = () => {
                         <td className="px-2 py-2">
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${client.status
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
                               }`}
                           >
                             {client.status ? 'Active' : 'Inactive'}

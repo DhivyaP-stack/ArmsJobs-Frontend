@@ -354,12 +354,18 @@ export const AddManpowerPopup: React.FC<ManpowerAddPopupProps> = ({
                                                     Quantity per Category
                                                 </label>
                                                 <InputField
-                                                    type="text"
+                                                    type="range"
+                                                    min={1}
+                                                    max={10}
+                                                    step={1}
                                                     {...register("quantity_per_category")}
                                                     name="quantity_per_category"
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
                                                 />
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    Select a quantity from 1 to 10.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

@@ -130,10 +130,10 @@ export const fetchAgents = async (query: string): Promise<Agent[]> => {
 };
 
 //pagination, search, All
-export const fetchAgentsPageList = async (page: number, search: string | undefined, filterBy: string, PageSize:string) => {
+export const fetchAgentsPageList = async (page: number, search: string | undefined, filterBy: string, PageSize:string, status:string) => {
   try {
     const response = await apiAxios.get(
-      `/api/agents/?page=${page}&search=${search}&filter_by=${filterBy}&page_size=${PageSize}`
+      `/api/agents/?page=${page}&search=${search}&filter_by=${filterBy}&page_size=${PageSize}&status=${status}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch agents list");

@@ -414,7 +414,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
 
                                             <div className="flex-1 min-w-[210px]">
                                                 <label className="text-sm font-semibold mb-1">
-                                                    Quantity Estimates
+                                                    Number of People You Can Supply
                                                 </label>
                                                 <InputField
                                                     type="number"

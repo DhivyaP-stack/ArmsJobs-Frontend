@@ -68,6 +68,7 @@ export const ManPowerSupplyTable = () => {
   const [search, setSearch] = useState<string>("")
   const [count, setCount] = useState<number>(1);
   const [filterBy, setFilterBy] = useState("all")
+  const [status, setstatus] = useState("active")
   const [manPowersuppliers, setManPowerSuppliers] = useState<ManpowerSupplier[]>([]);
   const [showDeleteManPoweSupplierPopup, setShowDeleteManPowerPopup] = useState(false);
   const [ManPoweToDelete, setManPowerToDelete] = useState<{ id: number, name: string } | null>(null);
@@ -125,7 +126,7 @@ export const ManPowerSupplyTable = () => {
   const fetchPagination = async () => {
     try {
       setLoading(true);
-      const response = await fetchManPowerSupplyList(currentPage, search.trim(), filterBy, itemsPerPage.toString()) as ManpowerSupplierResponse;
+      const response = await fetchManPowerSupplyList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status) as ManpowerSupplierResponse;
       console.log("hhhhhhhhhhhhhh", response)
       setManPowerSuppliers(response?.results?.data || []);
       setCount(response?.count || 1);
@@ -138,7 +139,7 @@ export const ManPowerSupplyTable = () => {
 
   useEffect(() => {
     fetchPagination();
-  }, [currentPage, search, filterBy, itemsPerPage]);
+  }, [currentPage, search, filterBy, itemsPerPage, status]);
 
 
   const refreshAgentList = async () => {
@@ -206,9 +207,15 @@ export const ManPowerSupplyTable = () => {
               <option value="thismonth">This Month</option>
               <option value="lastyear">Last Year</option>
             </select>
+            <select
+              value={status}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setstatus(e.target.value)}
+              className="w-[170px] max-sm:!w-[197px] rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none cursor-pointer">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
-
         {/* Table rendering */}
         <div className="w-full overflow-x-auto">
           {loading ? (

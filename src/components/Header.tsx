@@ -17,7 +17,7 @@ export const Header = () => {
 
   return (
     <header>
-      <div className="backdrop-blur-lg bg-opacity-100 shadow-md px-10 py-5 pb-0 max-2xl:pb-5 max-xl:pb-5">
+      <div className="relative backdrop-blur-lg bg-opacity-100 shadow-md px-10 py-5 pb-0 max-2xl:pb-5 max-xl:pb-5 z-[1090]">
         <div className="flex flex-wrap max-sm:!flex-nowrap justify-between items-center max-2xl:gap-x-12 max-2xl:gap-y-5 max-2xl:justify-between">
           <div className="flex justify-center items-center space-x-3 max-2xl:order-1">
             <Link to="/Dashboard">
@@ -58,7 +58,7 @@ export const Header = () => {
                   className="active-nav max-2xl:before:!-bottom-5"
                   aria-current="page"
                 >
-                  <li className="text-md max-xl:text-sm">Manpower Supply</li>
+                  <li className="text-md max-xl:text-sm">ManPower Supply Company</li>
                 </NavLink>
 
                 <NavLink
@@ -66,7 +66,7 @@ export const Header = () => {
                   className="active-nav max-2xl:before:!-bottom-5"
                   aria-current="page"
                 >
-                  <li className="text-md max-xl:text-sm">Overseas Recruitment</li>
+                  <li className="text-md max-xl:text-sm">Overseas Recruitment Agencies</li>
                 </NavLink>
 
                 <NavLink
@@ -106,12 +106,12 @@ export const Header = () => {
             <div className="relative group cursor-pointer flex items-center justify-center">
               {/* Profile Button */}
               <div className="rounded-full flex items-center justify-center px-2 py-1">
-                <FaCircleUser className="w-9 h-9 max-sm:w-7 max-sm:h-7 text-armsjobslightblue cursor-pointer" />
+                <FaCircleUser className="w-9 h-9 max-sm:w-7 max-sm:h-7 text-armsjobslightblue cursor-pointer " />
                 <span className="text-armsBlack font-bold ml-2 max-sm:!hidden">shana</span>
               </div>
 
               {/* Dropdown on Hover */}
-              <div className="absolute right-0 mt-38 w-40  bg-white shadow-lg rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute  right-0 mt-38 w-40  bg-white shadow-lg rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[1001]">
                 <div className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100">My Profile</div>
                 <div className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100">Password Reset</div>
                 <div
@@ -147,8 +147,8 @@ export const Header = () => {
             <NavLink to="/Dashboard" onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
             <NavLink to="/Candidate" onClick={() => setMenuOpen(false)}>Candidate</NavLink>
             <NavLink to="/AgentsSupplier" onClick={() => setMenuOpen(false)}>Agents/Supplier</NavLink>
-            <NavLink to="/ManpowerSupply" onClick={() => setMenuOpen(false)}>Manpower Supply</NavLink>
-            <NavLink to="/OverseasRecruitment" onClick={() => setMenuOpen(false)}>Overseas Recruitment</NavLink>
+            <NavLink to="/ManpowerSupply" onClick={() => setMenuOpen(false)}>ManPower Supply Company</NavLink>
+            <NavLink to="/OverseasRecruitment" onClick={() => setMenuOpen(false)}>Overseas Recruitment Agencies</NavLink>
             <NavLink to="/ClientEnquiry" onClick={() => setMenuOpen(false)}>Client Enquiry</NavLink>
             <NavLink to="/Reports" onClick={() => setMenuOpen(false)}>Reports</NavLink>
           </nav>

@@ -101,7 +101,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
     // const [error, setError] = useState<string | null>(null);
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
-
+    const [selection, setSelection] = useState("");
     const {
         register,
         handleSubmit,
@@ -249,7 +249,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                     onClick={closePopup}
                     className="absolute top-5 right-5 text-gray-500 cursor-pointer"
                 >
-                    <IoCloseOutline size={30}/>
+                    <IoCloseOutline size={30} />
                 </div>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b-1 border-armsBlack mb-6">
@@ -373,6 +373,18 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                     type="text"
                                                     {...register("current_location")}
                                                     name="current_location"
+                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                    label={""}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-sm font-semibold mb-1">
+                                                    Emirates ID<span className="text-red-500">*</span>
+                                                </label>
+                                                <InputField
+                                                    type="text"
+                                                    // {...register("current_location")}
+                                                    name="emirates"
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
                                                 />
@@ -683,7 +695,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
 
                                         {/* Referral Contact Details */}
                                         <div className="flex flex-row gap-4 flex-wrap">
-                                            <div className="w-[550px] max-w-full">
+                                            <div className="w-3/4 max-w-full">
                                                 <label className="text-sm font-semibold ">
                                                     Referral Contact Details
                                                 </label>
@@ -715,6 +727,57 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                             <p className="text-sm text-red-500">{errors.referral_contact.message}</p>
                                                         )}
                                                     </div>
+                                                    <div className="flex flex-col flex-1 min-w-[150px]">
+                                                        <label className="text-sm font-semibold mb-1">
+                                                            Choose Company or Individual
+                                                        </label>
+                                                        <SelectField
+                                                            label={""}
+                                                            // {...register("preferred_work_location")}
+                                                            value={selection}
+                                                            onChange={(e) => setSelection(e.target.value)}
+                                                            options={[
+                                                                { value: "", label: "Select Company or Individual" },
+                                                                { value: "Company", label: "Company" },
+                                                                { value: "Individual", label: "Individual" },
+                                                            ]}
+                                                            className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                        />
+                                                    </div>
+                                                    {selection === "Company" && (
+                                                        <div className="flex flex-col flex-1 min-w-[150px]">
+                                                            <label className="text-sm font-semibold mb-1">
+                                                                Company contact details
+                                                            </label>
+                                                            <SelectField
+                                                                label={""}
+                                                                //{...register("preferred_work_location")}
+                                                                options={[
+                                                                    { value: "", label: "Select Company contact details" },
+                                                                    { value: "Company Name", label: "Company Name" },
+                                                                    { value: "Company Contact Person", label: "Company Contact Person" },
+                                                                ]}
+                                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {selection === "Individual" && (
+                                                        <div className="flex flex-col flex-1 min-w-[150px]">
+                                                            <label className="text-sm font-semibold mb-1">
+                                                                Individual contact details
+                                                            </label>
+                                                            <SelectField
+                                                                label={""}
+                                                                // {...register("preferred_work_location")}
+                                                                options={[
+                                                                    { value: "", label: "Select Individual contact details" },
+                                                                    { value: "Individual Name", label: "Individual Name" },
+                                                                    { value: "Individual Contact Person", label: "Individual Contact Person" },
+                                                                ]}
+                                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

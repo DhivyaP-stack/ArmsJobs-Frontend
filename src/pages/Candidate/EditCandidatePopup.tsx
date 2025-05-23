@@ -139,6 +139,7 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
     const tabs = ["Personal Information", "Visa & Work Eligibility", "Job Infor/Work Preferences", "Documents Upload", "Other Information"];
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
+    const [selection, setSelection] = useState("");
     const {
         register,
         handleSubmit,
@@ -448,6 +449,18 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                     label={""}
                                                 />
                                             </div>
+                                            <div>
+                                                <label className="text-sm font-semibold mb-1">
+                                                    Emirates ID<span className="text-red-500">*</span>
+                                                </label>
+                                                <InputField
+                                                    type="text"
+                                                    // {...register("current_location")}
+                                                    name="emirates"
+                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                    label={""}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -580,7 +593,6 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                 label={""}
                                             />
                                         </div>
-
 
                                         <div>
                                             <label className="text-sm font-semibold mb-1">Preferred Work Location</label>
@@ -786,6 +798,57 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                                             <p className="text-sm text-red-500">{errors.referral_contact.message}</p>
                                                         )}
                                                     </div>
+                                                    <div className="flex flex-col flex-1 min-w-[150px]">
+                                                        <label className="text-sm font-semibold mb-1">
+                                                            Choose Company or Individual
+                                                        </label>
+                                                        <SelectField
+                                                            label={""}
+                                                            // {...register("preferred_work_location")}
+                                                            value={selection}
+                                                            onChange={(e) => setSelection(e.target.value)}
+                                                            options={[
+                                                                { value: "", label: "Select Company or Individual" },
+                                                                { value: "Company", label: "Company" },
+                                                                { value: "Individual", label: "Individual" },
+                                                            ]}
+                                                            className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                        />
+                                                    </div>
+                                                    {selection === "Company" && (
+                                                        <div className="flex flex-col flex-1 min-w-[150px]">
+                                                            <label className="text-sm font-semibold mb-1">
+                                                                Company contact details
+                                                            </label>
+                                                            <SelectField
+                                                                label={""}
+                                                                //{...register("preferred_work_location")}
+                                                                options={[
+                                                                    { value: "", label: "Select Company contact details" },
+                                                                    { value: "Company Name", label: "Company Name" },
+                                                                    { value: "Company Contact Person", label: "Company Contact Person" },
+                                                                ]}
+                                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {selection === "Individual" && (
+                                                        <div className="flex flex-col flex-1 min-w-[150px]">
+                                                            <label className="text-sm font-semibold mb-1">
+                                                                Individual contact details
+                                                            </label>
+                                                            <SelectField
+                                                                label={""}
+                                                                // {...register("preferred_work_location")}
+                                                                options={[
+                                                                    { value: "", label: "Select Individual contact details" },
+                                                                    { value: "Individual Name", label: "Individual Name" },
+                                                                    { value: "Individual Contact Person", label: "Individual Contact Person" },
+                                                                ]}
+                                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

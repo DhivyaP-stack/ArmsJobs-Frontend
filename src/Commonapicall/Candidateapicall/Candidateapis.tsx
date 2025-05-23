@@ -225,7 +225,7 @@ export const deleteCandidate = async (Id: number): Promise<boolean> => {
 // Get Candidate Names List
 export const fetchCandidateNames = async (search?:string) => {
   try {
-    const response = await apiAxios.get('/api/candidates/names/',
+    const response = await apiAxios.get(`/api/candidates/names/?page_size=${22}`,
       {
       params: { search },
     });
@@ -258,10 +258,10 @@ export const ViewCandidateName = async (
 };
 
 //Search, All, Pagination
-export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string, PageSize: string) => {
+export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string, PageSize: string, Status:string) => {
   try {
     const response = await apiAxios.get<ApiResponse>(
-      `/api/candidates/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}`
+      `/api/candidates/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}&status=${Status || ''}`
     );
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch overseas recruitment list");
