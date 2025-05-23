@@ -11,6 +11,7 @@ import { z } from "zod";
 import { fetchAgentById, updateAgent } from "../../Commonapicall/AgentsSupplierapicall/Agentsapis";
 import { toast } from "react-toastify";
 import { AgentSupplier } from "./AgentsSupplierTable";
+import Select from "react-select";
 // import { SelectField } from "../../common/SelectField";
 // import { FaCloudUploadAlt } from "react-icons/fa";
 interface EditAgentsSupplierPopupProps {
@@ -21,6 +22,19 @@ interface EditAgentsSupplierPopupProps {
 }
 
 type AgentFormData = z.infer<typeof agentSchema>;
+
+type OptionType = { value: string; label: string };
+
+const emiratesOptions: OptionType[] = [
+    { value: "Abu Dhabi", label: "Abu Dhabi" },
+    { value: "Dubai", label: "Dubai" },
+    { value: "Sharjah", label: "Sharjah" },
+    { value: "Ajman", label: "Ajman" },
+    { value: "Umm Al Quwain", label: "Umm Al Quwain" },
+    { value: "Ras Al Khaimah", label: "Ras Al Khaimah" },
+    { value: "Fujairah", label: "Fujairah" },
+];
+
 export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = ({
     closePopup,
     agentId,
@@ -44,6 +58,16 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             can_supply_manpower: "no",
         }
     });
+
+    const [selectedAreas, setSelectedAreas] = useState<OptionType[]>([]);
+
+    const handleChange = (selectedOptions: any) => {
+        setSelectedAreas(selectedOptions);
+        // Convert selected options to comma-separated string of values
+        const areasString = selectedOptions.map((option: OptionType) => option.value).join(', ');
+        setValue('areas_covered', areasString);
+    };
+
 
     const tabFieldMapping: Record<string, string[]> = {
         "Agent Details": [
@@ -72,6 +96,16 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
         const fetchAgentData = async () => {
             try {
                 const agent = await fetchAgentById(agentId);
+                // Parse areas_covered if it exists
+                const areasCovered = agent.areas_covered || "";
+                const initialAreas = areasCovered
+                    ? areasCovered.split(', ').map(area => ({
+                        value: area,
+                        label: area
+                    }))
+                    : [];
+                setSelectedAreas(initialAreas);
+
                 reset({
                     name: agent.name || "",
                     mobile_no: agent.mobile_no || "",
@@ -82,7 +116,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                     can_supply_manpower: agent.can_supply_manpower ? "yes" : "no",
                     supply_categories: agent.supply_categories || "",
                     quantity_estimates: agent.quantity_estimates || "",
-                    areas_covered: agent.areas_covered || "",
+                    areas_covered: areasCovered,
                     additional_notes: agent.additional_notes || ""
                 });
             } catch (error) {
@@ -121,7 +155,6 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                     areas_covered: data.areas_covered,
                     additional_notes: data.additional_notes,
                 };
-
                 await updateAgent(agentId, updateData);
                 reset();
                 closePopup();
@@ -132,7 +165,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                 const errorMessage = error instanceof Error ? error.message : "Failed to update agent";
                 console.error("Error updating agent:", errorMessage);
                 toast.error("Failed to update agent");
-            } 
+            }
             // finally {
             //     setIsSubmitting(false);
             // }
@@ -157,6 +190,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             }
         })(e);
     };
+
     useEffect(() => {
         if (scrollToField) {
             // First scroll the tab into view
@@ -164,7 +198,6 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             if (tabContent) {
                 tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-
             // Then scroll to the specific field
             const timeout = setTimeout(() => {
                 const el = document.querySelector(`[name="${scrollToField}"]`);
@@ -174,7 +207,6 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                 }
                 setScrollToField(null);
             }, 300); // Increased timeout to ensure tab change is complete
-
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
@@ -409,11 +441,20 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                                 <label className="text-sm font-semibold mb-1">
                                                     Areas Covered (Emirates)
                                                 </label>
-                                                <textarea
+                                                <Select<OptionType, true>
+                                                    options={emiratesOptions}
+                                                    isMulti
+                                                    value={selectedAreas}
+                                                    {...register("areas_covered")}
+                                                    name="areas_covered"
+                                                    onChange={handleChange}
+                                                    className="react-select-container"
+                                                />
+                                                {/* <textarea
 
                                                     {...register("areas_covered")}
                                                     className="w-full  h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                />
+                                                /> */}
                                                 {errors.areas_covered && <p className="text-red-500 text-xs">{errors.areas_covered.message}</p>}
                                             </div>
                                         </div>

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { toast } from "react-toastify";
-// import Select from "react-select";
+import Select from "react-select";
 
 interface AddAgentsSupplierPopupProps {
     closePopup: () => void;
@@ -43,17 +43,17 @@ export const agentSchema = z.object({
 
 type AgentFormData = z.infer<typeof agentSchema>;
 
-// type OptionType = { value: string; label: string };
+type OptionType = { value: string; label: string };
 
-// const emiratesOptions: OptionType[]  = [
-//     { value: "Dubai", label: "Dubai" },
-//     { value: "Abu Dhabi", label: "Abu Dhabi" },
-//     { value: "Sharjah", label: "Sharjah" },
-//     { value: "Ajman", label: "Ajman" },
-//     { value: "Fujairah", label: "Fujairah" },
-//     { value: "Ras Al Khaimah", label: "Ras Al Khaimah" },
-//     { value: "Umm Al Quwain", label: "Umm Al Quwain" },
-// ];
+const emiratesOptions: OptionType[] = [
+    { value: "Abu Dhabi", label: "Abu Dhabi" },
+    { value: "Dubai", label: "Dubai" },
+    { value: "Sharjah", label: "Sharjah" },
+    { value: "Ajman", label: "Ajman" },
+    { value: "Umm Al Quwain", label: "Umm Al Quwain" },
+    { value: "Ras Al Khaimah", label: "Ras Al Khaimah" },
+    { value: "Fujairah", label: "Fujairah" },
+];
 
 export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
     closePopup,
@@ -72,14 +72,14 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
         }
     });
 
-//     const [selectedAreas, setSelectedAreas] = useState([]);
+    const [selectedAreas, setSelectedAreas] = useState([]);
 
-//     const handleChange = (selectedOptions: any) => {
-//     setSelectedAreas(selectedOptions);
-//     // Convert selected options to comma-separated string of values
-//     const areasString = selectedOptions.map((option: OptionType) => option.value).join(', ');
-//     setValue('areas_covered', areasString);
-// };
+    const handleChange = (selectedOptions: any) => {
+        setSelectedAreas(selectedOptions);
+        // Convert selected options to comma-separated string of values
+        const areasString = selectedOptions.map((option: OptionType) => option.value).join(', ');
+        setValue('areas_covered', areasString);
+    };
 
     const tabFieldMapping: Record<string, string[]> = {
         "Agent Details": [
@@ -428,7 +428,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Areas Covered (Emirates)
                                                 </label>
-                                                {/* <Select<OptionType>
+                                                <Select<OptionType, true>
                                                     options={emiratesOptions}
                                                     isMulti
                                                     value={selectedAreas}
@@ -436,12 +436,12 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                     name="areas_covered"
                                                     onChange={handleChange}
                                                     className="react-select-container"
-                                                /> */}
-                                                 <textarea
+                                                />
+                                                {/* <textarea
                                                     {...register("areas_covered")}
                                                     name="areas_covered"
                                                     className="w-full  h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                />
+                                                /> */}
                                             </div>
                                         </div>
                                     </div>
