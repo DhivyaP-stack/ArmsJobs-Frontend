@@ -226,7 +226,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                     {/* Name of Agent */}
                                     <div>
                                         <label className="text-sm font-semibold mb-1">
-                                            Name of Agent<span className="text-red-500">*</span>
+                                            Name of Agent/Supplier<span className="text-red-500">*</span>
                                         </label>
                                         <InputField
                                             type="text"

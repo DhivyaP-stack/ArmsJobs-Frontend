@@ -191,6 +191,11 @@ export const AgentSupplyView = () => {
         fetchSingleAgent(); // Now this works correctly
     };
 
+    const fetchStatus = () => {
+        console.log("fetchStatus")
+        navigate('/AgentsSupplier');
+    }
+
     if (loading) {
         return <AgentSupplierViewShimmer />;
     }
@@ -304,7 +309,7 @@ export const AgentSupplyView = () => {
                                     <div>
                                         <div className="grid grid-cols-3 gap-4 pt-2 w-full">
                                             <div>
-                                                <p className="text-xs text-gray-600">Name of Agent</p>
+                                                <p className="text-xs text-gray-600">Name of Agent/Supplier</p>
                                                 <p className="text-sm font-bold mt-1">{agent?.name || 'N/A'}</p>
                                             </div>
                                             <div>
@@ -453,6 +458,7 @@ export const AgentSupplyView = () => {
                     closePopup={closeAgentsStatusPopup}
                     refreshData={fetchSingleAgent}
                     AgentData={AgentsStatus}
+                    InactiveStatus={() => fetchStatus()}
                 />
             )}
         </div>

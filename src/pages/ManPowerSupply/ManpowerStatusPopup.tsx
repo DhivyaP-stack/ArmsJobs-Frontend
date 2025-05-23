@@ -12,12 +12,14 @@ interface StatusManpowerPopupProps {
         currentStatus: boolean;
     };
     refreshData: () => void;
+    InactiveStatus: () => void;
 }
 
 export const StatusManpowerPopup: React.FC<StatusManpowerPopupProps> = ({
     closePopup,
     ManpowerData,
     refreshData,
+    InactiveStatus,
 }) => {
     const [error, setError] = useState<string | null>(null);
     const handleConfirm = async () => {
@@ -32,6 +34,7 @@ export const StatusManpowerPopup: React.FC<StatusManpowerPopupProps> = ({
             console.log("ManpowerSupply status response", response);
             toast.success("ManpowerSupply status updated successfully");
             refreshData();
+            InactiveStatus();
         } catch (error: any) {
             console.error('Error updating candidate status:', error);
             setError(error.message || 'Failed to update status. Please try again.');

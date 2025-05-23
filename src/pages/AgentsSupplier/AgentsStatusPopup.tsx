@@ -12,12 +12,14 @@ interface StatusAgentsPopupProps {
         currentStatus: boolean;
     };
     refreshData: () => void;
+    InactiveStatus:() => void;
 }
 
 export const StatusAgentsPopup: React.FC<StatusAgentsPopupProps> = ({
     closePopup,
     AgentData,
     refreshData,
+    InactiveStatus,
 }) => {
     const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +35,7 @@ export const StatusAgentsPopup: React.FC<StatusAgentsPopupProps> = ({
             console.log("Agents/Suppliers status response", response);
             toast.success("Agents/Suppliers status changed successfully");
             refreshData();
+            InactiveStatus();
         } catch (error: any) {
             console.error('Error updating Agents/Suppliers status:', error);
             setError(error.message || 'Failed to update status. Please try again.');

@@ -13,12 +13,14 @@ interface StatusClientEnquiryPopupProps {
         currentStatus: boolean;
     };
     refreshData: () => void;
+    InactiveStatus: () => void;
 }
 
 export const StatusClientEnquiryPopup: React.FC<StatusClientEnquiryPopupProps> = ({
     closePopup,
     ClientEnquiryData,
     refreshData,
+    InactiveStatus,
 }) => {
     const [error, setError] = useState<string | null>(null);
 
@@ -35,13 +37,13 @@ export const StatusClientEnquiryPopup: React.FC<StatusClientEnquiryPopupProps> =
             console.log("Client Enquiry status response", response);
             toast.success("Client Enquiry status updated successfully");
             refreshData();
+            InactiveStatus();
         } catch (error: any) {
             console.error('Error updating ClientEnquiry status:', error);
             setError(error.message || 'Failed to update status. Please try again.');
             toast.error(error.message || 'Failed to update status. Please try again.');
         }
     };
-
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-100 flex justify-center items-center z-50">

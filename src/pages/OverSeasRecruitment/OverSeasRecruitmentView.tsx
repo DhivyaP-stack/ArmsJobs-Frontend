@@ -205,6 +205,11 @@ export const OverSeasRecruitmentView = () => {
         setIsLoading(false);
     };
 
+    const fetchStatus = () => {
+        console.log("fetchStatus")
+        navigate('/OverseasRecruitment');
+    }
+
     if (isLoading && initialLoad) {
         return <AgentSupplierViewShimmer />;
     }
@@ -472,6 +477,7 @@ export const OverSeasRecruitmentView = () => {
                     closePopup={closeoverseasStatusPopup}
                     OverseasData={overseasStatus}
                     refreshData={() => fetchOverseasRecruitmentID(overseasStatus.id)}
+                    InactiveStatus={() => fetchStatus()}
                 />
             )}
         </div>

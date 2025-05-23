@@ -12,6 +12,7 @@ interface StatusOverseasPopupProps {
         currentStatus: boolean;
     };
     refreshData: () => void;
+    InactiveStatus: () => void;
 }
 
 
@@ -19,12 +20,12 @@ export const StatusOverseasPopup: React.FC<StatusOverseasPopupProps> = ({
     closePopup,
     OverseasData,
     refreshData,
+    InactiveStatus,
 }) => {
     const [error, setError] = useState<string | null>(null);
 
     const handleConfirm = async () => {
         setError(null);
-
         try {
             const newStatus = !OverseasData.currentStatus;
             const response = await OverseasStatus(
@@ -35,13 +36,13 @@ export const StatusOverseasPopup: React.FC<StatusOverseasPopupProps> = ({
             console.log("Overseas Recruitment status response", response);
             toast.success("Overseas Recruitment status updated successfully");
             refreshData();
+            InactiveStatus();
         } catch (error: any) {
             console.error('Error updating candidate status:', error);
             setError(error.message || 'Failed to update status. Please try again.');
             toast.error(error.message || 'Failed to update status. Please try again.');
         }
     };
-
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-100 flex justify-center items-center z-50">

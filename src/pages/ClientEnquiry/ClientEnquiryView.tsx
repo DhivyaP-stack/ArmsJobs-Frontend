@@ -183,6 +183,11 @@ export const ClientEnquiryView = () => {
         setShowStatusClientEnquiryPopup(false)
     }
 
+    const fetchStatus = () => {
+        console.log("fetchStatus")
+        navigate('/ClientEnquiry');
+    }
+
     if (isLoading && initialLoad) {
         return <AgentSupplierViewShimmer />;
     }
@@ -519,6 +524,7 @@ export const ClientEnquiryView = () => {
                     closePopup={closeoverseasStatusPopup}
                     ClientEnquiryData={clientenquiryStatus}
                     refreshData={() => fetchClientDetails(clientenquiryStatus.id)}
+                    InactiveStatus={() => fetchStatus()}
                 />
             )}
         </div>

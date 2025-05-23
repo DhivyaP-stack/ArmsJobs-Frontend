@@ -199,6 +199,11 @@ export const ManPowerSupplyView = () => {
         fetchManpowerById();
     }, [id]);
 
+    const fetchStatus = () => {
+        console.log("fetchStatus")
+        navigate('/ManpowerSupply');
+    }
+
     if (loading) {
         return <AgentSupplierViewShimmer />;
     }
@@ -414,10 +419,6 @@ export const ManPowerSupplyView = () => {
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
                             </div>
                         </div>
 
@@ -491,6 +492,7 @@ export const ManPowerSupplyView = () => {
                     closePopup={closeManpowerStatusPopup}
                     refreshData={fetchManpowerById}
                     ManpowerData={ManpowerStatus}
+                    InactiveStatus={() => fetchStatus()}
                 />
             )}
         </div>
