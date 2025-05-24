@@ -279,7 +279,6 @@ export const createRemark = async (candidate_id: number, remark: string) => {
     const formData = new FormData();
     formData.append('candidate_id', candidate_id.toString());
     formData.append('remark', remark);
-
     const response = await apiAxios.post(
       '/api/remarks/create/',
       formData,
@@ -289,11 +288,9 @@ export const createRemark = async (candidate_id: number, remark: string) => {
         },
       }
     );
-
     if (!response.data || response.status !== 201) {
       throw new Error('Failed to create remark');
     }
-
     return response.data;
   } catch (error: unknown) {
     console.error('Error creating remark:', error);
@@ -301,6 +298,7 @@ export const createRemark = async (candidate_id: number, remark: string) => {
   }
 };
 
+//Candidate status
 export const Candidatestatus = async (
   Id: string,
   Status: string, 

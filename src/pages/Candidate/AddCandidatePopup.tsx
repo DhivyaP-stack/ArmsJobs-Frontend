@@ -5,7 +5,6 @@ import DefaultProfile from "../../assets/images/DefaultProfile.jpg"
 import { Button } from "../../common/Button"
 import { InputField } from "../../common/InputField";
 import { SelectField } from "../../common/SelectField";
-import { FaCloudUploadAlt } from "react-icons/fa";
 import * as zod from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -637,71 +636,97 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                         </div>
                     )}
                     {activeTab === "Documents Upload" && (
-                        <div className="max-w-full mx-auto p-0 pl-1">
-                            <div className="flex flex-row gap-6 items-start">
-                                <div className="flex gap-13 w-auto">
-                                    {/* First Upload Block */}
-                                    <div className="flex flex-col gap-2 flex-1">
-                                        <label htmlFor="Uploadcv" className="text-sm font-semibold ">
-                                            Upload CV
-                                        </label>
-                                        <div className="flex flex-col items-center border-dashed border-2 border-armsjobslightblue p-1 w-72">
-                                            <div className="text-gray-400 text-5xl mb-2">
-                                                <FaCloudUploadAlt className="text-main" />
-                                            </div>
-
-                                            <div className="w-max-43 flex flex-col items-center">
-                                                <p className="text-armsBlack text-xs mb-2 text-center">
-                                                    Drag and drop your file here
-                                                </p>
-
-                                                <div className="flex items-center w-full mb-2">
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                    <span className="px-2 text-armsBlack text-xs">or</span>
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                </div>
-                                            </div>
-
-                                            <Button
-                                                buttonType="button"
-                                                buttonTitle="Browse Files"
-                                                className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
-                                            />
-                                            <p className="text-xs text-gray-400">Max file size 500KB.</p>
-                                            <p className="text-xs text-gray-400 mb-8">PDF, DOC only</p>
-                                        </div>
+                        <div className="max-w-full mx-auto p-4">
+                            {/* First Row - 4 documents */}
+                            <div className="grid grid-cols-4 gap-6 mb-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">Resume*</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload your resume" />
                                     </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
+                                </div>
 
-                                    {/* Second Upload Block */}
-                                    <div className="flex flex-col gap-2 flex-1">
-                                        <label htmlFor="Uploadcv" className="text-sm font-semibold">
-                                            Upload Relevant Documents
-                                        </label>
-                                        <div className="flex flex-col items-center border-dashed border-2 border-armsjobslightblue p-1 w-72">
-                                            <div className="text-gray-400 text-5xl mb-2">
-                                                <FaCloudUploadAlt className="text-main" />
-                                            </div>
-                                            <div className="w-max-43 flex flex-col items-center">
-                                                <p className="text-armsBlack text-xs mb-2 text-center">
-                                                    Drag and drop your file here
-                                                </p>
-                                                <div className="flex items-center w-full mb-2">
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                    <span className="px-2 text-armsBlack text-xs">or</span>
-                                                    <hr className="flex-grow border-t border-armsBlack" />
-                                                </div>
-                                            </div>
-                                            <Button
-                                                buttonType="button"
-                                                buttonTitle="Browse Files"
-                                                className="bg-armsjobslightblue cursor-pointer text-armsWhite font-semibold px-4 py-1 rounded hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mb-2"
-                                            />
-                                            <p className="text-xs text-gray-400">Max file size 500KB.</p>
-                                            <p className="text-xs text-gray-400 mb-4 text-center">upload Documents like Insurance, NOC, passport,<br /> visa, license, experience cert.</p>
-                                        </div>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">Insurance</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload insurance document" />
                                     </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">Passport*</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload passport" />
+                                    </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">Visa*</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload visa" />
+                                    </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
                                 </div>
                             </div>
+
+                            {/* Second Row - 3 documents */}
+                            <div className="grid grid-cols-4 gap-6 mb-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">NOC</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload NOC" />
+                                    </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">License</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload license" />
+                                    </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-sm font-semibold mb-1">Experience Certificate</label>
+                                        <input type="text" className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none" readOnly placeholder="Upload experience certificate" />
+                                    </div>
+                                    <Button
+                                        buttonType="button"
+                                        buttonTitle="Upload"
+                                        className="bg-armsjobslightblue text-armsWhite px-4 py-1.5 rounded text-sm hover:bg-armsWhite hover:text-armsjobslightblue border border-armsjobslightblue mt-6"
+                                    />
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-4">Note: Please ensure all relevant documents are uploaded in the required format. Each file should not exceed 500 KB in size. Larger files may not be accepted by the system. Kindly compress your documents if necessary before uploading.</p>
                         </div>
                     )}
                     {activeTab === "Other Information" && (
@@ -713,7 +738,7 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                     <div className="flex flex-col gap-4 flex-1">
                                         {/* First Row*/}
                                         <div className="flex flex-wrap gap-4">
-                                            <div className="flex-1 w-full flex flex-col gap-0">
+                                            <div className="flex flex-col flex-1 min-w-[150px]">
                                                 <label className="text-sm font-semibold pb-3">
                                                     Additional Notes or Information
                                                 </label>

@@ -135,7 +135,7 @@ export const CandidateTable = () => {
     setShowDeleteCandidatePopup(true);
   };
 
-  const closeDeleteAgentsPopup = () => {
+  const closeDeleteCandidatePopup = () => {
     setShowDeleteCandidatePopup(false);
     setcandidateToDelete(null);
   }
@@ -383,7 +383,7 @@ export const CandidateTable = () => {
 
       {showDeleteCandidatePopup && candidateToDelete &&
         (<DeleteCandidatePopup
-          closePopup={closeDeleteAgentsPopup}
+          closePopup={closeDeleteCandidatePopup}
           CandidateData={candidateToDelete}
           refreshData={refreshCandidateList}
         />)}
