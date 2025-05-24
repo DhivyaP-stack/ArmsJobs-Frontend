@@ -67,6 +67,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
     const tabs = ['Company Details', "Personal Information", "Facility Info", "Remarks"];
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
+    const [selection, setSelection] = useState("");
 
     const {
         register,
@@ -75,6 +76,11 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
         reset,
     } = useForm<ClientEnquiryFormData>({
         resolver: zodResolver(clientenquirySchema),
+        defaultValues: {
+            kitchen_facility: "no",
+            transportation_provided: "no",
+            accommodation_provided: "no",
+        },
     });
 
     const tabFieldMapping: Record<string, string[]> = {
@@ -324,7 +330,7 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                             {/* Project Location */}
                                             <div>
                                                 <label className="text-sm font-semibold mb-1 block">
-                                                    Project Location
+                                                    Project Location(Emirates)
                                                 </label>
                                                 <SelectField
                                                     label={""}
@@ -506,23 +512,26 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                         { value: "Outsourcing", label: "Outsourcing" },
                                         { value: "Others", label: "Others" },
                                     ]}
+                                    value={selection}
+                                    onChange={(e) => setSelection(e.target.value)}
                                     className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                 />
                             </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="additionalDetails" className="text-sm font-semibold">
-                                    Remarks / Notes
-                                </label>
-                                <textarea
-                                    id="additionalDetails"
-                                    {...register("remarks")}
-                                    name="remarks"
-                                    rows={4}
-                                    className="w-full h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus:outline-none resize-y"
-                                    placeholder="Enter details here..."
-                                />
-                            </div>
+                            {selection === "Others" && (
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="additionalDetails" className="text-sm font-semibold">
+                                        Remarks / Notes
+                                    </label>
+                                    <textarea
+                                        id="additionalDetails"
+                                        {...register("remarks")}
+                                        name="remarks"
+                                        rows={4}
+                                        className="w-full h-9.5 rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus:outline-none resize-y"
+                                        placeholder="Enter details here..."
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </form>

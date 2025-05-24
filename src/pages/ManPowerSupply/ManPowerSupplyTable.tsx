@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../common/Button";
-//import profileimg from "../../assets/images/profileimg.jpg"
 import { FaUser } from "react-icons/fa6";
-//import { FaSearch } from "react-icons/fa";
 import { MdDelete, MdModeEdit, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { Pagination } from "../../common/Pagination";
 import { IoMdSearch } from "react-icons/io";
@@ -132,7 +130,7 @@ export const ManPowerSupplyTable = () => {
       setCount(response?.count || 1);
     } catch (error) {
       console.error("Error fetching pagination data:", error);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -222,38 +220,40 @@ export const ManPowerSupplyTable = () => {
             <ManpowerTableShimmer />
           ) : (
             <div className="w-full overflow-x-auto">
-              {manPowersuppliers.length === 0 ? (
-                <div className="text-center py-4">No Manpower found</div>
-              ) : (
-                <table className="w-full table-auto text-sm ">
-                  <thead className="bg-main text-left">
-                    <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
-                      <th className="bg-main px-2 py-3  ">Manpower <br /> Supplier ID</th>
-                      <th className="bg-main px-2 py-3 ">Company Name</th>
-                      <th className="bg-main px-2 py-3 ">Contact Person<br />Name </th>
-                      <th className="bg-main px-2 py-3 ">Mobile No</th>
-                      <th className="bg-main px-2 py-3 ">WhatsApp No</th>
-                      <th className="bg-main px-2 py-3 ">Email ID</th>
-                      <th className="bg-main px-2 py-3 ">Office Location</th>
-                      <th className="bg-main px-2 py-3 ">Catagorise Available</th>
-                      <th className="bg-main px-2 py-3 ">Quantity per
-                        <br />
-                        Catagory
-                      </th>
-                      <th className="bg-main px-2 py-3 ">Upload Trade
-                        <br />Licence
-                      </th>
-                      <th className="bg-main px-2 py-3 ">Upload Company<br />Licence (if any)(optional)</th>
-                      <th className="bg-main px-2 py-3 ">Previous Experience in <br />Manpower Supply</th>
-                      <th className="bg-main px-2 py-3 ">If Worked Earlier <br />With Arms</th>
-                      <th className="bg-main px-2 py-3 ">Comments</th>
-                      <th className="bg-main px-2 py-3 ">Status</th>
-                      <th className="bg-main px-2 py-3 ">Created Date&Time</th>
-                      <th className="bg-main px-2 py-3 sticky right-0 z-10 max-sm:!static">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="whitespace-nowrap">
-                    {manPowersuppliers.map((manpower, index) => (
+              <table className="w-full table-auto text-sm ">
+                <thead className="bg-main text-left">
+                  <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
+                    <th className="bg-main px-2 py-3  ">Manpower <br /> Supplier ID</th>
+                    <th className="bg-main px-2 py-3 ">Company Name</th>
+                    <th className="bg-main px-2 py-3 ">Contact Person<br />Name </th>
+                    <th className="bg-main px-2 py-3 ">Mobile No</th>
+                    <th className="bg-main px-2 py-3 ">WhatsApp No</th>
+                    <th className="bg-main px-2 py-3 ">Email ID</th>
+                    <th className="bg-main px-2 py-3 ">Office Location</th>
+                    <th className="bg-main px-2 py-3 ">Catagorise Available</th>
+                    <th className="bg-main px-2 py-3 ">Quantity per
+                      <br />
+                      Catagory
+                    </th>
+                    <th className="bg-main px-2 py-3 ">Upload Trade
+                      <br />Licence
+                    </th>
+                    <th className="bg-main px-2 py-3 ">Upload Company<br />Licence (if any)(optional)</th>
+                    <th className="bg-main px-2 py-3 ">Previous Experience in <br />Manpower Supply</th>
+                    <th className="bg-main px-2 py-3 ">If Worked Earlier <br />With Arms</th>
+                    <th className="bg-main px-2 py-3 ">Comments</th>
+                    <th className="bg-main px-2 py-3 ">Status</th>
+                    <th className="bg-main px-2 py-3 ">Created Date&Time</th>
+                    <th className="bg-main px-2 py-3 sticky right-0 z-10 max-sm:!static">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="whitespace-nowrap">
+                  {manPowersuppliers.length === 0 ? (
+                    <td colSpan={12} className="text-center py-8">
+                    <div className="text-center py-4">No Manpower found</div>
+                    </td>
+                  ) : (
+                    manPowersuppliers.map((manpower, index) => (
                       <tr key={index}
                         onClick={() => navigate(`/ManpowerSupply/${manpower.id}`)}
                         className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
@@ -332,10 +332,11 @@ export const ManPowerSupplyTable = () => {
                           </td>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+                    ))
+                  )}
+                </tbody>
+              </table>
+
             </div>
           )}
           <Pagination
@@ -347,22 +348,22 @@ export const ManPowerSupplyTable = () => {
           />
         </div>
 
-        {showAddManpowerPopup && 
-        <AddManpowerPopup 
-        closePopup={closeAddManpowerPopup} 
-       // onAgentAdded={handleAgentAdded} 
-        refreshData={refreshAgentList} 
-        />}
+        {showAddManpowerPopup &&
+          <AddManpowerPopup
+            closePopup={closeAddManpowerPopup}
+            // onAgentAdded={handleAgentAdded} 
+            refreshData={refreshAgentList}
+          />}
 
         {showEditManpowerPopup && selectedManpower &&
-        <EditManpowerPopup 
-        closePopup={closeEditManpowerPopup} 
-        editManpowerSupply={selectedManpower}
-        //supplierId={Number(manPowerId)} 
-        //onUpdate={fetchPagination} 
-        //onAgentAdded={handleAgentAdded} 
-        refreshData={refreshAgentList}
-        />}
+          <EditManpowerPopup
+            closePopup={closeEditManpowerPopup}
+            editManpowerSupply={selectedManpower}
+            //supplierId={Number(manPowerId)} 
+            //onUpdate={fetchPagination} 
+            //onAgentAdded={handleAgentAdded} 
+            refreshData={refreshAgentList}
+          />}
 
         {showDeleteManPoweSupplierPopup && ManPoweToDelete && (<DeleteManPowerPopup closePopup={closeDeleteManPowerPopup} ManPowerData={ManPoweToDelete} refreshData={refreshAgentList} manpowerName={"ManPower/Supply"} />
         )}

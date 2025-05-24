@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addOverseasRecruitment } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { toast } from "react-toastify";
+import { SelectField } from "../../common/SelectField";
 
 interface OverSeasAddPopupProps {
     // isOpen: boolean;
@@ -365,12 +366,18 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Mobilization Time
                                                 </label>
-                                                <InputField
-                                                    type="text"
+                                                <SelectField
+                                                    label={""}
                                                     {...register("mobilization_time")}
                                                     name="mobilization_time"
+                                                    options={[
+                                                        { value: "", label: "Select Mobilization Time" },
+                                                        { value: "3-5 Days", label: "3-5 Days" },
+                                                        { value: "5-10 Days", label: "5-10 Days" },
+                                                        { value: "10-15 Days", label: "10-15 Days" },
+                                                        { value: "15+ Days", label: "15+ Days" },
+                                                    ]}
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
                                                 />
                                             </div>
                                             {/* UAE Deployment Experience */}

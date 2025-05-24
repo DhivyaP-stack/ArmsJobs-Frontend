@@ -17,7 +17,7 @@ export const Header = () => {
 
   return (
     <header>
-      <div className="relative backdrop-blur-lg bg-opacity-100 shadow-md px-10 py-5 pb-0 max-2xl:pb-5 max-xl:pb-5 z-[1090]">
+      <div className="relative backdrop-blur-lg bg-opacity-100 shadow-md px-10 py-5 pb-0 max-2xl:pb-5 max-xl:pb-5 z-[11]">
         <div className="flex flex-wrap max-sm:!flex-nowrap justify-between items-center max-2xl:gap-x-12 max-2xl:gap-y-5 max-2xl:justify-between">
           <div className="flex justify-center items-center space-x-3 max-2xl:order-1">
             <Link to="/Dashboard">
@@ -27,7 +27,7 @@ export const Header = () => {
 
           <div className="max-sm:!hidden max-md:!hidden max-2xl:order-3 max-2xl:mx-auto">
             <nav className="">
-              <ul className="flex items-center space-x-8 max-xl:space-x-6">
+              <ul className="flex items-center space-x-3 max-xl:space-x-6">
                 <NavLink
                   to="/Dashboard"
                   className="active-nav max-2xl:before:!-bottom-5"
@@ -75,6 +75,14 @@ export const Header = () => {
                   aria-current="page"
                 >
                   <li className="text-md max-xl:text-sm">Client Enquiry</li>
+                </NavLink>
+
+                <NavLink
+                  to="/Categories"
+                  className="active-nav max-2xl:before:!-bottom-5"
+                  aria-current="page"
+                >
+                  <li className="text-md max-xl:text-sm">Categories</li>
                 </NavLink>
 
                 <NavLink

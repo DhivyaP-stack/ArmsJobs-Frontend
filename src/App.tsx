@@ -18,6 +18,7 @@ import { OverSeasRecruitmentView } from './pages/OverSeasRecruitment/OverSeasRec
 import { AgentSupplyView } from './pages/AgentsSupplier/AgentSupplierView';
 import { ManPowerSupplyView } from './pages/ManPowerSupply/ManPowerSupplyView';
 import { ToastContainer } from 'react-toastify';
+import { Categories } from './pages/Categories';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="/ManpowerSupply" element={<ManpowerSupply />} />
             <Route path="/OverseasRecruitment" element={<OverseasRecruitment />} />
             <Route path="/ClientEnquiry" element={<ClientEnquiry />} />
+            <Route path="/Categories" element={<Categories/>} />
             <Route path="/Reports" element={<Reports />} />
             <Route path="/Candidate/:id" element={<CandidateView />} />
             <Route path="/ClientEnquiry/:id" element={<ClientEnquiryView />} />

@@ -78,7 +78,7 @@ export const CandidateTable = () => {
   const refreshCandidateList = async () => {
     try {
       setLoading(true);
-      const response = await filterCandidateList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status );
+      const response = await filterCandidateList(currentPage, search.trim(), filterBy, itemsPerPage.toString(), status);
       setCandidatesData(response?.results?.data);
     } catch (err) {
       NotifyError(err instanceof Error ? err.message : "Failed to fetch agents");
@@ -107,7 +107,6 @@ export const CandidateTable = () => {
       setLoading(false);
     }
   }, [currentPage, search, filterBy, itemsPerPage, status]);
-
 
   useEffect(() => {
     fetchPagination();
@@ -213,43 +212,47 @@ export const CandidateTable = () => {
         </div>
 
         {/* Table rendering */}
-        {loading ? (
-          <CandidateTableShimmer />
-        ) : (
-          <div className="w-full overflow-x-auto">
-            {candidatesData.length === 0 ? (
-              <div className="text-center py-4">No candidates found</div>
-            ) : (
-              <table className="w-full table-auto text-sm ">
-                <thead className="bg-main text-left">
-                  <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
-                    <th className="bg-main px-2 py-3  ">Candidate ID</th>
-                    <th className="bg-main px-2 py-3 ">Photo Upload</th>
-                    <th className="bg-main px-2 py-3 ">Full Name</th>
-                    <th className="bg-main px-2 py-3 ">Mobile No</th>
-                    <th className="bg-main px-2 py-3 ">WhatsApp No</th>
-                    <th className="bg-main px-2 py-3 ">Email ID</th>
-                    <th className="bg-main px-2 py-3 ">Nationality</th>
-                    <th className="bg-main px-2 py-3 ">Current Location</th>
-                    <th className="bg-main px-2 py-3 ">Visa Type</th>
-                    <th className="bg-main px-2 py-3 ">Visa Expiry Date</th>
-                    <th className="bg-main px-2 py-3 ">Availability to join</th>
-                    <th className="bg-main px-2 py-3 ">Position Applying For</th>
-                    <th className="bg-main px-2 py-3 ">Category</th>
-                    <th className="bg-main px-2 py-3 ">Any Other Category</th>
-                    <th className="bg-main px-2 py-3 ">Years of UAE Experience</th>
-                    <th className="bg-main px-2 py-3 ">Skills & Tasks You can Perform</th>
-                    <th className="bg-main px-2 py-3 ">Preferred Work Location</th>
-                    <th className="bg-main px-2 py-3 ">Expected Salary (AED)</th>
-                    <th className="bg-main px-2 py-3 ">Upload CV</th>
-                    <th className="bg-main px-2 py-3 ">Upload Relevant Docs</th>
-                    <th className="bg-main px-2 py-3 ">Status</th>
-                    <th className="bg-main px-2 py-3 ">Created At</th>
-                    <th className="bg-main px-2 py-3 sticky right-0 max-sm:!static ">Actions</th>
+        <div className="w-full overflow-x-auto">
+          {loading ? (
+            <CandidateTableShimmer />
+          ) : (
+            <table className="w-full table-auto text-sm ">
+              <thead className="bg-main text-left">
+                <tr className="bg-main text-left text-armsWhite whitespace-nowrap">
+                  <th className="bg-main px-2 py-3  ">Candidate ID</th>
+                  <th className="bg-main px-2 py-3 ">Photo Upload</th>
+                  <th className="bg-main px-2 py-3 ">Full Name</th>
+                  <th className="bg-main px-2 py-3 ">Mobile No</th>
+                  <th className="bg-main px-2 py-3 ">WhatsApp No</th>
+                  <th className="bg-main px-2 py-3 ">Email ID</th>
+                  <th className="bg-main px-2 py-3 ">Nationality</th>
+                  <th className="bg-main px-2 py-3 ">Current Location</th>
+                  <th className="bg-main px-2 py-3 ">Visa Type</th>
+                  <th className="bg-main px-2 py-3 ">Visa Expiry Date</th>
+                  <th className="bg-main px-2 py-3 ">Availability to join</th>
+                  <th className="bg-main px-2 py-3 ">Position Applying For</th>
+                  <th className="bg-main px-2 py-3 ">Category</th>
+                  <th className="bg-main px-2 py-3 ">Any Other Category</th>
+                  <th className="bg-main px-2 py-3 ">Years of UAE Experience</th>
+                  <th className="bg-main px-2 py-3 ">Skills & Tasks You can Perform</th>
+                  <th className="bg-main px-2 py-3 ">Preferred Work Location</th>
+                  <th className="bg-main px-2 py-3 ">Expected Salary (AED)</th>
+                  <th className="bg-main px-2 py-3 ">Upload CV</th>
+                  <th className="bg-main px-2 py-3 ">Upload Relevant Docs</th>
+                  <th className="bg-main px-2 py-3 ">Status</th>
+                  <th className="bg-main px-2 py-3 ">Created At</th>
+                  <th className="bg-main px-2 py-3 sticky right-0 max-sm:!static ">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="whitespace-nowrap ">
+                {candidatesData.length === 0 ? (
+                  <tr>
+                    <td colSpan={14} className="text-center py-8">
+                      <p className="text-center py-4">No candidates found</p>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="whitespace-nowrap ">
-                  {candidatesData.map((candidate) => (
+                ) : (
+                  candidatesData.map((candidate) => (
                     <tr key={candidate.candidate_id}
                       onClick={() => navigate(`/Candidate/${candidate.id}`)}
                       className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
@@ -349,12 +352,13 @@ export const CandidateTable = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
+                  ))
+                )}
+              </tbody>
+            </table>
+              )}
+        </div>
+        
         <Pagination
           currentPage={currentPage}
           totalItems={totalCount}

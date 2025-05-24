@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateOverseasRecruitment } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { toast } from "react-toastify";
+import { SelectField } from "../../common/SelectField";
 
 // Define the interface
 interface OverseasRecruitmentAgency {
@@ -164,7 +165,7 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                 };
                 // Call API to update overseas recruitment
                 const response = await updateOverseasRecruitment(editOverseas.id, requestData);
-                console.log("response",response)
+                console.log("response", response)
                 // On success:
                 reset();
                 closePopup();
@@ -396,12 +397,18 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Mobilization Time
                                                 </label>
-                                                <InputField
-                                                    type="text"
+                                                <SelectField
+                                                    label={""}
                                                     {...register("mobilization_time")}
                                                     name="mobilization_time"
+                                                    options={[
+                                                        { value: "", label: "Select Mobilization Time" },
+                                                        { value: "3-5 Days", label: "3-5 Days" },
+                                                        { value: "5-10 Days", label: "5-10 Days" },
+                                                        { value: "10-15 Days", label: "10-15 Days" },
+                                                        { value: "15+ Days", label: "15+ Days" },
+                                                    ]}
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
                                                 />
                                             </div>
                                             {/* UAE Deployment Experience */}

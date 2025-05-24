@@ -102,6 +102,8 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
     const [selection, setSelection] = useState("");
+    const [ownVisa, setOwnVisa] = useState("");
+
     const {
         register,
         handleSubmit,
@@ -378,17 +380,46 @@ export const AddCandidatePopup: React.FC<AddCandidatePopupProps> = ({
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-sm font-semibold mb-1">
-                                                    Emirates ID<span className="text-red-500">*</span>
-                                                </label>
-                                                <InputField
-                                                    type="text"
-                                                    // {...register("current_location")}
-                                                    name="emirates"
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
-                                                />
+                                                <label className="text-sm font-semibold mb-1">Select OwnVisa or NewCandidate</label>
+                                                <div className="flex space-x-6 pt-2">
+                                                    <label className="flex items-center cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            value="Own Visa"
+                                                            // {...register("currently_employed")}
+                                                            checked={ownVisa === "Own Visa"}
+                                                            onChange={(e) => setOwnVisa(e.target.value)}
+                                                            className="w-5 h-5 cursor-pointer "
+                                                        />
+                                                        Own Visa
+                                                    </label>
+                                                    <label className="flex items-center cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            value="New Candidate"
+                                                            // {...register("currently_employed")}
+                                                            checked={ownVisa === "New Candidate"}
+                                                            onChange={(e) => setOwnVisa(e.target.value)}
+                                                            className="w-5 h-5 cursor-pointer"
+                                                        />
+                                                        New Candidate
+                                                    </label>
+                                                </div>
                                             </div>
+                                            {ownVisa === "Own Visa" && (
+                                                <div>
+                                                    <label className="text-sm font-semibold mb-1">
+                                                        Emirates ID<span className="text-red-500">*</span>
+                                                    </label>
+                                                    <InputField
+                                                        type="text"
+                                                        // {...register("current_location")}
+                                                        name="emirates"
+                                                        className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
+                                                        label={""}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

@@ -134,7 +134,7 @@ export const AgentSupplierTable = () => {
       setCount(response?.count || 1);
     } catch (error) {
       console.error("Error fetching pagination data:", error);
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -260,67 +260,75 @@ export const AgentSupplierTable = () => {
                   </tr>
                 </thead>
                 <tbody className="whitespace-nowrap ">
-                  {agents.map((agent) => (
-                    <tr key={agent.id}
-                      onClick={() => navigate(`/AgentsSupplier/${agent.id}`)}
-                      className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
-                      <td className="px-2 py-5">{agent.agent_supplier_id || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.name || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.mobile_no || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.whatsapp_no || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.email || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.can_recruit ? "yes" : "no"}</td>
-                      <td className="px-2 py-5">{agent.associated_earlier ? "yes" : "no"}</td>
-                      <td className="px-2 py-5">{agent.can_supply_manpower ? "yes" : "no"}</td>
-                      <td className="px-2 py-5">{agent.supply_categories || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.quantity_estimates || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.areas_covered || "N/A"}</td>
-                      <td className="px-2 py-5">{agent.additional_notes || "N/A"}</td>
-                      <td className="px-2 py-5">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${agent.status
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                            }`}
-                        >
-                          {agent.status ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="px-2 py-5">{new Date(agent.created_at).toLocaleString()}</td>
-                      <td className="px-2 py-5 sticky right-0 z-10 max-sm:!static bg-armsWhite border-b-2 border-armsgrey">
-
-                        <div className="flex items-center space-x-2">
-                          {/* Edit Button */}
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent row navigation
-                              openEditAgentsSupplierPopup(agent.id); // Open the popup
-                            }}
-                            className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                            <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
-                            {/* Tooltip */}
-                            <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                              Edit
-                            </div>
-                          </div>
-
-                          {/* Delete Button */}
-                          <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
-                            <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl"
-                              onClick={(e) => openDeleteAgentsPopup(agent, e)}
-                            />
-                            {/* Tooltip */}
-                            <div
-                              onClick={(e) => openDeleteAgentsPopup(agent, e)}
-                              className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
-                              Delete
-                            </div>
-                          </div>
-                        </div>
-
+                  {agents.length === 0 ? (
+                    <tr>
+                      <td colSpan={13} className="text-center py-8">
+                        <p className="text-center py-4">No agents/suppliers found</p>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    agents.map((agent) => (
+                      <tr key={agent.id}
+                        onClick={() => navigate(`/AgentsSupplier/${agent.id}`)}
+                        className="border-b-2 border-armsgrey hover:bg-gray-100 cursor-pointer">
+                        <td className="px-2 py-5">{agent.agent_supplier_id || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.name || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.mobile_no || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.whatsapp_no || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.email || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.can_recruit ? "yes" : "no"}</td>
+                        <td className="px-2 py-5">{agent.associated_earlier ? "yes" : "no"}</td>
+                        <td className="px-2 py-5">{agent.can_supply_manpower ? "yes" : "no"}</td>
+                        <td className="px-2 py-5">{agent.supply_categories || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.quantity_estimates || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.areas_covered || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.additional_notes || "N/A"}</td>
+                        <td className="px-2 py-5">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs ${agent.status
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                              }`}
+                          >
+                            {agent.status ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="px-2 py-5">{new Date(agent.created_at).toLocaleString()}</td>
+                        <td className="px-2 py-5 sticky right-0 z-10 max-sm:!static bg-armsWhite border-b-2 border-armsgrey">
+
+                          <div className="flex items-center space-x-2">
+                            {/* Edit Button */}
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row navigation
+                                openEditAgentsSupplierPopup(agent.id); // Open the popup
+                              }}
+                              className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                              <MdModeEdit className="text-white group-hover:text-armsjobslightblue text-xl" />
+                              {/* Tooltip */}
+                              <div className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                Edit
+                              </div>
+                            </div>
+
+                            {/* Delete Button */}
+                            <div className="relative flex items-center justify-center border-[1px] border-armsjobslightblue rounded-full px-2 py-2 cursor-pointer group bg-armsjobslightblue hover:bg-white hover:border-armsjobslightblue transition-all duration-200">
+                              <MdDelete className="text-white group-hover:text-armsjobslightblue text-xl"
+                                onClick={(e) => openDeleteAgentsPopup(agent, e)}
+                              />
+                              {/* Tooltip */}
+                              <div
+                                onClick={(e) => openDeleteAgentsPopup(agent, e)}
+                                className="absolute -top-6.5 bg-armsjobslightblue  text-armsWhite text-xs font-semibold px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                Delete
+                              </div>
+                            </div>
+                          </div>
+
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
