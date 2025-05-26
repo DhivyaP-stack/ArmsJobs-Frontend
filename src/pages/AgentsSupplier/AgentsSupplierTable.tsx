@@ -28,6 +28,7 @@ export interface AgentSupplier {
   associated_earlier: boolean | null;
   can_supply_manpower: boolean | null;
   supply_categories: string | null;
+  supply_category_names: string | null;
   quantity_estimates: string | null;
   areas_covered: string | null;
   additional_notes: string | null;
@@ -279,7 +280,7 @@ export const AgentSupplierTable = () => {
                         <td className="px-2 py-5">{agent.can_recruit ? "yes" : "no"}</td>
                         <td className="px-2 py-5">{agent.associated_earlier ? "yes" : "no"}</td>
                         <td className="px-2 py-5">{agent.can_supply_manpower ? "yes" : "no"}</td>
-                        <td className="px-2 py-5">{agent.supply_categories || "N/A"}</td>
+                        <td className="px-2 py-5">{agent.supply_category_names || "N/A"}</td>
                         <td className="px-2 py-5">{agent.quantity_estimates || "N/A"}</td>
                         <td className="px-2 py-5">{agent.areas_covered || "N/A"}</td>
                         <td className="px-2 py-5">{agent.additional_notes || "N/A"}</td>

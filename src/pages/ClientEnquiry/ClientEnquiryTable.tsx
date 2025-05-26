@@ -26,6 +26,7 @@ interface ClientEnquiryList {
   project_location: string;
   project_duration: string;
   categories_required: string;
+  categories_required_names:string;
   quantity_required: string;
   project_start_date: string;
   kitchen_facility: boolean;
@@ -278,7 +279,7 @@ export const ClientEnquiryTable = () => {
                         <td className="px-2 py-2">
                           {client.accommodation_provided ? 'yes' : 'no'}
                         </td>
-                        <td className="px-2 py-2">{client.categories_required || 'N/A'}</td>
+                        <td className="px-2 py-2">{client.categories_required_names || 'N/A'}</td>
                         <td className="px-2 py-2">{client.quantity_required || 'N/A'}</td>
                         <td className="px-2 py-2">
                           <span

@@ -29,6 +29,7 @@ export interface ManpowerSupplier {
   email: string;
   office_location: string;
   categories_available: string;
+  categories_available_names:string;
   quantity_per_category: string;
   trade_license: string | null;
   company_license: string | null;
@@ -264,7 +265,7 @@ export const ManPowerSupplyTable = () => {
                         <td className="px-2 py-3">{manpower.whatsapp_no || "N/A"}</td>
                         <td className="px-2 py-3">{manpower.email || "N/A"}</td>
                         <td className="px-2 py-3">{manpower.office_location || "N/A"}</td>
-                        <td className="px-2 py-3">{manpower.categories_available || "N/A"}</td>
+                        <td className="px-2 py-3">{manpower.categories_available_names || "N/A"}</td>
                         <td className="px-2 py-3">{manpower.quantity_per_category || "N/A"}</td>
                         <td className="px-2 py-3">
                           <div className="text-armsjobslightblue flex text-lg items-center gap-1">

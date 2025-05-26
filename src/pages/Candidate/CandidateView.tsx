@@ -42,6 +42,7 @@ interface CandidateApiResponse {
     availability_to_join: string;
     position_applying_for: string;
     category: string;
+    category_names:string;
     other_category: string | null;
     uae_experience_years: string;
     skills_tasks: string;
@@ -96,6 +97,7 @@ export const CandidateView = () => {
         availability_to_join: '',
         position_applying_for: '',
         category: '',
+        category_names:'',
         other_category: null,
         uae_experience_years: '',
         skills_tasks: '',
@@ -186,16 +188,6 @@ export const CandidateView = () => {
         console.log("fetchStatus")
         navigate('/Candidate');
     }
-
-    // Add this effect to handle status change navigation
-    // useEffect(() => {
-    //     if (selectedCandidate?.status === false) {
-    //         const timer = setTimeout(() => {
-    //             navigate('/Candidate');
-    //         }, 1000);
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [selectedCandidate?.status, navigate]);
 
     // Direct navigation and data loading handler for candidate click
     const handleCandidateClick = async (candidateId: number, e: React.MouseEvent) => {
@@ -427,7 +419,7 @@ export const CandidateView = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Category</p>
-                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.category || 'N/A'}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedCandidate?.category_names || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Any Other Category</p>

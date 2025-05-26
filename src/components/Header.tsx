@@ -1,10 +1,11 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import ArmsLogo from "../assets/images/armslogo.jpg"
-import Settings from '../assets/icons/Settings.jpg'
+// import Settings from '../assets/icons/Settings.jpg'
 import NotificationBell from "../assets/icons/NotificationBell.jpg"
 import { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { FaCircleUser } from 'react-icons/fa6';
+import { IoMdSettings } from 'react-icons/io';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export const Header = () => {
                 >
                   <li className="text-md max-xl:text-sm">Agents/Supplier</li>
                 </NavLink>
-                
+
                 <NavLink
                   to="/ManpowerSupply"
                   className="active-nav max-2xl:before:!-bottom-5"
@@ -77,13 +78,13 @@ export const Header = () => {
                   <li className="text-md max-xl:text-sm">Client Enquiry</li>
                 </NavLink>
 
-                <NavLink
+                {/* <NavLink
                   to="/Categories"
                   className="active-nav max-2xl:before:!-bottom-5"
                   aria-current="page"
                 >
                   <li className="text-md max-xl:text-sm">Categories</li>
-                </NavLink>
+                </NavLink> */}
 
                 <NavLink
                   to="/Reports"
@@ -97,13 +98,19 @@ export const Header = () => {
           </div>
 
           <div className="flex items-center space-x-5 2xl:space-x-5 max-2xl:order-2 cursor-pointer">
-            <button className="text-gray-700">
-              <img
-                src={Settings}
-                alt="Settingsicon"
-                className="w-5 h-5 object-cover"
-              />
-            </button>
+            <div className="relative group cursor-pointer flex items-center justify-center">
+              <button className="text-gray-700">
+                <IoMdSettings className="w-5 h-5 object-cover text-armsjobslightblue" />
+              </button>
+              <div className="absolute -left-15  top-2.5 mt-2 w-48 bg-white shadow-lg rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[1001]">
+                <NavLink
+                  to="/Categories"
+                  className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100"
+                >
+                  Categories
+                </NavLink>
+              </div>
+            </div>
             <button className="text-gray-700">
               <img
                 src={NotificationBell}

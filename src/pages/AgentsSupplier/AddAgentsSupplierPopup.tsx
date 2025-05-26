@@ -8,10 +8,24 @@ import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import Select from "react-select";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
 
 interface AddAgentsSupplierPopupProps {
     closePopup: () => void;
     onAgentAdded?: () => void;
+}
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 export const agentSchema = z.object({
@@ -62,6 +76,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
     const [activeTab, setActiveTab] = useState("Agent Details");
     const [, setIsSubmitting] = useState(false);
     const tabs = ["Agent Details", "Eligibility & History", "Manpower Info", "Additional Info"];
+    const [categories, setCategories] = useState<Category[]>([]);
 
     const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<AgentFormData>({
         resolver: zodResolver(agentSchema),
@@ -81,6 +96,20 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
         setValue('areas_covered', areasString);
     };
 
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('supply_categories', categoryIds); // Pass to form
+    };
+
+    const categoryOptions = categories.map(cat => ({
+        value: cat.id.toString(),      // use ID as value
+        label: cat.category            // show category name
+    }));
+
     const tabFieldMapping: Record<string, string[]> = {
         "Agent Details": [
             'name',
@@ -95,7 +124,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
         ],
         "Manpower Info": [
             'quantity_estimates',
-            'areas_covered',
+            'supply_categories',
             'areas_covered',
         ],
         "Additional Info": [
@@ -174,6 +203,19 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -293,8 +335,6 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                 </div>
                             </div>
                         </div>
-
-
                     )}
                     {/* Eligibility & History */}
                     {activeTab === "Eligibility & History" && (
@@ -403,12 +443,14 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories You Can Supply
                                                 </label>
-                                                <InputField
-                                                    type="text"
-                                                    {...register("supply_categories")}
+                                                <Select
+                                                    isMulti
                                                     name="supply_categories"
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
+                                                    options={categoryOptions}
+                                                    // value={selectedCategories} // array of { value, label }
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
 

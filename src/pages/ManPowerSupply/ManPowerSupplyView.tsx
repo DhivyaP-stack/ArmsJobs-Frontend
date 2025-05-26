@@ -55,6 +55,7 @@ export const ManPowerSupplyView = () => {
         email: '',
         office_location: '',
         categories_available: '',
+        categories_available_names:'',
         quantity_per_category: '',
         trade_license: null,
         company_license: null,
@@ -348,7 +349,7 @@ export const ManPowerSupplyView = () => {
                                     <div className="grid grid-cols-3 gap-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Categories Available</p>
-                                            <p className="text-sm font-bold mt-1">{manPower?.categories_available || 'N/A'}</p>
+                                            <p className="text-sm font-bold mt-1">{manPower?.categories_available_names || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Quantity per Categoryn</p>

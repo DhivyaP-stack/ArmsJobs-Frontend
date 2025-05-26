@@ -442,29 +442,6 @@ export const fetchSupplierData = async (supplierId: number): Promise<ManpowerSup
   return response.data as ManpowerSupplier;
 };
 
-// add manPower api call
-// export const createSupplier = async (data: any, onAgentAdded?: () => void) => {
-//     const formData = new FormData();
-//     formData.append("company_name", data.company_name);
-//     formData.append("contact_person_name", data.contact_person_name);
-//     formData.append("mobile_no", data.mobile_no);
-//     formData.append("whatsapp_no", data.whatsapp_no);
-//     formData.append("email", data.email);
-//     const response = await apiAxios.post("/api/manpower-suppliers/",formData,
-//         {
-//             headers: { "Content-Type": "multipart/form-data" },
-//         }
-//     );
-
-//     if (onAgentAdded) {
-//         onAgentAdded();
-//     }
-
-//     return response.data;
-// };
-
-
-
 //Mnapower Status
 export const Manpowerstatus = async (
   Id: string,

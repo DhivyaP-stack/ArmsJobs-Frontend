@@ -12,6 +12,7 @@ import { fetchAgentById, updateAgent } from "../../Commonapicall/AgentsSuppliera
 import { toast } from "react-toastify";
 import { AgentSupplier } from "./AgentsSupplierTable";
 import Select from "react-select";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
 // import { SelectField } from "../../common/SelectField";
 // import { FaCloudUploadAlt } from "react-icons/fa";
 interface EditAgentsSupplierPopupProps {
@@ -19,6 +20,19 @@ interface EditAgentsSupplierPopupProps {
     agentId: number;
     onAgentAdded?: () => void;
     refreshData: () => void;
+}
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 type AgentFormData = z.infer<typeof agentSchema>;
@@ -43,6 +57,9 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
 }) => {
     //   if (!isOpen) return null;
     const [activeTab, setActiveTab] = useState("Agent Details");
+    const [, setCategories] = useState<Category[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string }[]>([]);
     const tabs = ["Agent Details", "Eligibility & History", "Manpower Info", "Additional Info"];
     const {
         register,
@@ -66,6 +83,16 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
         // Convert selected options to comma-separated string of values
         const areasString = selectedOptions.map((option: OptionType) => option.value).join(', ');
         setValue('areas_covered', areasString);
+    };
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        setSelectedCategories([...newSelected]);
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('supply_categories', categoryIds); // Pass to form
     };
 
 
@@ -141,7 +168,6 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             try {
                 const parseBoolean = (val: string | undefined): boolean | undefined =>
                     val === "true" ? true : val === "false" ? false : undefined;
-
                 const updateData: Partial<AgentSupplier> = {
                     name: data.name,
                     mobile_no: data.mobile_no,
@@ -156,7 +182,7 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                     additional_notes: data.additional_notes,
                 };
                 await updateAgent(agentId, updateData);
-                reset();
+                reset(); 2
                 closePopup();
                 refreshData();
                 toast.success('Agent Updated successfully');
@@ -210,6 +236,45 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+                // Set options for react-select
+                const options = data.data.map(cat => ({
+                    value: cat.id.toString(),
+                    label: cat.category
+                }));
+                setCategoryOptions(options);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        if (agentId && categoryOptions.length > 0) {
+            // Fetch the agent data again or use the data you already have
+            const fetchAgentCategories = async () => {
+                try {
+                    const agent = await fetchAgentById(agentId);
+                    if (agent.supply_categories) {
+                        const ids = agent.supply_categories.split(',');
+                        const selected = categoryOptions.filter(opt => ids.includes(opt.value));
+                        setSelectedCategories(selected);
+                        setValue('supply_categories', agent.supply_categories);
+                    }
+                } catch (error) {
+                    console.error("Error fetching agent categories", error);
+                }
+            };
+            fetchAgentCategories();
+        }
+    }, [agentId, categoryOptions, setValue]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -415,12 +480,14 @@ export const EditAgentsSupplierPopup: React.FC<EditAgentsSupplierPopupProps> = (
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories You Can Supply
                                                 </label>
-                                                <InputField
-                                                    type="text"
-
-                                                    {...register("supply_categories")}
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
+                                                <Select
+                                                    isMulti
+                                                    name="supply_categories"
+                                                    options={categoryOptions}
+                                                    value={selectedCategories} // array of { value, label }
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                                 {errors.supply_categories && <p className="text-red-500 text-xs">{errors.supply_categories.message}</p>}
                                             </div>

@@ -10,6 +10,7 @@ interface OverseasRecruitment {
   whatsapp_no: string | null;
   email_address: string;
   categories_you_can_provide: string;
+  categories_you_can_provide_names:string;
   nationality_of_workers: string;
   mobilization_time: string;
   uae_deployment_experience: boolean;
@@ -27,6 +28,7 @@ interface OverseasRecruitmentFormData {
   whatsapp_no: string;
   email_address: string;
   categories_you_can_provide: string;
+  //categories_you_can_provide_names:string;
   nationality_of_workers: string;
   mobilization_time: string;
   uae_deployment_experience: boolean;

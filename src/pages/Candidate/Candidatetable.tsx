@@ -31,6 +31,7 @@ interface CandidateList {
   availability_to_join: string;
   position_applying_for: string;
   category: string;
+  category_names: string;
   other_category?: string | null;
   uae_experience_years: string;
   skills_tasks: string;
@@ -284,7 +285,7 @@ export const CandidateTable = () => {
                       <td className="px-2 py-1">{candidate.availability_to_join || "N/A"}</td>
                       <td className="px-2 py-1">{candidate.position_applying_for || "N/A"}</td>
                       <td className="px-2 py-1">
-                        {candidate.category || "N/A"}
+                        {candidate.category_names || "N/A"}
                       </td>
                       <td className="px-2 py-1">
                         {candidate.other_category || "N/A"}
@@ -356,9 +357,9 @@ export const CandidateTable = () => {
                 )}
               </tbody>
             </table>
-              )}
+          )}
         </div>
-        
+
         <Pagination
           currentPage={currentPage}
           totalItems={totalCount}

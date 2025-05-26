@@ -20,6 +20,9 @@ interface Category {
 }
 
 interface CategoryApiResponse {
+  count:number;
+  next:string;
+  previous:string;
   results: Category[]
 }
 

@@ -7,10 +7,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { AddManpowerSupply } from "../../Commonapicall/ManpowerSupplyapicall/Manpowerapis";
-
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
+import Select from "react-select";
 interface ManpowerAddPopupProps {
     closePopup: () => void;
     refreshData: () => void;
+}
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 //Company details schema
@@ -72,11 +84,13 @@ export const AddManpowerPopup: React.FC<ManpowerAddPopupProps> = ({
     const tabs = ['Company Details', "Manpower Information", "Documents", "Experience", "Additional"];
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
+        setValue,
     } = useForm<ManpowerFormData>({
         resolver: zodResolver(ManpowerSchema),
         defaultValues: {
@@ -84,6 +98,22 @@ export const AddManpowerPopup: React.FC<ManpowerAddPopupProps> = ({
             worked_with_arms_before: "no"
         },
     });
+
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('categories_available', categoryIds); // Pass to form
+    };
+
+    const categoryOptions = categories.map(cat => ({
+        value: cat.id.toString(),      // use ID as value
+        label: cat.category            // show category name
+    }));
+
 
     const tabFieldMapping: Record<string, string[]> = {
         "Company Details": [
@@ -193,6 +223,19 @@ export const AddManpowerPopup: React.FC<ManpowerAddPopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -339,12 +382,14 @@ export const AddManpowerPopup: React.FC<ManpowerAddPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories Available
                                                 </label>
-                                                <InputField
-                                                    type="text"
-                                                    {...register("categories_available")}
+                                                <Select
+                                                    isMulti
                                                     name="categories_available"
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
+                                                    options={categoryOptions}
+                                                    // value={selectedCategories} // array of { value, label }
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
 

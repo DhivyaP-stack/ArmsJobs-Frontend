@@ -9,10 +9,24 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddClientEnquiryList } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
 interface ClientEnquiryAddPopupProps {
-    // isOpen: boolean;
     closePopup: () => void;
     refreshData: () => void;
+}
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 const companydetailsSchema = zod.object({
@@ -68,12 +82,14 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
     const [selection, setSelection] = useState("");
+    const [categories, setCategories] = useState<Category[]>([]);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
+        setValue,
     } = useForm<ClientEnquiryFormData>({
         resolver: zodResolver(clientenquirySchema),
         defaultValues: {
@@ -108,6 +124,20 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
             'query_type',
         ],
     };
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('categories_required', categoryIds); // Pass to form
+    };
+
+    const categoryOptions = categories.map(cat => ({
+        value: cat.id.toString(),      // use ID as value
+        label: cat.category            // show category name
+    }));
 
     const [scrollToField, setScrollToField] = useState<string | null>(null);
     console.log("scrollToField", scrollToField)
@@ -195,6 +225,19 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -365,12 +408,14 @@ export const ClientEnquiryAddPopup: React.FC<ClientEnquiryAddPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories Required
                                                 </label>
-                                                <InputField
-                                                    type="text"
+                                                <Select
+                                                    isMulti
+                                                    options={categoryOptions}
                                                     {...register("categories_required")}
                                                     name="categories_required"
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
                                             {/* Quantity Required */}

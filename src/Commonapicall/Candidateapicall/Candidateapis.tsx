@@ -27,6 +27,7 @@ interface CandidateList {
   availability_to_join: string;
   position_applying_for: string;
   category: string;
+  category_names:string
   other_category?: string | null;
   uae_experience_years: string;
   skills_tasks: string;

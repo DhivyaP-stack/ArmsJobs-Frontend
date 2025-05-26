@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditManpowerSupply } from "../../Commonapicall/ManpowerSupplyapicall/Manpowerapis";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
 
 interface ManpowerEditPopupProps {
     closePopup: () => void;
@@ -47,6 +49,7 @@ export interface ManpowerSupplier {
     email: string;
     office_location: string;
     categories_available: string;
+    categories_available_names: string;
     quantity_per_category: string;
     trade_license: string | null;
     company_license: string | null;
@@ -57,6 +60,19 @@ export interface ManpowerSupplier {
     status: boolean;
     created_at: string;
     manpower_remarks: ManpowerRemark[];
+}
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 //Company details schema
@@ -119,6 +135,9 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
     const tabs = ['Company Details', "Manpower Information", "Documents", "Experience", "Additional"];
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
+    const [, setCategories] = useState<Category[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string }[]>([]);
     const {
         register,
         handleSubmit,
@@ -157,6 +176,16 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
         "Additional": [
             'comments'
         ],
+    };
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        setSelectedCategories([...newSelected]);
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('categories_available', categoryIds); // Pass to form
     };
 
     useEffect(() => {
@@ -201,7 +230,6 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
                     data.worked_with_arms_before || 'no',
                     data.comments || ''
                 );
-
                 // On success
                 reset();
                 closePopup();
@@ -244,7 +272,6 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
             if (tabContent) {
                 tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-
             // Then scroll to the specific field
             const timeout = setTimeout(() => {
                 const el = document.querySelector(`[name="${scrollToField}"]`);
@@ -258,6 +285,37 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+                // Set options for react-select
+                const options = data.data.map(cat => ({
+                    value: cat.id.toString(),
+                    label: cat.category
+                }));
+                setCategoryOptions(options);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        if (editManpowerSupply?.categories_available && categoryOptions.length > 0) {
+            const ids = editManpowerSupply.categories_available.split(','); // ["10", "13", "12"]
+
+            const selected = categoryOptions.filter(opt => ids.includes(opt.value));
+            setSelectedCategories(selected);
+
+            // Set form value
+            setValue('categories_available', ids.join(','));
+        }
+    }, [editManpowerSupply, categoryOptions, setValue]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -404,12 +462,15 @@ export const EditManpowerPopup: React.FC<ManpowerEditPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories Available
                                                 </label>
-                                                <InputField
-                                                    type="text"
+                                                <Select
+                                                    isMulti
+                                                    options={categoryOptions}
+                                                    value={selectedCategories} // array of { value, label }
                                                     {...register("categories_available")}
                                                     name="categories_available"
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
 

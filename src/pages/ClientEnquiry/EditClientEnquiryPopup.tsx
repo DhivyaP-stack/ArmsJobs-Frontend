@@ -11,6 +11,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditClientEnquiry } from "../../Commonapicall/ClientEnquiryapicall/ClientEnquiryapis";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
 
 interface EditClientEnquiryAddPopupProps {
     // isOpen: boolean;
@@ -34,6 +36,19 @@ interface EditClientEnquiryAddPopupProps {
         remarks: string;
         query_type: string;
     }
+}
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 const companydetailsSchema = zod.object({
@@ -92,6 +107,9 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
     const [selection, setselection] = useState('');
+    const [, setCategories] = useState<Category[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string }[]>([]);
 
     const {
         register,
@@ -132,6 +150,16 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
             'remarks',
             'query_type',
         ],
+    };
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        setSelectedCategories([...newSelected]);
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('categories_required', categoryIds); // Pass to form
     };
 
     useEffect(() => {
@@ -252,6 +280,34 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
         }
     };
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+                // Set options for react-select
+                const options = data.data.map(cat => ({
+                    value: cat.id.toString(),
+                    label: cat.category
+                }));
+                setCategoryOptions(options);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        if (editClientEnquiry?.categories_required && categoryOptions.length > 0) {
+            const ids = editClientEnquiry.categories_required.split(','); // ["10", "13", "12"]
+            const selected = categoryOptions.filter(opt => ids.includes(opt.value));
+            setSelectedCategories(selected);
+            // Set form value
+            setValue('categories_required', ids.join(','));
+        }
+    }, [editClientEnquiry, categoryOptions, setValue]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -422,12 +478,22 @@ export const EditClientEnquiryPopup: React.FC<EditClientEnquiryAddPopupProps> = 
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories Required
                                                 </label>
-                                                <InputField
+                                                {/* <InputField
                                                     type="text"
                                                     {...register("categories_required")}
                                                     name="categories_required"
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
+                                                /> */}
+                                                <Select
+                                                    isMulti
+                                                    options={categoryOptions}
+                                                    value={selectedCategories} // array of { value, label }
+                                                    {...register("categories_required")}
+                                                    name="categories_required"
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
                                             {/* Quantity Required */}

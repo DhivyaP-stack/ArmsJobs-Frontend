@@ -10,11 +10,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { addOverseasRecruitment } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { toast } from "react-toastify";
 import { SelectField } from "../../common/SelectField";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
+import Select from "react-select";
 
 interface OverSeasAddPopupProps {
     // isOpen: boolean;
     closePopup: () => void;
     refreshData?: () => void;
+}
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 // Company Details Schema
@@ -67,18 +80,34 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
     // const tabs = ["Personal Information", "Visa & Work Eligibility", "Job Information", "Documents Upload"];
     const tabs = ['Company Details', "Recruitment Info", "Documents", "Notes"];
     const [error, setError] = useState<string | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
+        setValue,
     } = useForm<OverseasRecruitmentFormData>({
         resolver: zodResolver(overseasRecruitmentSchema),
         defaultValues: {
             uae_deployment_experience: "no", // Set default value for radio buttons
         },
     });
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('categories_you_can_provide', categoryIds); // Pass to form
+    };
+
+    const categoryOptions = categories.map(cat => ({
+        value: cat.id.toString(),      // use ID as value
+        label: cat.category            // show category name
+    }));
 
     const tabFieldMapping: Record<string, string[]> = {
         "Company Details": [
@@ -122,6 +151,7 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
                     whatsapp_no: data.whatsapp_no,
                     email_address: data.email_address,
                     categories_you_can_provide: data.categories_you_can_provide || '',
+                    //categories_you_can_provide_names: data.categories_you_can_provide_names || '',
                     nationality_of_workers: data.nationality_of_workers || '',
                     mobilization_time: data.mobilization_time || '',
                     uae_deployment_experience: uaeExperience,
@@ -181,6 +211,19 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -336,12 +379,22 @@ export const OverSeasAddPopup: React.FC<OverSeasAddPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories You Can Provide
                                                 </label>
-                                                <InputField
+                                                {/* <InputField
                                                     type="text"
                                                     {...register("categories_you_can_provide")}
                                                     name="categories_you_can_provide"
                                                     className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
                                                     label={""}
+                                                /> */}
+                                                <Select
+                                                    isMulti
+                                                    {...register("categories_you_can_provide")}
+                                                    name="categories_you_can_provide"
+                                                    options={categoryOptions}
+                                                    // value={selectedCategories} // array of { value, label }
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
                                             {/* Nationality of Workers */}

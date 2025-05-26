@@ -20,6 +20,7 @@ interface ClientEnquiryList {
   project_location: string;
   project_duration: string;
   categories_required: string;
+  categories_required_names:string;
   quantity_required: string;
   project_start_date: string;
   kitchen_facility: boolean;

@@ -11,6 +11,16 @@ export const getCategories = async () => {
   }
 };
 
+//dropdown Categories
+export const dropdowngetCategories = async () => {
+  try {
+    const response = await apiAxios.get(`/api/categories/dropdown/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+};
 
 //Add Candidate
 export const AddCategoryList = async (
@@ -35,6 +45,7 @@ export const AddCategoryList = async (
   }
 };
 
+//Edit Category
 export const EditCategoryList = async (
   id:number,
   Category: string, 

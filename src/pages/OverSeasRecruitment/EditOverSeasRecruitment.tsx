@@ -10,6 +10,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updateOverseasRecruitment } from "../../Commonapicall/Overseasapicall/Overseasapis";
 import { toast } from "react-toastify";
 import { SelectField } from "../../common/SelectField";
+import Select from "react-select";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
 
 // Define the interface
 interface OverseasRecruitmentAgency {
@@ -35,6 +37,20 @@ interface OverSeasAddPopupProps {
     closePopup: () => void;
     refreshData: () => void;
     editOverseas: OverseasRecruitmentAgency;
+}
+
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 // Company Details Schema
@@ -86,6 +102,9 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
     const [activeTab, setActiveTab] = useState("Company Details");
     const tabs = ['Company Details', "Recruitment Info", "Documents", "Notes"];
     const [error, setError] = useState<string | null>(null);
+    const [, setCategories] = useState<Category[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string }[]>([]);
 
     const {
         register,
@@ -119,6 +138,17 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
             'comments',
         ],
     };
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        setSelectedCategories([...newSelected]);
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('categories_you_can_provide', categoryIds); // Pass to form
+    };
+
 
     useEffect(() => {
         if (editOverseas) {
@@ -217,6 +247,35 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+                // Set options for react-select
+                const options = data.data.map(cat => ({
+                    value: cat.id.toString(),
+                    label: cat.category
+                }));
+                setCategoryOptions(options);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        if (editOverseas?.categories_you_can_provide && categoryOptions.length > 0) {
+            const ids = editOverseas.categories_you_can_provide.split(','); // ["10", "13", "12"]
+            const selected = categoryOptions.filter(opt => ids.includes(opt.value));
+            setSelectedCategories(selected);
+            // Set form value
+            setValue('categories_you_can_provide', ids.join(','));
+        }
+    }, [editOverseas, categoryOptions, setValue]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -367,12 +426,15 @@ export const EditOverSeasPopup: React.FC<OverSeasAddPopupProps> = ({
                                                 <label className="text-sm font-semibold mb-1">
                                                     Categories You Can Provide
                                                 </label>
-                                                <InputField
-                                                    type="text"
+                                                <Select
+                                                    isMulti
+                                                    options={categoryOptions}
+                                                    value={selectedCategories} // array of { value, label }
                                                     {...register("categories_you_can_provide")}
                                                     name="categories_you_can_provide"
-                                                    className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                    label={""}
+                                                    onChange={handleCategoryChange}
+                                                    // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                    classNamePrefix="select"
                                                 />
                                             </div>
                                             {/* Nationality of Workers */}

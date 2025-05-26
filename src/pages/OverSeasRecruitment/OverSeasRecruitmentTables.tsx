@@ -23,6 +23,7 @@ interface OverseasRecruitmentAgency {
   whatsapp_no: string | null;
   email_address: string;
   categories_you_can_provide: string;
+  categories_you_can_provide_names:string;
   nationality_of_workers: string;
   mobilization_time: string;
   uae_deployment_experience: boolean;
@@ -219,7 +220,7 @@ export const OverSeasRecruitmentTable = () => {
                       <td className="px-2 py-7">{agency.mobile_no || 'N/A'}</td>
                       <td className="px-2 py-7">{agency.whatsapp_no || 'N/A'}</td>
                       <td className="px-2 py-7">{agency.email_address || 'N/A'}</td>
-                      <td className="px-2 py-7">{agency.categories_you_can_provide || 'N/A'}</td>
+                      <td className="px-2 py-7">{agency.categories_you_can_provide_names || 'N/A'}</td>
                       <td className="px-2 py-7">{agency.nationality_of_workers || 'N/A'}</td>
                       <td className="px-2 py-7">{agency.mobilization_time || 'N/A'}</td>
                       <td className="px-2 py-7">{agency.uae_deployment_experience ? 'Yes' : 'No'}</td>

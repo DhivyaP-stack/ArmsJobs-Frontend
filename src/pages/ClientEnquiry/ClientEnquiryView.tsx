@@ -36,6 +36,7 @@ interface ClientEnquiryResponse {
     project_location: string; project_duration
     : string;
     categories_required: string;
+    categories_required_names:string;
     quantity_required: string;
     project_start_date: string; // ISO date string
     kitchen_facility: boolean;
@@ -72,6 +73,7 @@ export const ClientEnquiryView = () => {
         project_location: '',
         project_duration: '',
         categories_required: '',
+        categories_required_names: '',
         quantity_required: '',
         project_start_date: '',
         kitchen_facility: false,
@@ -340,7 +342,7 @@ export const ClientEnquiryView = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Categories Required</p>
-                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.categories_required || 'N/A'}</p>
+                                            <p className="text-sm font-bold mt-1">{selectedClientEnquiry?.categories_required_names || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Quantity Required (per category)</p>

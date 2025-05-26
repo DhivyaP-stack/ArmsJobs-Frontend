@@ -23,6 +23,7 @@ interface OverseasRecruitment {
     whatsapp_no: string;
     email_address: string;
     categories_you_can_provide: string;
+    categories_you_can_provide_names:string;
     nationality_of_workers: string;
     mobilization_time: string;
     uae_deployment_experience: boolean;
@@ -360,7 +361,7 @@ export const OverSeasRecruitmentView = () => {
                                     <div className="grid grid-cols-3 gap-x-8 gap-y-4 pt-2">
                                         <div>
                                             <p className="text-xs text-gray-600">Categories You Can Provide</p>
-                                            <p className="text-sm font-bold mt-1">{oversea?.categories_you_can_provide || 'N/A'}</p>
+                                            <p className="text-sm font-bold mt-1">{oversea?.categories_you_can_provide_names || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-600">Nationality of Workers</p>

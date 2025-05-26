@@ -10,6 +10,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditCandidateList } from "../../Commonapicall/Candidateapicall/Candidateapis";
 import { toast } from "react-toastify";
+import { dropdowngetCategories } from "../../Commonapicall/Categoriesapicall/Categoriesapis";
+import Select from "react-select";
 
 interface EditCandidatePopupProps {
     // isOpen: boolean;
@@ -49,6 +51,19 @@ interface EditCandidatePopupProps {
         referral_name: string;
         referral_contact: string;
     }
+}
+
+interface Category {
+    id: number;
+    status: boolean;
+    category: string;
+    is_deleted: boolean;
+}
+
+interface CategoryApiResponse {
+    status: string;
+    message: string;
+    data: Category[]
 }
 
 // Personal Information Schema
@@ -126,7 +141,6 @@ const candidateSchema = personalInfoSchema
 
 type EditCandidateFormData = zod.infer<typeof candidateSchema>;
 
-
 export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
     // isOpen,
     closePopup,
@@ -139,6 +153,10 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
     const [, setLoading] = useState(false);
     const [, setError] = useState<string | null>(null);
     const [selection, setSelection] = useState("");
+    const [, setCategories] = useState<Category[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string }[]>([]);
+
     const {
         register,
         handleSubmit,
@@ -187,6 +205,16 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
             'referral_name',
             'referral_contact'
         ]
+    };
+
+    const handleCategoryChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        const newSelected = selectedOptions || [];
+        setSelectedCategories([...newSelected]);
+        // Extract only the IDs and join with commas
+        const categoryIds = newSelected.map(opt => opt.value).join(',');
+        setValue('category', categoryIds); // Pass to form
     };
 
     useEffect(() => {
@@ -306,6 +334,35 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
             return () => clearTimeout(timeout);
         }
     }, [activeTab, scrollToField]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await dropdowngetCategories() as CategoryApiResponse;
+                setCategories(data.data);
+                // Set options for react-select
+                const options = data.data.map(cat => ({
+                    value: cat.id.toString(),
+                    label: cat.category
+                }));
+                setCategoryOptions(options);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        if (editCandidate?.category && categoryOptions.length > 0) {
+            const ids = editCandidate.category.split(','); // ["10", "13", "12"]
+            const selected = categoryOptions.filter(opt => ids.includes(opt.value));
+            setSelectedCategories(selected);
+            // Set form value
+            setValue('category', ids.join(','));
+        }
+    }, [editCandidate, categoryOptions, setValue]);
 
     return (
         <div className="fixed inset-0 bg-armsAsh bg-opacity-70 flex justify-center items-start pt-25 z-50">
@@ -544,12 +601,15 @@ export const EditCandidatePopup: React.FC<EditCandidatePopupProps> = ({
                                             <label className="text-sm font-semibold mb-1">
                                                 Category
                                             </label>
-                                            <InputField
-                                                type="text"
+                                            <Select
+                                                isMulti
+                                                options={categoryOptions}
+                                                value={selectedCategories} // array of { value, label }
                                                 {...register("category")}
                                                 name="category"
-                                                className="w-full rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5 focus-within:outline-none"
-                                                label={""}
+                                                onChange={handleCategoryChange}
+                                                // className="w-full cursor-pointer rounded-[5px] border-[1px] border-armsgrey px-2 py-1.5"
+                                                classNamePrefix="select"
                                             />
                                         </div>
 
