@@ -1,9 +1,15 @@
+import { CategoryApiResponse } from "../../pages/Categories/Categoriestable";
 import { apiAxios } from "../apiUrl";
 
 // Fetch all categories
-export const getCategories = async () => {
+export const getCategories = async (page: number, pageSize: number) => {
   try {
-    const response = await apiAxios.get(`/api/categories/`);
+    const response = await apiAxios.get<CategoryApiResponse>(
+      `/api/categories/?page=${page}&page_size=${pageSize}`
+    );
+    if (!response.data || response.status !== 200) {
+      throw new Error("Failed to fetch categories");
+    }
     return response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -24,8 +30,8 @@ export const dropdowngetCategories = async () => {
 
 //Add Candidate
 export const AddCategoryList = async (
-  Category: string, 
- ) => {
+  Category: string,
+) => {
   try {
     const formData = new FormData();
     formData.append('category', Category);
@@ -47,9 +53,9 @@ export const AddCategoryList = async (
 
 //Edit Category
 export const EditCategoryList = async (
-  id:number,
-  Category: string, 
- ) => {
+  id: number,
+  Category: string,
+) => {
   try {
     const formData = new FormData();
     formData.append('category', Category);
@@ -80,9 +86,10 @@ export const deleteCategory = async (Id: number): Promise<boolean> => {
   } catch (error: any) {
     console.error("Error deleting Category:", error);
     throw new Error(
-      error.response?.data?.message || 
-      error.message || 
+      error.response?.data?.message ||
+      error.message ||
       "Failed to delete Category. Please try again."
     );
   }
 };
+
