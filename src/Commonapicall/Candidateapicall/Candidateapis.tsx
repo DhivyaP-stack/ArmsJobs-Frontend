@@ -59,7 +59,6 @@ interface CandidateList {
 export const fetchCandidatesList = async () => {
   try {
     const response = await apiAxios.get('/api/candidates/');
-
     if (!response.data || response.status !== 200) {
       throw new Error("Failed to fetch candidates");
     }

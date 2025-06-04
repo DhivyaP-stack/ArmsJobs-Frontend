@@ -2,8 +2,9 @@
 import axios from 'axios';
 
 export const apiUrl = {
-   //apiUrlConfig: "http://192.168.1.14:8000",
- apiUrlConfig: "https://armsjob.vercel.app",
+  //apiUrlConfig: "http://192.168.1.14:8000",
+  //  apiUrlConfig: "https://armsjob.vercel.app",
+  apiUrlConfig: "http://37.27.253.81:8000/",
   // apiUrlConfig: "http://192.168.43.150:8000", Motorola One Power
   // apiUrlConfig: "https://djangoapp-mindful-beautys-projects.vercel.app",
   //apiUrlConfig: "https://mbrestapi-f8cphtgaf7fjdyb0.westcentralus-01.azurewebsites.net",    // Azure

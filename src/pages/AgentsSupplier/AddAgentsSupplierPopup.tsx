@@ -518,7 +518,7 @@ export const AddAgentsSupplierPopup: React.FC<AddAgentsSupplierPopupProps> = ({
                                     onClick={closePopup}
                                     buttonType="button"
                                     buttonTitle="Cancel"
-                                    className="px-7 py-2.5  text-armsBlack rounded-sm font-semibold hover:bg-gray-200 cursor-pointer"
+                                    className="px-7 py-2.5 text-armsBlack rounded-sm font-semibold hover:bg-gray-50 cursor-pointer"
                                 />
                             </div>
                             <div>
