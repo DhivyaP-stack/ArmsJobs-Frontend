@@ -100,16 +100,10 @@ export const Header = () => {
           <div className="flex items-center space-x-5 2xl:space-x-5 max-2xl:order-2 cursor-pointer">
             <div className="relative group cursor-pointer flex items-center justify-center">
               <button className="text-gray-700">
-                <IoMdSettings className="w-5 h-5 object-cover text-armsjobslightblue" />
-              </button>
-              <div className="absolute -left-15  top-2.5 mt-2 w-48 bg-white shadow-lg rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[1001]">
-                <NavLink
-                  to="/Categories"
-                  className="block px-4 py-2 text-sm text-armsBlack hover:bg-gray-100"
-                >
-                  Categories
+                <NavLink to="/Settings">
+                  <IoMdSettings className="w-5 h-5 object-cover text-armsjobslightblue" />
                 </NavLink>
-              </div>
+              </button>
             </div>
             <button className="text-gray-700">
               <img
