@@ -13,7 +13,7 @@ interface ApiResponse {
 }
 
 interface CandidateList {
- id: number;
+  id: number;
   candidate_id: number;
   photo_upload?: string | null;
   full_name: string;
@@ -27,7 +27,7 @@ interface CandidateList {
   availability_to_join: string;
   position_applying_for: string;
   category: string;
-  category_names:string
+  category_names: string;
   other_category?: string | null;
   uae_experience_years: string;
   skills_tasks: string;
@@ -72,39 +72,46 @@ export const fetchCandidatesList = async () => {
 
 //Add Candidate
 export const AddCandidateList = async (
-  FullName: string, 
-  MobileNumber: string, 
-  WhatsappNumber: string, 
-  Email:string, 
-  Nationality:string,
-  CurrentLocation:string,
-  VisaType:string,
-  AvailabilitytoJoin:string,
-  PositionApplyingFor:string,
-  Category:string,
-  UAEexperience:string,
-  SkillsTasks:string,
-  PreferredWorkLocation:string,
-  ExpectedSalary:string,
-  VisaExpiryDate:string,
-  OtherCategory:string,
-  LanguagesSpoken:string,
-  PreferredWorkType:string,
-  CurrentlyEmployed:string,
-  AdditionalNotes:string,
-  ReferralName:string,
-  ReferralContact:string
- ) => {
+  FullName: string,
+  MobileNumber: string,
+  WhatsappNumber: string,
+  Email: string,
+  Nationality: string,
+  CurrentLocation: string,
+  VisaType: string,
+  AvailabilitytoJoin: string,
+  PositionApplyingFor: string,
+  Category: string,
+  UAEexperience: string,
+  SkillsTasks: string,
+  PreferredWorkLocation: string,
+  ExpectedSalary: string,
+  VisaExpiryDate: string,
+  OtherCategory: string,
+  LanguagesSpoken: string,
+  PreferredWorkType: string,
+  CurrentlyEmployed: string,
+  AdditionalNotes: string,
+  ReferralName: string,
+  ReferralContact: string,
+  cvFile?: File,
+  insuranceFile?: File,
+  passportFile?: File,
+  visaFile?: File,
+  nocFile?: File,
+  licenseFile?: File,
+  experienceCertificateFile?: File
+) => {
   try {
     const formData = new FormData();
     formData.append('full_name', FullName);
-    formData.append('mobile_number',MobileNumber);
+    formData.append('mobile_number', MobileNumber);
     formData.append('whatsapp_number', WhatsappNumber);
     formData.append('email', Email);
     formData.append('nationality', Nationality);
     formData.append('current_location', CurrentLocation);
     formData.append('visa_type', VisaType);
-    formData.append('availability_to_join',AvailabilitytoJoin);
+    formData.append('availability_to_join', AvailabilitytoJoin);
     formData.append('position_applying_for', PositionApplyingFor);
     formData.append('category', Category);
     formData.append('uae_experience_years', UAEexperience);
@@ -118,8 +125,14 @@ export const AddCandidateList = async (
     formData.append('currently_employed', CurrentlyEmployed);
     formData.append('additional_notes', AdditionalNotes);
     formData.append('referral_name', ReferralName);
-    formData.append('referral_contact',ReferralContact)
-
+    formData.append('referral_contact', ReferralContact)
+    if (cvFile) formData.append('upload_cv', cvFile);
+    if (insuranceFile) formData.append('insurance', insuranceFile);
+    if (passportFile) formData.append('passport', passportFile);
+    if (visaFile) formData.append('visa', visaFile);
+    if (nocFile) formData.append('noc', nocFile);
+    if (licenseFile) formData.append('license', licenseFile);
+    if (experienceCertificateFile) formData.append('experience_certificate', experienceCertificateFile);
     const response = await apiAxios.post('/api/candidates/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -141,39 +154,39 @@ export const AddCandidateList = async (
 //EditCandidate
 export const EditCandidateList = async (
   id: number,
-  FullName: string, 
-  MobileNumber: string, 
-  WhatsappNumber: string, 
-  Email:string, 
-  Nationality:string,
-  CurrentLocation:string,
-  VisaType:string,
-  AvailabilitytoJoin:string,
-  PositionApplyingFor:string,
-  Category:string,
-  UAEexperience:string,
-  SkillsTasks:string,
-  PreferredWorkLocation:string,
-  ExpectedSalary:string,
-  VisaExpiryDate:string,
-  OtherCategory:string,
-  LanguagesSpoken:string,
-  PreferredWorkType:string,
-  CurrentlyEmployed:string,
-  AdditionalNotes:string,
-  ReferralName:string,
-  ReferralContact:string
- ) => {
+  FullName: string,
+  MobileNumber: string,
+  WhatsappNumber: string,
+  Email: string,
+  Nationality: string,
+  CurrentLocation: string,
+  VisaType: string,
+  AvailabilitytoJoin: string,
+  PositionApplyingFor: string,
+  Category: string,
+  UAEexperience: string,
+  SkillsTasks: string,
+  PreferredWorkLocation: string,
+  ExpectedSalary: string,
+  VisaExpiryDate: string,
+  OtherCategory: string,
+  LanguagesSpoken: string,
+  PreferredWorkType: string,
+  CurrentlyEmployed: string,
+  AdditionalNotes: string,
+  ReferralName: string,
+  ReferralContact: string
+) => {
   try {
     const formData = new FormData();
     formData.append('full_name', FullName);
-    formData.append('mobile_number',MobileNumber);
+    formData.append('mobile_number', MobileNumber);
     formData.append('whatsapp_number', WhatsappNumber);
     formData.append('email', Email);
     formData.append('nationality', Nationality);
     formData.append('current_location', CurrentLocation);
     formData.append('visa_type', VisaType);
-    formData.append('availability_to_join',AvailabilitytoJoin);
+    formData.append('availability_to_join', AvailabilitytoJoin);
     formData.append('position_applying_for', PositionApplyingFor);
     formData.append('category', Category);
     formData.append('uae_experience_years', UAEexperience);
@@ -187,7 +200,7 @@ export const EditCandidateList = async (
     formData.append('currently_employed', CurrentlyEmployed);
     formData.append('additional_notes', AdditionalNotes);
     formData.append('referral_name', ReferralName);
-    formData.append('referral_contact',ReferralContact)
+    formData.append('referral_contact', ReferralContact)
     const response = await apiAxios.patch(`/api/candidates/update/${id}/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -196,7 +209,7 @@ export const EditCandidateList = async (
     if (response.status !== 200) {
       throw new Error('Failed to submit candidate data');
     }
-    console.log('Candidate updated successfully:', response.data);3
+    console.log('Candidate updated successfully:', response.data); 3
     return response.data;
   } catch (error: any) {
     console.error('Error submitting candidate:', error.response?.message || error.message);
@@ -215,20 +228,20 @@ export const deleteCandidate = async (Id: number): Promise<boolean> => {
   } catch (error: any) {
     console.error("Error deleting Candidatre:", error);
     throw new Error(
-      error.response?.data?.message || 
-      error.message || 
+      error.response?.data?.message ||
+      error.message ||
       "Failed to delete Candidate. Please try again."
     );
   }
 };
 
 // Get Candidate Names List
-export const fetchCandidateNames = async (search?:string) => {
+export const fetchCandidateNames = async (search?: string) => {
   try {
     const response = await apiAxios.get(`/api/candidates/names/?page_size=${22}`,
       {
-      params: { search },
-    });
+        params: { search },
+      });
     if (response.status !== 200 || !response.data) {
       throw new Error('Failed to fetch candidate names');
     }
@@ -243,13 +256,13 @@ export const fetchCandidateNames = async (search?:string) => {
 //ViewCandidateNamw
 export const ViewCandidateName = async (
   id: number,
- ) => {
+) => {
   try {
     const response = await apiAxios.get(`/api/candidates/${id}/`)
     if (response.status !== 200) {
       throw new Error('Failed to submit candidate data');
     }
-    console.log('Candidate updated successfully:', response.data);3
+    console.log('Candidate updated successfully:', response.data); 3
     return response.data;
   } catch (error: any) {
     console.error('Error submitting candidate:', error.response?.message || error.message);
@@ -258,7 +271,7 @@ export const ViewCandidateName = async (
 };
 
 //Search, All, Pagination
-export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string, PageSize: string, Status:string) => {
+export const filterCandidateList = async (page: number, search: string | undefined, filterBy: string, PageSize: string, Status: string) => {
   try {
     const response = await apiAxios.get<ApiResponse>(
       `/api/candidates/?page=${page}&search=${search || ''}&filter_by=${filterBy || ''}&page_size=${PageSize || ''}&status=${Status || ''}`
@@ -301,12 +314,12 @@ export const createRemark = async (candidate_id: number, remark: string) => {
 //Candidate status
 export const Candidatestatus = async (
   Id: string,
-  Status: string, 
- ) => {
+  Status: string,
+) => {
   try {
     const formData = new FormData();
     formData.append('id', Id);
-    formData.append('boolean_value',Status);
+    formData.append('boolean_value', Status);
     const response = await apiAxios.post('/api/candidates/update-status/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -315,7 +328,7 @@ export const Candidatestatus = async (
     if (response.status !== 200) {
       throw new Error('Failed to submit candidate status data');
     }
-    console.log('Candidate status updated successfully:', response.data);3
+    console.log('Candidate status updated successfully:', response.data); 3
     return response.data;
   } catch (error: any) {
     console.error('Error submitting candidate status:', error.response?.message || error.message);
